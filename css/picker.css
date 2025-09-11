@@ -1,0 +1,98 @@
+/* ==========================================================================
+    Color Picker Layout & Components
+   ========================================================================== */
+
+.compact-picker-wrapper {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    background-color: transparent;
+}
+.color-preview-box {
+    width: var(--color-preview-box-width);
+    align-self: stretch;
+    border: 2px solid var(--color-border-input);
+    border-radius: var(--radius-global);
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+}
+.compact-picker-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+}
+
+.slider-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 1px;
+    border-radius: var(--radius-global);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.slider-group label {
+    flex-shrink: 0;
+    margin-right: 5px;
+    text-align: left;
+    color: var(--color-text-page);
+    width: 95px;
+}
+.slider-group > span {
+    line-height: 1;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--width-unit-span);
+    color: var(--color-text-page-secondary);
+    margin-left: 3px;
+    text-align: left;
+}
+.color-string-input-group {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+/* ==========================================================================
+    Specific Slider Track Backgrounds
+   ========================================================================== */
+input[type="range"].hue-slider {
+    background-image: var(--background-image-slider-track-hsl-h);
+    border: none !important;
+}
+
+input[type="range"].oklch-h-slider {
+    background-image: var(--background-image-slider-track-oklch-h);
+}
+
+input[type="range"].saturation-slider {
+    background-image: var(--background-image-slider-track-saturation);
+    border: none !important;
+}
+
+input[type="range"].lightness-slider {
+    background-image: var(--background-image-slider-track-lightness);
+    border: none !important;
+}
+
+input[type="range"].oklch-l-slider {
+    background-image: var(--background-image-slider-track-oklch-l);
+    border: none !important;
+}
+
+input[type="range"].oklch-c-slider {
+    background-image: var(--background-image-slider-track-oklch-c);
+    border: none !important;
+}
+
+input[type="range"].opacity-slider {
+    background-color: var(--color-bg-checkerboard);
+    background-image: var(--background-image-slider-track-opacity), linear-gradient(45deg, var(--color-checkerboard-pattern) 25%, transparent 25%), linear-gradient(-45deg, var(--color-checkerboard-pattern) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--color-checkerboard-pattern) 75%), linear-gradient(-45deg, transparent 75%, var(--color-checkerboard-pattern) 75%);
+    background-size: auto, var(--size-checkerboard) var(--size-checkerboard), var(--size-checkerboard) var(--size-checkerboard), var(--size-checkerboard) var(--size-checkerboard), var(--size-checkerboard) var(--size-checkerboard);
+    background-position: 0 0, 0 0, 0 calc(var(--size-checkerboard) / 2), calc(var(--size-checkerboard) / 2) calc(var(--size-checkerboard) / -2), calc(var(--size-checkerboard) / -2) 0px;
+    background-repeat: no-repeat, repeat, repeat, repeat, repeat;
+}

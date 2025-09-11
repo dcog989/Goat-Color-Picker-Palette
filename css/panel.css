@@ -1,0 +1,118 @@
+/* ==========================================================================
+    Panel Styles
+   ========================================================================== */
+
+.panel {
+    background-color: var(--color-bg-control-surface);
+    padding: 15px;
+    border-radius: var(--radius-global);
+    box-shadow: 0 2px 5px hsl(0 0% 0% / 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid var(--color-border-control-surface);
+}
+
+.panel h2 {
+    margin: 0 0 10px 0;
+    color: var(--color-text-page);
+    font-size: 1.2em;
+    text-align: center;
+}
+
+/* Picker Panel Header */
+.picker-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 5px;
+    position: relative;
+    gap: 15px;
+}
+
+.picker-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+    color: var(--color-text-page);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+#app-version {
+    font-size: 0.8em;
+    color: var(--color-text-page-secondary);
+}
+
+.palette-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.palette-controls .slider-value-input {
+    width: auto;
+}
+
+#variation-slider {
+    flex-grow: 1;
+}
+
+/* OKLCH Info Panel */
+#oklchInfoPanel {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out, padding-top 0.3s ease-in-out, padding-bottom 0.3s ease-in-out, margin-top 0.3s ease-in-out, margin-bottom 0.3s ease-in-out;
+}
+
+#oklchInfoPanel.visible {
+    opacity: 1;
+    max-height: 500px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Color Output Panel */
+#colorOutput {
+    background-color: var(--color-bg-input-darker);
+    border-radius: var(--radius-global);
+    color: var(--color-text-page-secondary);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 15px;
+    margin-top: 15px;
+    padding: 10px 15px;
+    width: 100%;
+}
+
+.output-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.output-separator {
+    color: var(--color-text-inactive);
+}
+
+.output-group strong {
+    color: var(--color-text-page);
+    font-weight: 600;
+}
+
+.output-group span {
+    font-family: "Source Code Pro", Consolas, "Courier New", Courier, monospace;
+    word-break: break-all;
+    text-align: left;
+}
