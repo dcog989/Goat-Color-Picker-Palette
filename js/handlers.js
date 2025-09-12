@@ -310,6 +310,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             }
             GPG.handlers.resetDragState();
         },
+
         handleCopyButtonClick: function (event) {
             const button = event.target.closest(".copy-btn");
             if (!button || !button.dataset.target) return;
@@ -319,28 +320,34 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
             const textToCopy = targetSpan.textContent;
             const originalTitle = button.title;
+            const visuallyHiddenSpan = button.querySelector('.visually-hidden');
 
-            const removeFeedbackClasses = () => {
+            const restoreButtonState = () => {
                 button.classList.remove("copied-success", "copied-fail");
                 button.title = originalTitle;
+                button.innerHTML = GPG.SVG_COPY_ICON;
+                if (visuallyHiddenSpan) button.appendChild(visuallyHiddenSpan);
             };
 
             if (textToCopy && textToCopy !== "Invalid" && textToCopy !== "Error") {
                 navigator.clipboard.writeText(textToCopy).then(() => {
                     button.classList.add("copied-success");
                     button.title = "Copied!";
-                    setTimeout(removeFeedbackClasses, 2000);
+                    button.innerHTML = GPG.SVG_COPIED_ICON;
+                    if (visuallyHiddenSpan) button.appendChild(visuallyHiddenSpan);
+                    setTimeout(restoreButtonState, 2000);
                 }).catch(err => {
                     console.error('Failed to copy text: ', err);
                     button.classList.add("copied-fail");
                     button.title = "Copy failed";
-                    setTimeout(removeFeedbackClasses, 2000);
+                    setTimeout(restoreButtonState, 2000);
                 });
             } else {
                 button.classList.add("copied-fail");
                 button.title = "Nothing to copy!";
-                setTimeout(removeFeedbackClasses, 2000);
+                setTimeout(restoreButtonState, 2000);
             }
         }
+
     };
 }(window.GPG));

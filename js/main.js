@@ -24,6 +24,14 @@ window.GPG = window.GPG || {};
         document.getElementById(`mode-${lastActiveMode}`).checked = true;
         GPG.state.activePickerMode = lastActiveMode;
 
+        GPG.elements.copyButtons.forEach(button => {
+            const span = button.querySelector('.visually-hidden');
+            button.innerHTML = GPG.SVG_COPY_ICON;
+            if (span) {
+                button.appendChild(span);
+            }
+        });
+
         const initialH = Math.floor(Math.random() * (245 - 4 + 1)) + 4;
         const initialL_oklch = 45;
         const initialC_oklch = 0.13;

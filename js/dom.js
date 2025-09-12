@@ -63,6 +63,7 @@ window.GPG = window.GPG || {};
         };
         GPG.elements.pickerModeRadios = document.querySelectorAll('input[name="picker-mode"]');
         GPG.elements.exportFormatRadios = document.querySelectorAll('input[name="export-format"]');
+        GPG.elements.copyButtons = document.querySelectorAll('#colorOutput .copy-btn');
 
         if (GPG.elements.colorPreviewBox) {
             GPG.elements.colorPreviewBox_checkerboard = GPG.elements.colorPreviewBox.querySelector(".checkerboard-element");
