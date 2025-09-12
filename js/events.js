@@ -77,17 +77,11 @@ window.GPG = window.GPG || {};
                 input.addEventListener('input', () => input.classList.remove('invalid'));
 
                 // --- Drag and Drop for Color Input ---
-                input.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'copy';
-                    input.classList.add('drag-over');
-                });
-                input.addEventListener('dragleave', () => {
-                    input.classList.remove('drag-over');
-                });
+                input.addEventListener('dragover', GPG.handlers.dragOverHandler);
+                input.addEventListener('dragleave', GPG.handlers.dragLeaveHandler);
                 input.addEventListener('drop', e => {
                     e.preventDefault();
-                    input.classList.remove('drag-over');
+                    GPG.handlers.dragLeaveHandler(e);
                     const colorString = e.dataTransfer.getData('text/plain');
                     if (colorString) {
                         input.value = colorString;
@@ -133,8 +127,8 @@ window.GPG = window.GPG || {};
             // Global Drag/Drop
             if (GPG.elements.colorPreviewBox) {
                 const box = GPG.elements.colorPreviewBox;
-                box.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; box.classList.add('drag-over'); });
-                box.addEventListener('dragleave', e => box.classList.remove('drag-over'));
+                box.addEventListener('dragover', GPG.handlers.dragOverHandler);
+                box.addEventListener('dragleave', GPG.handlers.dragLeaveHandler);
                 box.addEventListener('drop', GPG.handlers.handleDropOnPicker);
             }
 
@@ -143,5 +137,6 @@ window.GPG = window.GPG || {};
                 GPG.elements.colorOutputContainer.addEventListener("click", GPG.handlers.handleCopyButtonClick);
             }
         }
+
     };
 }(window.GPG));
