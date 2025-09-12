@@ -5,7 +5,7 @@ GPG.ui = GPG.ui || {};
     'use strict';
     Object.assign(GPG.ui, {
         generateHslHueTrackGradientString: function (s, l, steps = 12) {
-            if (s < 1) {
+            if (s < 1 || l <= 0 || l >= 100) {
                 const grayColor = `hsl(0, 0%, ${l}%)`;
                 return `linear-gradient(to right, ${grayColor}, ${grayColor})`;
             }
@@ -59,11 +59,14 @@ GPG.ui = GPG.ui || {};
             const s_hsl = parseFloat(GPG.elements.pickerInput2.value);
             const l_hsl = parseFloat(GPG.elements.pickerInput3.value);
             if (!isNaN(h_hsl) && !isNaN(s_hsl) && !isNaN(l_hsl)) {
-                const stable_h_hsl = s_hsl < 1 ? GPG.state.lastHslHue : h_hsl;
+                const isAchromatic = s_hsl < 1 || l_hsl <= 0 || l_hsl >= 100;
+                const stable_h_hsl = isAchromatic ? GPG.state.lastHslHue : h_hsl;
+                const saturationForTracks = isAchromatic ? 0 : s_hsl;
+
                 const hTrackGradientHsl = this.generateHslHueTrackGradientString(s_hsl, l_hsl);
                 root.style.setProperty("--background-image-slider-track-hsl-h", hTrackGradientHsl);
                 root.style.setProperty("--background-image-slider-track-saturation", `linear-gradient(to right, hsl(${stable_h_hsl}, 0%, ${l_hsl}%) 0%, hsl(${stable_h_hsl}, 100%, ${l_hsl}%) 100%)`);
-                root.style.setProperty("--background-image-slider-track-lightness", `linear-gradient(to right, hsl(${stable_h_hsl}, ${s_hsl}%, 0%) 0%, hsl(${stable_h_hsl}, ${s_hsl}%, 50%) 50%, hsl(${stable_h_hsl}, ${s_hsl}%, 100%) 100%)`);
+                root.style.setProperty("--background-image-slider-track-lightness", `linear-gradient(to right, hsl(${stable_h_hsl}, ${saturationForTracks}%, 0%) 0%, hsl(${stable_h_hsl}, ${saturationForTracks}%, 50%) 50%, hsl(${stable_h_hsl}, ${saturationForTracks}%, 100%) 100%)`);
             }
 
             // OKLCH Sliders
