@@ -38,6 +38,7 @@ GPG.ui = GPG.ui || {};
     function _addClickListenerToSwatch(swatch) {
         swatch.addEventListener("click", (e) => {
             const colorString = e.currentTarget.dataset.color;
+
             if (!colorString) return;
 
             const clickedGC = GoatColor(colorString);
@@ -55,7 +56,7 @@ GPG.ui = GPG.ui || {};
             }
 
             GPG.ui.syncAllUiFromState();
-            GPG.palette.generatePaletteDynamically(false);
+            GPG.palette.generate();
             GPG.handlers.generateAndDisplayTheoryPalette();
         });
     }

@@ -42,7 +42,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
                     GPG.ui.requestExpensiveUpdate();
                 } else {
                     GPG.ui.syncAllUiFromState({ source: 'hsl' });
-                    GPG.palette.generatePaletteDynamically(false);
+                    GPG.palette.generate();
                     GPG.handlers.generateAndDisplayTheoryPalette();
                 }
             }
@@ -87,7 +87,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
                     GPG.ui.requestExpensiveUpdate();
                 } else {
                     GPG.ui.syncAllUiFromState({ source: 'oklch' });
-                    GPG.palette.generatePaletteDynamically(false);
+                    GPG.palette.generate();
                     GPG.handlers.generateAndDisplayTheoryPalette();
                 }
             }
@@ -113,7 +113,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
                     }
 
                     GPG.ui.syncAllUiFromState();
-                    GPG.palette.generatePaletteDynamically(false);
+                    GPG.palette.generate();
                     GPG.handlers.generateAndDisplayTheoryPalette();
                 } else {
                     console.warn("Dropped color string is invalid:", colorString, newColor.error);
@@ -147,7 +147,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 }
 
                 GPG.ui.syncAllUiFromState();
-                GPG.palette.generatePaletteDynamically(false);
+                GPG.palette.generate();
                 GPG.handlers.generateAndDisplayTheoryPalette();
             } else {
                 inputElement.classList.add('invalid');
@@ -298,7 +298,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             GPG.ui.updateIncrementUI();
             GPG.ui.updateInfoPanel();
             GPG.ui.syncAllUiFromState();
-            GPG.palette.generatePaletteDynamically(false);
+            GPG.palette.generate();
         },
 
         handlePaintboxBinDrop: function (e) {

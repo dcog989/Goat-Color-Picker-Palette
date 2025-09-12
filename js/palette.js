@@ -230,15 +230,7 @@ window.GPG = window.GPG || {};
     }
 
     GPG.palette = {
-        generatePaletteDynamically: function (isFromSlider = false) {
-            clearTimeout(GPG.state.debounceTimer);
-            if (!isFromSlider) {
-                GPG.state.debounceTimer = setTimeout(() => {
-                    generatePalette();
-                }, 250);
-            }
-            // Slider-based palette updates are now handled by the throttled request in the event handler.
-        },
         generate: generatePalette
     };
+
 }(window.GPG));
