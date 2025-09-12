@@ -113,6 +113,7 @@ GPG.ui = GPG.ui || {};
             requestAnimationFrame(() => {
                 this.performExpensiveUpdates();
                 GPG.palette.generate();
+                GPG.handlers.generateAndDisplayTheoryPalette();
                 GPG.state.isUiUpdateThrottled = false;
             });
         },
