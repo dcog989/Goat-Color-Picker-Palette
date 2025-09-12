@@ -30,18 +30,8 @@ window.GPG = window.GPG || {};
                 GPG.state.isProgrammaticUpdate = true;
                 if (slider) slider.value = Math.max(min, Math.min(max, numericValue));
                 GPG.state.isProgrammaticUpdate = false;
+                updateCallback(true);
             }
-
-            if (GPG.state.activePickerMode === 'oklch') {
-                const l = parseInt(GPG.elements.pickerInput3.value, 10);
-                const c = parseFloat(GPG.elements.pickerInput2.value);
-                const h = parseInt(GPG.elements.pickerInput1.value, 10);
-                if (!isNaN(c) && !isNaN(l)) {
-                    GPG.ui.updateOklchHueSliderState(c, l, isNaN(h) ? GPG.state.lastOklchHue : h);
-                }
-            }
-
-            GPG.ui.updateAllSliderBackgrounds();
         });
 
         input.addEventListener("change", () => {
