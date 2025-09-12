@@ -9,6 +9,35 @@ window.GPG = window.GPG || {}; (function (GPG) {
         }, 2000);
     }
 
+    function _processColorUpdate(newColor, sourceMode, isSliderEvent) {
+        if (!newColor.isValid()) return;
+
+        GPG.state.currentGoatColor = newColor;
+
+        if (sourceMode === 'hsl') {
+            const newOklch = newColor.toOklch();
+            if (newOklch.c >= GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
+                GPG.state.lastOklchHue = GPG.utils.normalizeHueForDisplay(newOklch.h);
+            }
+        } else { // oklch
+            const newHsl = newColor.toHsl();
+            if (newHsl.s > 0) {
+                GPG.state.lastHslHue = GPG.utils.normalizeHueForDisplay(newHsl.h);
+            }
+        }
+
+        if (isSliderEvent) {
+            GPG.state.isProgrammaticUpdate = true;
+            GPG.ui.syncInstantUiFromState({ source: sourceMode });
+            GPG.state.isProgrammaticUpdate = false;
+            GPG.ui.requestExpensiveUpdate();
+        } else {
+            GPG.ui.syncAllUiFromState({ source: sourceMode });
+            GPG.palette.generate();
+            GPG.handlers.generateAndDisplayTheoryPalette();
+        }
+    }
+
     GPG.handlers = {
         updateFromHslPicker: function (isSliderEvent = false) {
             if (GPG.state.isProgrammaticUpdate) return;
@@ -23,29 +52,11 @@ window.GPG = window.GPG || {}; (function (GPG) {
             if (s > 0) {
                 GPG.state.lastHslHue = h;
             } else {
-                h = GPG.state.lastHslHue; // Use last saved hue if saturation is zero
+                h = GPG.state.lastHslHue;
             }
 
             const newColor = GoatColor(`hsla(${h}, ${s}%, ${l}%, ${o / 100})`);
-            if (newColor.isValid()) {
-                GPG.state.currentGoatColor = newColor;
-
-                const newOklch = newColor.toOklch();
-                if (newOklch.c >= GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                    GPG.state.lastOklchHue = GPG.utils.normalizeHueForDisplay(newOklch.h);
-                }
-
-                if (isSliderEvent) {
-                    GPG.state.isProgrammaticUpdate = true;
-                    GPG.ui.syncInstantUiFromState({ source: 'hsl' });
-                    GPG.state.isProgrammaticUpdate = false;
-                    GPG.ui.requestExpensiveUpdate();
-                } else {
-                    GPG.ui.syncAllUiFromState({ source: 'hsl' });
-                    GPG.palette.generate();
-                    GPG.handlers.generateAndDisplayTheoryPalette();
-                }
-            }
+            _processColorUpdate(newColor, 'hsl', isSliderEvent);
         },
 
         updateFromOklchPicker: function (isSliderEvent = false) {
@@ -59,38 +70,19 @@ window.GPG = window.GPG || {}; (function (GPG) {
             if (isNaN(l) || isNaN(cPercent) || isNaN(h) || isNaN(o)) return;
 
             cPercent = Math.max(0, Math.min(100, cPercent));
-
             const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
             let cAbsolute = (cPercent / 100) * maxAbsC;
-
             let hueForCreation = h;
+
             if (cAbsolute < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                hueForCreation = GPG.state.lastOklchHue; // Use last hue if chroma is effectively zero
+                hueForCreation = GPG.state.lastOklchHue;
                 cAbsolute = 0;
             } else {
-                GPG.state.lastOklchHue = h; // Only update last hue from UI if chromatic
+                GPG.state.lastOklchHue = h;
             }
 
             const newColor = GoatColor(`oklch(${l}% ${cAbsolute.toFixed(4)} ${hueForCreation} / ${o / 100})`);
-            if (newColor.isValid()) {
-                GPG.state.currentGoatColor = newColor;
-
-                const newHsl = newColor.toHsl();
-                if (newHsl.s > 0) {
-                    GPG.state.lastHslHue = GPG.utils.normalizeHueForDisplay(newHsl.h);
-                }
-
-                if (isSliderEvent) {
-                    GPG.state.isProgrammaticUpdate = true;
-                    GPG.ui.syncInstantUiFromState({ source: 'oklch' });
-                    GPG.state.isProgrammaticUpdate = false;
-                    GPG.ui.requestExpensiveUpdate();
-                } else {
-                    GPG.ui.syncAllUiFromState({ source: 'oklch' });
-                    GPG.palette.generate();
-                    GPG.handlers.generateAndDisplayTheoryPalette();
-                }
-            }
+            _processColorUpdate(newColor, 'oklch', isSliderEvent);
         },
 
         handleDropOnPicker: function (event) {
@@ -310,7 +302,6 @@ window.GPG = window.GPG || {}; (function (GPG) {
             }
             GPG.handlers.resetDragState();
         },
-
         handleCopyButtonClick: function (event) {
             const button = event.target.closest(".copy-btn");
             if (!button || !button.dataset.target) return;
@@ -348,6 +339,5 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 setTimeout(restoreButtonState, 2000);
             }
         }
-
     };
 }(window.GPG));
