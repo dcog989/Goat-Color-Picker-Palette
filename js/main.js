@@ -25,14 +25,14 @@ window.GPG = window.GPG || {};
         GPG.state.activePickerMode = lastActiveMode;
 
         const initialH = Math.floor(Math.random() * (245 - 4 + 1)) + 4;
-        const initialS = 76;
-        const initialL = 36;
+        const initialL_oklch = 45;
+        const initialC_oklch = 0.13;
         const initialO = 100;
 
-        GPG.state.currentGoatColor = GoatColor(`hsla(${initialH}, ${initialS}%, ${initialL}%, ${initialO / 100})`);
+        GPG.state.currentGoatColor = GoatColor(`oklch(${initialL_oklch}% ${initialC_oklch} ${initialH} / ${initialO / 100})`);
         if (!GPG.state.currentGoatColor.isValid()) {
-            GPG.state.currentGoatColor = GoatColor(`hsla(0, 75%, 50%, 1)`);
-            console.error("Failed to initialize with random color, using default.");
+            GPG.state.currentGoatColor = GoatColor(`oklch(45% 0.13 200 / 1)`); // Fallback
+            console.error("Failed to initialize with random OKLCH color, using default.");
         }
 
         const initialHsl = GPG.state.currentGoatColor.toHsl();
