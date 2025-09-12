@@ -58,15 +58,18 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
             if (isNaN(l) || isNaN(cPercent) || isNaN(h) || isNaN(o)) return;
 
-            GPG.state.lastOklchHue = h; // Always update last hue from UI
             cPercent = Math.max(0, Math.min(100, cPercent));
 
-            const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+            const hueForMaxChroma = cPercent < 1 ? GPG.state.lastOklchHue : h;
+            const maxAbsC = GoatColor.getMaxSRGBChroma(l, hueForMaxChroma, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
             let cAbsolute = (cPercent / 100) * maxAbsC;
 
-            let hueForCreation = h;
-            if (cAbsolute < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                hueForCreation = GPG.state.lastOklchHue; // Use last hue if chroma is effectively zero
+            let hueForCreation;
+            if (cAbsolute >= GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
+                GPG.state.lastOklchHue = h;
+                hueForCreation = h;
+            } else {
+                hueForCreation = GPG.state.lastOklchHue;
                 cAbsolute = 0;
             }
 
