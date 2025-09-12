@@ -56,18 +56,15 @@ window.GPG = window.GPG || {};
             return null;
         }
 
-        // Use the alpha style hint from the base color as a consistent reference
         const opacityStyleHint = GPG.state.currentGoatColor._alphaInputStyleHint || GoatColor.ALPHA_STYLE_HINT_NUMBER;
 
         let outputItems = [];
-        GPG.state.generatedColors.forEach((colorData, index) => {
-            const hslaStringInput = `hsla(${colorData.hsl.h}, ${colorData.hsl.s}%, ${colorData.hsl.l}%, ${colorData.o})`;
-            const colorInstance = GoatColor(hslaStringInput);
-            if (!colorInstance.isValid()) {
-                console.warn("Skipping invalid color during export:", colorData);
+        GPG.state.generatedColors.forEach((colorInstance, index) => {
+            if (!colorInstance || !colorInstance.isValid()) {
+                console.warn("Skipping invalid color during export:", colorInstance);
                 return;
             }
-            colorInstance.setAlpha(colorData.o, opacityStyleHint);
+            colorInstance.setAlpha(colorInstance.a, opacityStyleHint);
             const formattedColorString = GPG.utils.getFormattedColorString(colorInstance, exportFormat);
             outputItems.push(individualColorFormatter(colorInstance, index, formattedColorString, exportFormat));
         });

@@ -189,21 +189,13 @@ window.GPG = window.GPG || {};
             );
 
             if (tempGoatColor && tempGoatColor.isValid()) {
-                GPG.state.generatedColors.push({
-                    hsl: tempGoatColor.toHsl(),
-                    oklch: tempGoatColor.toOklch(),
-                    o: tempGoatColor.a
-                });
+                GPG.state.generatedColors.push(tempGoatColor);
             } else {
                 console.warn("Generated color invalid for palette:", finalValueToUse, "for", varyParam, tempGoatColor ? tempGoatColor.error : "N/A");
                 if (GPG.state.generatedColors.length < numTotalSwatches) {
                     const fallbackBase = GoatColor(`hsla(${baseHslForGeneration.h}, ${baseHslForGeneration.s}%, ${baseHslForGeneration.l}%, ${baseOpacity})`);
                     if (fallbackBase.isValid()) {
-                        GPG.state.generatedColors.push({
-                            hsl: fallbackBase.toHsl(),
-                            oklch: fallbackBase.toOklch(),
-                            o: fallbackBase.a
-                        });
+                        GPG.state.generatedColors.push(fallbackBase);
                     } else {
                         console.error("Fallback base HSL color is also invalid. Base HSL input:", baseHslForGeneration, "Opacity:", baseOpacity);
                     }
@@ -212,11 +204,7 @@ window.GPG = window.GPG || {};
         }
 
         if (GPG.state.generatedColors.length === 0 && GPG.state.currentGoatColor && GPG.state.currentGoatColor.isValid()) {
-            GPG.state.generatedColors.push({
-                hsl: GPG.state.currentGoatColor.toHsl(),
-                oklch: GPG.state.currentGoatColor.toOklch(),
-                o: GPG.state.currentGoatColor.a
-            });
+            GPG.state.generatedColors.push(GPG.state.currentGoatColor);
         }
 
         const fragment = document.createDocumentFragment();
@@ -228,7 +216,6 @@ window.GPG = window.GPG || {};
         }
         GPG.elements.paletteContainer.appendChild(fragment);
     }
-
     GPG.palette = {
         generate: generatePalette
     };

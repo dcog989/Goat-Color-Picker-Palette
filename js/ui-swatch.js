@@ -135,18 +135,15 @@ GPG.ui = GPG.ui || {};
             GPG.elements.exportPaintboxBtn.disabled = true;
         },
 
-        createSwatch: function (colorData) {
-            const { hsl, o } = colorData;
-            const originalHslaString = `hsla(${hsl.h}, ${hsl.s}%, ${hsl.l}%, ${o})`;
-            const swatchGoatColor = GoatColor(originalHslaString);
-
-            if (!swatchGoatColor.isValid()) {
-                console.warn("Invalid color for swatch:", colorData);
+        createSwatch: function (swatchGoatColor) {
+            if (!swatchGoatColor || !swatchGoatColor.isValid()) {
+                console.warn("Invalid color for swatch:", swatchGoatColor);
                 return null;
             }
 
             const hexForTooltip = swatchGoatColor.toHex().toUpperCase();
             const swatchRgba = swatchGoatColor.toRgba();
+            const o = swatchGoatColor.a;
 
             const colorItem = document.createElement("div");
             colorItem.classList.add("color-item");
