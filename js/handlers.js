@@ -52,7 +52,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             if (s > 0) {
                 GPG.state.lastHslHue = h;
             } else {
-                h = GPG.state.lastHslHue;
+                h = GPG.state.lastHslHue; // Use last saved hue if saturation is zero
             }
 
             const newColor = GoatColor(`hsla(${h}, ${s}%, ${l}%, ${o / 100})`);
@@ -70,24 +70,35 @@ window.GPG = window.GPG || {}; (function (GPG) {
             if (isNaN(l) || isNaN(cPercent) || isNaN(h) || isNaN(o)) return;
 
             cPercent = Math.max(0, Math.min(100, cPercent));
+
             const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
             let cAbsolute = (cPercent / 100) * maxAbsC;
-            let hueForCreation = h;
 
+            let hueForCreation = h;
             if (cAbsolute < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                hueForCreation = GPG.state.lastOklchHue;
+                hueForCreation = GPG.state.lastOklchHue; // Use last hue if chroma is effectively zero
                 cAbsolute = 0;
             } else {
-                GPG.state.lastOklchHue = h;
+                GPG.state.lastOklchHue = h; // Only update last hue from UI if chromatic
             }
 
             const newColor = GoatColor(`oklch(${l}% ${cAbsolute.toFixed(4)} ${hueForCreation} / ${o / 100})`);
             _processColorUpdate(newColor, 'oklch', isSliderEvent);
         },
 
+        dragOverHandler: function (e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            e.currentTarget.classList.add('drag-over');
+        },
+
+        dragLeaveHandler: function (e) {
+            e.currentTarget.classList.remove('drag-over');
+        },
+
         handleDropOnPicker: function (event) {
             event.preventDefault();
-            GPG.elements.colorPreviewBox.classList.remove('drag-over');
+            event.currentTarget.classList.remove('drag-over');
 
             const colorString = event.dataTransfer.getData('text/plain');
             if (colorString) {
