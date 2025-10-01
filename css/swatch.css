@@ -6,10 +6,9 @@
 #palette-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 10px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    justify-content: center;
+    width: 100%;
 }
 .color-item {
     align-items: center;
@@ -47,6 +46,12 @@
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
+    width: 100%;
+}
+
+.swatch {
+    width: 60px;
+    height: 60px;
 }
 
 .swatch,
@@ -55,11 +60,6 @@
     border: 1px solid hsl(0, 0%, 100%, 0.1);
     cursor: grab;
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-}
-
-.swatch {
-    width: 60px;
-    height: 60px;
 }
 
 .swatch:hover,

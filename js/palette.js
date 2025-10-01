@@ -3,84 +3,25 @@ window.GPG = window.GPG || {};
 (function (GPG) {
     'use strict';
 
-    function getPaletteVariantColor(varyParam, value, baseHsl, baseOklch, baseOpacity, oklchStaticMaxAbsolute, lastOklchHueForGen) {
-        let tempGoatColor;
-        let c_absolute_for_oklch_gen;
-
-        if (varyParam === "oklch_c") {
-            c_absolute_for_oklch_gen = value;
-        } else {
-            const maxCForBaseLH = GoatColor.getMaxSRGBChroma(baseOklch.l, baseOklch.h, oklchStaticMaxAbsolute);
-            const cPercent = maxCForBaseLH > 0 ? (baseOklch.c / maxCForBaseLH) * 100 : 0;
-            c_absolute_for_oklch_gen = (cPercent / 100) * (maxCForBaseLH > 0.0001 ? maxCForBaseLH : oklchStaticMaxAbsolute);
-        }
-
-        if (c_absolute_for_oklch_gen < 0.001 && varyParam !== "oklch_c") {
-            c_absolute_for_oklch_gen = 0.0001;
-        }
-
-        let effectiveOklchH = baseOklch.h;
-        if (c_absolute_for_oklch_gen < 0.001 && varyParam !== "oklch_h" && varyParam !== "oklch_c") {
-            effectiveOklchH = lastOklchHueForGen;
-        }
-
-        if (varyParam === "oklch_c" && value < 0.001) {
-            effectiveOklchH = lastOklchHueForGen;
-        }
-
-        switch (varyParam) {
-            case "hue":
-                tempGoatColor = GoatColor(`hsla(${value}, ${baseHsl.s}%, ${baseHsl.l}%, ${baseOpacity})`);
-                break;
-            case "saturation":
-                tempGoatColor = GoatColor(`hsla(${baseHsl.h}, ${value}%, ${baseHsl.l}%, ${baseOpacity})`);
-                break;
-            case "lightness":
-                tempGoatColor = GoatColor(`hsla(${baseHsl.h}, ${baseHsl.s}%, ${value}%, ${baseOpacity})`);
-                break;
-            case "oklch_l":
-                tempGoatColor = GoatColor(`oklch(${value}% ${c_absolute_for_oklch_gen.toFixed(4)} ${effectiveOklchH} / ${baseOpacity * 100}%)`);
-                break;
-            case "oklch_c":
-                tempGoatColor = GoatColor(`oklch(${baseOklch.l}% ${value.toFixed(4)} ${effectiveOklchH} / ${baseOpacity * 100}%)`);
-                break;
-            case "oklch_h":
-                tempGoatColor = GoatColor(`oklch(${baseOklch.l}% ${c_absolute_for_oklch_gen.toFixed(4)} ${value} / ${baseOpacity * 100}%)`);
-                break;
-            case "opacity":
-                const currentOpacityVal = Math.max(0, Math.min(1, value / 100.0));
-                if (GPG.state.activePickerMode === 'oklch') {
-                    tempGoatColor = GoatColor(`oklch(${baseOklch.l}% ${c_absolute_for_oklch_gen.toFixed(4)} ${effectiveOklchH} / ${currentOpacityVal * 100}%)`);
-                } else {
-                    tempGoatColor = GoatColor(`hsla(${baseHsl.h}, ${baseHsl.s}%, ${baseHsl.l}%, ${currentOpacityVal})`);
-                }
-                break;
-        }
-        return tempGoatColor;
-    }
-
     function generatePalette() {
         if (!GPG.state.currentGoatColor || !GPG.state.currentGoatColor.isValid()) {
             return;
         }
 
         const baseColor = GPG.state.currentGoatColor;
+        const baseOpacityPercent = baseColor.a * 100;
+        const activeMode = GPG.state.activePickerMode;
+
         const baseHsl = baseColor.toHsl();
         const baseOklch = baseColor.toOklch();
-        const baseOpacity = baseColor.a;
 
-        const baseHslForGeneration = {
-            h: GPG.utils.normalizeHueForDisplay(baseHsl.s < 1 ? GPG.state.lastHslHue : baseHsl.h),
-            s: baseHsl.s,
-            l: baseHsl.l
-        };
-        const baseOklchForGeneration = {
-            l: baseOklch.l,
-            c: baseOklch.c,
-            h: GPG.utils.normalizeHueForDisplay(baseOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : baseOklch.h)
-        };
+        // Use the same hue-locking logic as the UI for consistency
+        const stableHslHue = GPG.utils.normalizeHueForDisplay(baseHsl.s < 1 ? GPG.state.lastHslHue : baseHsl.h);
+        const stableOklchHue = GPG.utils.normalizeHueForDisplay(baseOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : baseOklch.h);
 
-        const variationPercent = 1;
+        // For OKLCH, we need the base chroma percentage relative to its own L/H
+        const maxChromaForBase = GoatColor.getMaxSRGBChroma(baseOklch.l, stableOklchHue, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+        const baseChromaPercent = maxChromaForBase > 0.0001 ? (baseOklch.c / maxChromaForBase) * 100 : 0;
 
         let numTotalSwatches = parseInt(GPG.elements.swatchCountInput.value, 10);
         const varyParam = GPG.elements.varyParamSelect.value;
@@ -94,136 +35,56 @@ window.GPG = window.GPG || {};
         GPG.elements.paletteContainer.innerHTML = "";
         GPG.state.generatedColors = [];
 
-        if (isNaN(numTotalSwatches) || numTotalSwatches < 2) {
-            numTotalSwatches = 2;
+        if (isNaN(numTotalSwatches) || numTotalSwatches < 1) {
+            numTotalSwatches = 1;
         }
-
-        let baseValue, minValue = 0,
-            maxValue;
-        let isHueParam = false;
-
-        switch (varyParam) {
-            case "hue":
-                baseValue = baseHslForGeneration.h;
-                minValue = 0;
-                maxValue = 359;
-                isHueParam = true;
-                break;
-            case "saturation":
-                baseValue = baseHslForGeneration.s;
-                minValue = 0;
-                maxValue = 100;
-                break;
-            case "lightness":
-                baseValue = baseHslForGeneration.l;
-                minValue = 0;
-                maxValue = 100;
-                break;
-            case "oklch_l":
-                baseValue = baseOklchForGeneration.l;
-                minValue = 0;
-                maxValue = 100;
-                break;
-            case "oklch_c":
-                const baseLForMaxC = baseOklchForGeneration.l;
-                let baseHForMaxC = baseOklchForGeneration.h;
-                const currentBaseChromaAbsolute = baseOklch.c;
-
-                if (currentBaseChromaAbsolute < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                    baseHForMaxC = GPG.utils.normalizeHueForDisplay(GPG.state.lastOklchHue);
-                }
-
-                maxValue = GoatColor.getMaxSRGBChroma(baseLForMaxC, baseHForMaxC, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                if (maxValue < 0.0001) maxValue = 0.0001;
-                baseValue = Math.min(currentBaseChromaAbsolute, maxValue);
-                minValue = 0;
-                break;
-            case "oklch_h":
-                baseValue = baseOklchForGeneration.h;
-                minValue = 0;
-                maxValue = 359;
-                isHueParam = true;
-                break;
-            case "opacity":
-                baseValue = baseOpacity * 100;
-                minValue = 0;
-                maxValue = 100;
-                break;
-        }
-
-        let startValue, endValue;
-
-        if (isHueParam) {
-            const spread = 180 * variationPercent;
-            startValue = baseValue - spread;
-            endValue = baseValue + spread;
-        } else {
-            startValue = baseValue - (baseValue - minValue) * variationPercent;
-            endValue = baseValue + (maxValue - baseValue) * variationPercent;
-        }
-
 
         for (let i = 0; i < numTotalSwatches; i++) {
-            let currentValue;
-            if (numTotalSwatches === 1) {
-                currentValue = baseValue;
-            } else {
-                currentValue = startValue + ((endValue - startValue) / (numTotalSwatches - 1)) * i;
-            }
-
-            let finalValueToUse;
-            if (isHueParam) {
-                finalValueToUse = GPG.utils.normalizeHueForDisplay(currentValue);
-            } else if (varyParam === "oklch_c") {
-                finalValueToUse = parseFloat(currentValue.toFixed(4));
-                finalValueToUse = Math.max(minValue, Math.min(maxValue, finalValueToUse));
-            } else {
-                finalValueToUse = Math.round(currentValue);
-                finalValueToUse = Math.max(minValue, Math.min(maxValue, finalValueToUse));
-            }
-
+            const stepPercent = (numTotalSwatches <= 1) ? 0.5 : i / (numTotalSwatches - 1);
             let tempGoatColor;
 
-            if (GPG.state.activePickerMode === 'oklch' && varyParam === 'oklch_l') {
-                const intendedHue = baseOklchForGeneration.h;
-                const maxChromaForBase = GoatColor.getMaxSRGBChroma(baseOklchForGeneration.l, intendedHue, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                const chromaPercent = maxChromaForBase > 0.0001 ? baseOklchForGeneration.c / maxChromaForBase : 0;
-
-                const newLightness = finalValueToUse;
-
-                const maxChromaForNewL = GoatColor.getMaxSRGBChroma(newLightness, intendedHue, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                const newChroma = chromaPercent * maxChromaForNewL;
-
-                tempGoatColor = GoatColor(`oklch(${newLightness}% ${newChroma.toFixed(4)} ${intendedHue} / ${baseOpacity})`);
-            } else {
-                tempGoatColor = getPaletteVariantColor(
-                    varyParam,
-                    finalValueToUse,
-                    baseHslForGeneration,
-                    baseOklchForGeneration,
-                    baseOpacity,
-                    GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE,
-                    GPG.state.lastOklchHue
-                );
+            if (activeMode === 'hsl') {
+                let h = stableHslHue, s = baseHsl.s, l = baseHsl.l, o = baseOpacityPercent;
+                switch (varyParam) {
+                    case 'hue':
+                        h = (i / numTotalSwatches) * 360;
+                        break;
+                    case 'saturation':
+                        s = stepPercent * 100;
+                        break;
+                    case 'lightness':
+                        l = 10 + (stepPercent * 80); // Range 10-90
+                        break;
+                    case 'opacity':
+                        o = stepPercent * 100;
+                        break;
+                }
+                tempGoatColor = GPG.color.createFromPicker('hsl', h, s, l, o);
+            } else { // oklch
+                let l = baseOklch.l, cPercent = baseChromaPercent, h = stableOklchHue, o = baseOpacityPercent;
+                switch (varyParam) {
+                    case 'oklch_l':
+                        l = 10 + (stepPercent * 80); // Range 10-90
+                        break;
+                    case 'oklch_c':
+                        cPercent = 5 + (stepPercent * 95); // Range 5-100 to avoid gray
+                        break;
+                    case 'oklch_h':
+                        h = (i / numTotalSwatches) * 360;
+                        break;
+                    case 'opacity':
+                        o = stepPercent * 100;
+                        break;
+                }
+                tempGoatColor = GPG.color.createFromPicker('oklch', h, cPercent, l, o);
             }
 
             if (tempGoatColor && tempGoatColor.isValid()) {
                 GPG.state.generatedColors.push(tempGoatColor);
             } else {
-                console.warn("Generated color invalid for palette:", finalValueToUse, "for", varyParam, tempGoatColor ? tempGoatColor.error : "N/A");
-                if (GPG.state.generatedColors.length < numTotalSwatches) {
-                    const fallbackBase = GoatColor(`hsla(${baseHslForGeneration.h}, ${baseHslForGeneration.s}%, ${baseHslForGeneration.l}%, ${baseOpacity})`);
-                    if (fallbackBase.isValid()) {
-                        GPG.state.generatedColors.push(fallbackBase);
-                    } else {
-                        console.error("Fallback base HSL color is also invalid. Base HSL input:", baseHslForGeneration, "Opacity:", baseOpacity);
-                    }
-                }
+                console.warn("Generated color invalid for palette step:", i, tempGoatColor ? tempGoatColor.error : "N/A");
+                GPG.state.generatedColors.push(GoatColor('transparent')); // Push a placeholder
             }
-        }
-
-        if (GPG.state.generatedColors.length === 0 && GPG.state.currentGoatColor && GPG.state.currentGoatColor.isValid()) {
-            GPG.state.generatedColors.push(GPG.state.currentGoatColor);
         }
 
         const fragment = document.createDocumentFragment();

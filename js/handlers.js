@@ -42,47 +42,28 @@ window.GPG = window.GPG || {}; (function (GPG) {
         updateFromHslPicker: function (isSliderEvent = false) {
             if (GPG.state.isProgrammaticUpdate) return;
 
-            let h = parseInt(GPG.elements.pickerInput1.value, 10);
-            let s = parseInt(GPG.elements.pickerInput2.value, 10);
-            let l = parseInt(GPG.elements.pickerInput3.value, 10);
+            const h = parseInt(GPG.elements.pickerInput1.value, 10);
+            const s = parseInt(GPG.elements.pickerInput2.value, 10);
+            const l = parseInt(GPG.elements.pickerInput3.value, 10);
             const o = parseInt(GPG.elements.pickerOpacityInput.value, 10);
 
             if (isNaN(h) || isNaN(s) || isNaN(l) || isNaN(o)) return;
 
-            if (s > 0) {
-                GPG.state.lastHslHue = h;
-            } else {
-                h = GPG.state.lastHslHue; // Use last saved hue if saturation is zero
-            }
-
-            const newColor = GoatColor(`hsla(${h}, ${s}%, ${l}%, ${o / 100})`);
+            const newColor = GPG.color.createFromPicker('hsl', h, s, l, o);
             _processColorUpdate(newColor, 'hsl', isSliderEvent);
         },
 
         updateFromOklchPicker: function (isSliderEvent = false) {
             if (GPG.state.isProgrammaticUpdate) return;
 
-            let l = parseInt(GPG.elements.pickerInput3.value, 10);
-            let cPercent = parseFloat(GPG.elements.pickerInput2.value);
-            let h = parseInt(GPG.elements.pickerInput1.value, 10);
+            const l = parseInt(GPG.elements.pickerInput3.value, 10);
+            const cPercent = parseFloat(GPG.elements.pickerInput2.value);
+            const h = parseInt(GPG.elements.pickerInput1.value, 10);
             const o = parseInt(GPG.elements.pickerOpacityInput.value, 10);
 
             if (isNaN(l) || isNaN(cPercent) || isNaN(h) || isNaN(o)) return;
 
-            cPercent = Math.max(0, Math.min(100, cPercent));
-
-            const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-            let cAbsolute = (cPercent / 100) * maxAbsC;
-
-            let hueForCreation = h;
-            if (cAbsolute < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                hueForCreation = GPG.state.lastOklchHue; // Use last hue if chroma is effectively zero
-                cAbsolute = 0;
-            } else {
-                GPG.state.lastOklchHue = h; // Only update last hue from UI if chromatic
-            }
-
-            const newColor = GoatColor(`oklch(${l}% ${cAbsolute.toFixed(4)} ${hueForCreation} / ${o / 100})`);
+            const newColor = GPG.color.createFromPicker('oklch', h, cPercent, l, o);
             _processColorUpdate(newColor, 'oklch', isSliderEvent);
         },
 
@@ -219,8 +200,9 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 if (theoryColor && theoryColor.isValid()) {
                     const emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
                     if (emptyIdx !== -1) {
-                        if (GPG.elements.paintboxGrid.children[emptyIdx]) {
-                            GPG.ui.updatePaintboxSwatchUI(GPG.elements.paintboxGrid.children[emptyIdx], theoryColor);
+                        const targetChild = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(emptyIdx));
+                        if (targetChild) {
+                            GPG.ui.updatePaintboxSwatchUI(targetChild, theoryColor);
                             appendedCount++;
                         }
                     } else {
@@ -252,8 +234,9 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 if (paletteColor && paletteColor.isValid()) {
                     const emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
                     if (emptyIdx !== -1) {
-                        if (GPG.elements.paintboxGrid.children[emptyIdx]) {
-                            GPG.ui.updatePaintboxSwatchUI(GPG.elements.paintboxGrid.children[emptyIdx], paletteColor);
+                        const targetChild = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(emptyIdx));
+                        if (targetChild) {
+                            GPG.ui.updatePaintboxSwatchUI(targetChild, paletteColor);
                             appendedCount++;
                         }
                     } else {
@@ -351,8 +334,11 @@ window.GPG = window.GPG || {}; (function (GPG) {
             e.preventDefault();
             e.stopPropagation();
             e.currentTarget.classList.remove("drag-over-bin");
-            if (GPG.state.draggedItem.sourceType === "paintbox" && GPG.state.draggedItem.originalIndex !== -1 && GPG.elements.paintboxGrid.children[GPG.state.draggedItem.originalIndex]) {
-                GPG.ui.updatePaintboxSwatchUI(GPG.elements.paintboxGrid.children[GPG.state.draggedItem.originalIndex], null);
+            if (GPG.state.draggedItem.sourceType === "paintbox" && GPG.state.draggedItem.originalIndex !== -1) {
+                const childToClear = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(GPG.state.draggedItem.originalIndex));
+                if (childToClear) {
+                    GPG.ui.updatePaintboxSwatchUI(childToClear, null);
+                }
             }
             GPG.handlers.resetDragState();
         },

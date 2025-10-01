@@ -1,6 +1,6 @@
 /* ==========================================================================
-    Buttons
-   ========================================================================== */
+Buttons
+========================================================================== */
 
 .button {
     border: none;
@@ -30,15 +30,6 @@
     gap: 8px;
     margin-bottom: 10px;
     align-items: center;
-}
-
-#copy-theory-to-paintbox-btn {
-    margin-top: 15px;
-}
-
-#add-palette-to-paintbox-btn {
-    display: block;
-    margin: 20px auto 0;
 }
 
 /* Export Controls (Palette Generator) */
