@@ -233,11 +233,12 @@ window.GPG = window.GPG || {}; (function (GPG) {
             }
         },
         exportPaintboxColors: function () {
+            const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
             let cssVars = ":root {\n";
             let hasColors = false;
             GPG.state.paintboxColors.forEach((color, index) => {
                 if (color && color.isValid()) {
-                    const outputString = GPG.utils.getFormattedColorString(color, 'hex'); // Default to hex for export
+                    const outputString = GPG.utils.getFormattedColorString(color, exportFormat);
                     cssVars += `  --paintbox-color-${String(index + 1).padStart(2, "0")}: ${outputString};\n`;
                     hasColors = true;
                 }

@@ -29,10 +29,6 @@ window.GPG = window.GPG || {};
             }
         },
 
-        getActiveOpacityInput: function () {
-            return GPG.elements.pickerOpacityInput;
-        },
-
         findContrastingTextColor: function (bgColorInstances, targetHue) {
             const TARGET_CONTRAST = 4.5;
             const TEXT_SATURATION = 20;

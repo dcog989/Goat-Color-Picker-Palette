@@ -6,6 +6,7 @@ repomix.config.json
 
 # FOLDERS
 .archive/
-.gemini/
+.ai-context/
+.dev-notes/
 .testdata/
 build/

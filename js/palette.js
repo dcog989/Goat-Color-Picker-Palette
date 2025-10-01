@@ -49,7 +49,11 @@ window.GPG = window.GPG || {};
                 break;
             case "opacity":
                 const currentOpacityVal = Math.max(0, Math.min(1, value / 100.0));
-                tempGoatColor = GoatColor(`hsla(${baseHsl.h}, ${baseHsl.s}%, ${baseHsl.l}%, ${currentOpacityVal})`);
+                if (GPG.state.activePickerMode === 'oklch') {
+                    tempGoatColor = GoatColor(`oklch(${baseOklch.l}% ${c_absolute_for_oklch_gen.toFixed(4)} ${effectiveOklchH} / ${currentOpacityVal * 100}%)`);
+                } else {
+                    tempGoatColor = GoatColor(`hsla(${baseHsl.h}, ${baseHsl.s}%, ${baseHsl.l}%, ${currentOpacityVal})`);
+                }
                 break;
         }
         return tempGoatColor;
