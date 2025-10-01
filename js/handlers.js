@@ -137,16 +137,24 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
             if (newColor.isValid()) {
                 inputElement.classList.remove('invalid');
-                GPG.state.currentGoatColor = newColor;
 
-                const newHsl = newColor.toHsl();
-                if (newHsl.s > 0) {
-                    GPG.state.lastHslHue = GPG.utils.normalizeHueForDisplay(newHsl.h);
+                let finalColor = newColor;
+                const oklch = newColor.toOklch();
+
+                // If the new color is achromatic while in OKLCH mode, recreate it using the last known hue.
+                // This keeps the internal state consistent with the UI's hue-locking behavior for grays.
+                if (GPG.state.activePickerMode === 'oklch' && oklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
+                    finalColor = GoatColor(`oklch(${oklch.l}% ${oklch.c} ${GPG.state.lastOklchHue})`);
+                } else {
+                    GPG.state.lastOklchHue = GPG.utils.normalizeHueForDisplay(oklch.h);
                 }
 
-                const newOklch = newColor.toOklch();
-                if (newOklch.c >= GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                    GPG.state.lastOklchHue = GPG.utils.normalizeHueForDisplay(newOklch.h);
+                GPG.state.currentGoatColor = finalColor;
+
+                // Also update the HSL hue cache
+                const hsl = finalColor.toHsl();
+                if (hsl.s > 0) {
+                    GPG.state.lastHslHue = GPG.utils.normalizeHueForDisplay(hsl.h);
                 }
 
                 GPG.ui.syncAllUiFromState();
@@ -232,29 +240,63 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 _provideButtonFeedback(GPG.elements.copyTheoryToPaintboxBtn, false, "No valid colors");
             }
         },
-        exportPaintboxColors: function () {
-            const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
-            let cssVars = ":root {\n";
-            let hasColors = false;
-            GPG.state.paintboxColors.forEach((color, index) => {
-                if (color && color.isValid()) {
-                    const outputString = GPG.utils.getFormattedColorString(color, exportFormat);
-                    cssVars += `  --paintbox-color-${String(index + 1).padStart(2, "0")}: ${outputString};\n`;
-                    hasColors = true;
+        copyPaletteToPaintbox: function () {
+            const button = GPG.elements.addPaletteToPaintboxBtn;
+            if (GPG.state.generatedColors.length === 0) {
+                _provideButtonFeedback(button, false, "No Palette!");
+                return;
+            }
+            let appendedCount = 0;
+            let paintboxWasFull = false;
+            for (const paletteColor of GPG.state.generatedColors) {
+                if (paletteColor && paletteColor.isValid()) {
+                    const emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
+                    if (emptyIdx !== -1) {
+                        if (GPG.elements.paintboxGrid.children[emptyIdx]) {
+                            GPG.ui.updatePaintboxSwatchUI(GPG.elements.paintboxGrid.children[emptyIdx], paletteColor);
+                            appendedCount++;
+                        }
+                    } else {
+                        paintboxWasFull = true;
+                        break;
+                    }
                 }
-            });
-            cssVars += "}";
+            }
 
+            if (appendedCount > 0 && paintboxWasFull) {
+                _provideButtonFeedback(button, true, "Partial Add");
+            } else if (appendedCount > 0 && !paintboxWasFull) {
+                _provideButtonFeedback(button, true, "Added!");
+            } else if (appendedCount === 0 && paintboxWasFull) {
+                _provideButtonFeedback(button, false, "Full!");
+            } else if (appendedCount === 0 && !paintboxWasFull && GPG.state.generatedColors.length > 0) {
+                _provideButtonFeedback(button, false, "No valid colors");
+            }
+        },
+        handlePaintboxExport: function () {
+            const button = GPG.elements.exportActionButton;
+            const destination = document.querySelector('input[name="export-destination"]:checked').value;
+
+            const hasColors = GPG.state.paintboxColors.some(c => c && c.isValid());
             if (!hasColors) {
-                _provideButtonFeedback(GPG.elements.exportPaintboxBtn, false, "Empty!");
+                _provideButtonFeedback(button, false, "Empty!");
                 return;
             }
 
-            navigator.clipboard.writeText(cssVars).then(() => {
-                _provideButtonFeedback(GPG.elements.exportPaintboxBtn, true, "Copied!");
-            }).catch(() => {
-                _provideButtonFeedback(GPG.elements.exportPaintboxBtn, false, "Failed!");
-            });
+            if (destination === 'css-file') {
+                GPG.exporter.exportCssFile();
+            } else if (destination === 'xml-file') {
+                GPG.exporter.exportXmlFile();
+            } else if (destination === 'clipboard') {
+                const cssContent = GPG.exporter.generateCssString();
+                if (cssContent) {
+                    navigator.clipboard.writeText(cssContent).then(() => {
+                        _provideButtonFeedback(button, true, "Copied!");
+                    }).catch(() => {
+                        _provideButtonFeedback(button, false, "Failed!");
+                    });
+                }
+            }
         },
         resetDragState: function () {
             if (GPG.state.draggedItem.element) {

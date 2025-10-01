@@ -66,8 +66,14 @@ GPG.ui = GPG.ui || {};
 
                     if (lDisplayOklch > 0 && lDisplayOklch < 100) {
                         const maxCForCurrentLH = GoatColor.getMaxSRGBChroma(lDisplayOklch, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                        const cPercentDisplay = maxCForCurrentLH > 0.0001 ? (masterOklch.c / maxCForCurrentLH) * 100 : 0;
-                        this.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplay.toFixed(1));
+                        let cPercentDisplay = maxCForCurrentLH > 0.0001 ? (masterOklch.c / maxCForCurrentLH) * 100 : 0;
+
+                        // Clamp percentage to a max of 100 to account for floating point inaccuracies during color conversion round trips.
+                        cPercentDisplay = Math.min(100, cPercentDisplay);
+
+                        const cPercentDisplayRounded = cPercentDisplay.toFixed(1);
+                        this.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplayRounded);
+                        this.updateUiElementValue(GPG.elements.pickerInput2, cPercentDisplayRounded);
                     }
 
                     this.updateUiElementValue(GPG.elements.pickerSlider3, lDisplayOklch);

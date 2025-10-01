@@ -45,6 +45,7 @@ GPG.ui = GPG.ui || {};
             if (!clickedGC.isValid()) return;
 
             GPG.state.currentGoatColor = clickedGC;
+
             const newHsl = clickedGC.toHsl();
             if (newHsl.s > 0) {
                 GPG.state.lastHslHue = GPG.utils.normalizeHueForDisplay(newHsl.h);
@@ -88,7 +89,7 @@ GPG.ui = GPG.ui || {};
             GPG.ui.updatePaintboxSwatchUI(targetSwatchElement, draggedColor);
 
             if (GPG.state.draggedItem.sourceType === "paintbox" && GPG.state.draggedItem.originalIndex !== -1 && GPG.state.draggedItem.originalIndex !== targetIndex) {
-                const originalSwatchElement = GPG.elements.paintboxGrid.children[GPG.state.draggedItem.originalIndex];
+                const originalSwatchElement = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(GPG.state.draggedItem.originalIndex));
                 if (originalSwatchElement) {
                     GPG.ui.updatePaintboxSwatchUI(originalSwatchElement, colorAtTargetBeforeDrop);
                 }
@@ -119,7 +120,9 @@ GPG.ui = GPG.ui || {};
             }
 
             _addDragListenersToSwatch(swatch);
-            _addClickListenerToSwatch(swatch);
+            if (className !== 'color-input-main') {
+                _addClickListenerToSwatch(swatch);
+            }
             if (isPaintboxSwatch) {
                 _addDropListenersToPaintboxSwatch(swatch);
             }
@@ -127,12 +130,19 @@ GPG.ui = GPG.ui || {};
         },
 
         initializePaintbox: function () {
-            GPG.elements.paintboxGrid.innerHTML = "";
-            GPG.state.paintboxColors = Array(GPG.PAINTBOX_ROWS * GPG.PAINTBOX_COLS).fill(null);
-            for (let i = 0; i < GPG.PAINTBOX_ROWS * GPG.PAINTBOX_COLS; i++) {
-                GPG.elements.paintboxGrid.appendChild(GPG.ui.createDraggableSwatchElement(null, "paintbox-swatch", true, i));
+            // Remove only old swatches, keeping the bin element
+            GPG.elements.paintboxGrid.querySelectorAll('.paintbox-swatch').forEach(swatch => swatch.remove());
+
+            const numSwatches = GPG.PAINTBOX_ROWS * GPG.PAINTBOX_COLS - 1;
+            GPG.state.paintboxColors = Array(numSwatches).fill(null);
+
+            for (let i = 0; i < numSwatches; i++) {
+                const swatch = GPG.ui.createDraggableSwatchElement(null, "paintbox-swatch", true, i);
+                // Insert new swatches before the bin element
+                GPG.elements.paintboxGrid.insertBefore(swatch, GPG.elements.paintboxBin);
             }
-            GPG.elements.exportPaintboxBtn.disabled = true;
+
+            GPG.elements.exportActionButton.disabled = true;
         },
 
         createSwatch: function (swatchGoatColor) {
@@ -201,7 +211,8 @@ GPG.ui = GPG.ui || {};
                 swatchElement.title = "Empty";
                 swatchElement.dataset.color = "";
             }
-            GPG.elements.exportPaintboxBtn.disabled = !GPG.state.paintboxColors.some((c) => c && c.isValid());
+            const hasColors = GPG.state.paintboxColors.some((c) => c && c.isValid());
+            GPG.elements.exportActionButton.disabled = !hasColors;
         }
     });
 }(window.GPG));

@@ -93,17 +93,15 @@ window.GPG = window.GPG || {};
 
             // Palette Generator Controls
             GPG.elements.swatchCountInput.addEventListener("change", GPG.palette.generate);
-            setupSliderInputPair(GPG.elements.variationSlider, GPG.elements.variationInput, GPG.palette.generate);
             GPG.elements.varyParamSelect.addEventListener("change", GPG.palette.generate);
+            GPG.elements.addPaletteToPaintboxBtn.addEventListener("click", GPG.handlers.copyPaletteToPaintbox);
 
-            // GPG.elements.exportFormatRadios.forEach(radio => radio.addEventListener("change", GPG.ui.updateAllSwatches));
-            GPG.elements.exportButton.addEventListener("click", GPG.exporter.exportCssPalette);
-            GPG.elements.exportXmlButton.addEventListener("click", GPG.exporter.exportXmlPalette);
+            // Export Controls
+            GPG.elements.exportActionButton.addEventListener("click", GPG.handlers.handlePaintboxExport);
 
             // Side Panel Controls
             GPG.elements.harmonySelect.addEventListener("change", GPG.handlers.generateAndDisplayTheoryPalette);
             GPG.elements.copyTheoryToPaintboxBtn.addEventListener("click", GPG.handlers.copyTheoryToPaintbox);
-            GPG.elements.exportPaintboxBtn.addEventListener("click", GPG.handlers.exportPaintboxColors);
 
             // Paintbox Bin
             GPG.elements.paintboxBin.addEventListener("dragover", e => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; e.currentTarget.classList.add("drag-over-bin"); });

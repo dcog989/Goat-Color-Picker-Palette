@@ -12,7 +12,7 @@ window.GPG = window.GPG || {};
     GPG.SVG_COPIED_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">
     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
 </svg>`;
-    GPG.PAINTBOX_ROWS = 4;
+    GPG.PAINTBOX_ROWS = 3;
     GPG.PAINTBOX_COLS = 5;
     GPG.MONOCHROMATIC_PALETTE_SIZE = 5;
 

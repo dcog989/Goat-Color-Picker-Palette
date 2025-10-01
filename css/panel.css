@@ -20,6 +20,11 @@
     text-align: center;
 }
 
+#palette-generator-panel,
+#color-theory-panel {
+    align-items: center;
+}
+
 /* Picker Panel Header */
 .picker-header {
     display: flex;
@@ -52,14 +57,11 @@
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .palette-controls .slider-value-input {
     width: auto;
-}
-
-#variation-slider {
-    flex-grow: 1;
 }
 
 /* OKLCH Info Panel */
@@ -115,4 +117,12 @@
     font-family: "Source Code Pro", Consolas, "Courier New", Courier, monospace;
     word-break: break-all;
     text-align: left;
+}
+
+.export-controls {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
 }

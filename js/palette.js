@@ -80,7 +80,7 @@ window.GPG = window.GPG || {};
             h: GPG.utils.normalizeHueForDisplay(baseOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : baseOklch.h)
         };
 
-        const variationPercent = parseInt(GPG.elements.variationInput.value, 10) / 100;
+        const variationPercent = 1;
 
         let numTotalSwatches = parseInt(GPG.elements.swatchCountInput.value, 10);
         const varyParam = GPG.elements.varyParamSelect.value;
@@ -182,15 +182,30 @@ window.GPG = window.GPG || {};
                 finalValueToUse = Math.max(minValue, Math.min(maxValue, finalValueToUse));
             }
 
-            let tempGoatColor = getPaletteVariantColor(
-                varyParam,
-                finalValueToUse,
-                baseHslForGeneration,
-                baseOklchForGeneration,
-                baseOpacity,
-                GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE,
-                GPG.state.lastOklchHue
-            );
+            let tempGoatColor;
+
+            if (GPG.state.activePickerMode === 'oklch' && varyParam === 'oklch_l') {
+                const intendedHue = baseOklchForGeneration.h;
+                const maxChromaForBase = GoatColor.getMaxSRGBChroma(baseOklchForGeneration.l, intendedHue, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+                const chromaPercent = maxChromaForBase > 0.0001 ? baseOklchForGeneration.c / maxChromaForBase : 0;
+
+                const newLightness = finalValueToUse;
+
+                const maxChromaForNewL = GoatColor.getMaxSRGBChroma(newLightness, intendedHue, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+                const newChroma = chromaPercent * maxChromaForNewL;
+
+                tempGoatColor = GoatColor(`oklch(${newLightness}% ${newChroma.toFixed(4)} ${intendedHue} / ${baseOpacity})`);
+            } else {
+                tempGoatColor = getPaletteVariantColor(
+                    varyParam,
+                    finalValueToUse,
+                    baseHslForGeneration,
+                    baseOklchForGeneration,
+                    baseOpacity,
+                    GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE,
+                    GPG.state.lastOklchHue
+                );
+            }
 
             if (tempGoatColor && tempGoatColor.isValid()) {
                 GPG.state.generatedColors.push(tempGoatColor);

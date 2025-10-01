@@ -6,8 +6,8 @@
 #palette-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
     justify-content: center;
+    gap: 10px;
     margin-top: 20px;
     margin-bottom: 20px;
 }
@@ -16,22 +16,24 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 60px;
 }
 .color-input-main {
     border: 1px solid var(--color-border-input);
     border-radius: var(--radius-global);
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: box-shadow 0.2s ease-out;
+    transition: box-shadow 0.2s ease-out, transform 0.2s ease-out;
 }
 .color-input-main:hover {
     box-shadow: 0 0 6px var(--shadow-default);
+    transform: scale(1.1);
 }
 
 /* Theory & Paintbox Swatches */
@@ -43,19 +45,21 @@
 #theory-palette-swatches {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
     justify-content: center;
-    min-height: var(--swatch-size);
 }
 
 .swatch,
 .paintbox-swatch {
-    width: var(--swatch-size);
-    height: var(--swatch-size);
     border-radius: var(--radius-global);
     border: 1px solid hsl(0, 0%, 100%, 0.1);
     cursor: grab;
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.swatch {
+    width: 60px;
+    height: 60px;
 }
 
 .swatch:hover,
@@ -66,9 +70,10 @@
 
 #paintbox-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--swatch-size), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
     gap: 8px;
     margin-bottom: 10px;
+    justify-content: center;
 }
 
 .paintbox-swatch {
@@ -82,16 +87,8 @@
 }
 
 /* Paintbox Controls & Bin */
-#paintbox-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 8px;
-}
-
 #paintbox-bin {
-    width: calc(var(--swatch-size) + 5px);
-    height: calc(var(--swatch-size) + 5px);
+    aspect-ratio: 1 / 1;
     border: 2px dashed var(--bin-border-color-default);
     border-radius: var(--radius-global);
     display: flex;
@@ -99,6 +96,7 @@
     justify-content: center;
     color: var(--bin-icon-color-default);
     transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    cursor: pointer;
 }
 
 #paintbox-bin svg {

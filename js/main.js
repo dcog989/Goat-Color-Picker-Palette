@@ -49,8 +49,6 @@ window.GPG = window.GPG || {};
         GPG.state.lastOklchHue = initialOklch.h;
 
         GPG.elements.swatchCountInput.value = 6;
-        GPG.elements.variationInput.value = 100;
-        GPG.elements.variationSlider.value = 100;
 
         document.getElementById("format-hsl").checked = true;
 

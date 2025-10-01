@@ -33,22 +33,19 @@ window.GPG = window.GPG || {};
             // Other UI elements
             appVersion: "app-version",
             paletteContainer: "palette-container",
-            exportButton: "export-button",
-            exportXmlButton: "export-xml-button",
             oklchInfoPanel: "oklchInfoPanel",
             paletteGeneratorPanel: "palette-generator-panel",
             swatchCountInput: "swatch-count-input",
-            variationSlider: "variation-slider",
-            variationInput: "variation-input",
             varyParamSelect: "vary-param-select",
+            addPaletteToPaintboxBtn: "add-palette-to-paintbox-btn",
             harmonySelect: "harmony-select",
             copyTheoryToPaintboxBtn: "copy-theory-to-paintbox-btn",
             theoryPaletteSwatches: "theory-palette-swatches",
             paintboxGrid: "paintbox-grid",
             paintboxBin: "paintbox-bin",
-            exportPaintboxBtn: "export-paintbox-btn",
             colorOutputContainer: "colorOutput",
-            themeSelect: "theme-select"
+            themeSelect: "theme-select",
+            exportActionButton: "export-action-button"
         };
 
         for (const key in elementIdMap) {
@@ -63,6 +60,7 @@ window.GPG = window.GPG || {};
         };
         GPG.elements.pickerModeRadios = document.querySelectorAll('input[name="picker-mode"]');
         GPG.elements.exportFormatRadios = document.querySelectorAll('input[name="export-format"]');
+        GPG.elements.exportDestinationRadios = document.querySelectorAll('input[name="export-destination"]');
         GPG.elements.copyButtons = document.querySelectorAll('#colorOutput .copy-btn');
 
         if (GPG.elements.colorPreviewBox) {
@@ -77,12 +75,14 @@ window.GPG = window.GPG || {};
             "pickerGroup2", "pickerSlider2", "pickerInput2",
             "pickerGroup3", "pickerSlider3", "pickerInput3",
             "pickerOpacityGroup", "pickerOpacitySlider", "pickerOpacityInput", "colorPreviewBox", "pickerModeSelector",
-            "appVersion", "paletteContainer", "exportButton", "exportXmlButton",
-            "oklchInfoPanel", "paletteGeneratorPanel", "swatchCountInput", "variationSlider", "variationInput",
+            "appVersion", "paletteContainer",
+            "oklchInfoPanel", "paletteGeneratorPanel", "swatchCountInput",
             "varyParamSelect", "colorOutputContainer",
+            "addPaletteToPaintboxBtn",
             "harmonySelect", "copyTheoryToPaintboxBtn", "theoryPaletteSwatches",
-            "paintboxGrid", "paintboxBin", "exportPaintboxBtn",
-            "themeSelect"
+            "paintboxGrid", "paintboxBin",
+            "themeSelect",
+            "exportActionButton"
         ];
 
         let initFailed = false;
@@ -97,7 +97,7 @@ window.GPG = window.GPG || {};
             initFailed = true;
         }
         if (!GPG.elements.colorPreviewBox_checkerboard || !GPG.elements.colorPreviewBox_colorOverlay ||
-            (GPG.elements.exportFormatRadios && GPG.elements.exportFormatRadios.length !== 4) ||
+            (GPG.elements.exportFormatRadios && GPG.elements.exportFormatRadios.length === 0) || // Basic check that some exist
             (GPG.elements.pickerModeRadios && GPG.elements.pickerModeRadios.length !== 2)
         ) {
             if (!initFailed) console.error("Critical DOM elements missing or incorrect count. Halting initialization.", GPG.elements);

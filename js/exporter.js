@@ -3,27 +3,8 @@ window.GPG = window.GPG || {};
 (function (GPG) {
     'use strict';
 
-    function generateExportHeaderComment() {
-        if (!GPG.state.currentGoatColor || !GPG.state.currentGoatColor.isValid()) return "/* Base color invalid */\n\n";
-
-        const numSwatchesInputEl = GPG.elements.swatchCountInput;
-        const numSwatches = parseInt(numSwatchesInputEl.value, 10) || 1;
-
-        const varyParamSelect = GPG.elements.varyParamSelect;
-        const selectedOption = varyParamSelect.options[varyParamSelect.selectedIndex];
-        const varyParamDataName = selectedOption ? selectedOption.textContent : "Parameter";
-
-        let exportFormat = document.querySelector('input[name="export-format"]:checked').value;
-
-        let baseColorStringForComment;
-        if (GPG.state.activePickerMode === "hsl") {
-            baseColorStringForComment = GPG.state.currentGoatColor.toHslaString();
-        } else {
-            baseColorStringForComment = GPG.state.currentGoatColor.toOklchaString();
-        }
-
-
-        return `/*\n * Palette based on ${baseColorStringForComment}\n * Varying: ${varyParamDataName}, Number of Swatches: ${numSwatches}\n * Export Format: ${exportFormat.toUpperCase()}\n */\n\n`;
+    function generatePaintboxExportHeaderComment(exportFormat) {
+        return `/*\n * Paintbox Export\n * Format: ${exportFormat.toUpperCase()}\n */\n\n`;
     }
 
     function generateExportFilename(base, extension) {
@@ -50,20 +31,17 @@ window.GPG = window.GPG || {};
         }, 100);
     }
 
-    function processColorsForExport(exportFormat, individualColorFormatter) {
-        if (GPG.state.generatedColors.length === 0) {
-            alert("Generate a palette first!");
+    function processColorsForExport(colors, exportFormat, individualColorFormatter) {
+        const validColors = colors.filter(c => c && c.isValid());
+
+        if (validColors.length === 0) {
             return null;
         }
 
         const opacityStyleHint = GPG.state.currentGoatColor._alphaInputStyleHint || GoatColor.ALPHA_STYLE_HINT_NUMBER;
 
         let outputItems = [];
-        GPG.state.generatedColors.forEach((colorInstance, index) => {
-            if (!colorInstance || !colorInstance.isValid()) {
-                console.warn("Skipping invalid color during export:", colorInstance);
-                return;
-            }
+        validColors.forEach((colorInstance, index) => {
             colorInstance.setAlpha(colorInstance.a, opacityStyleHint);
             const formattedColorString = GPG.utils.getFormattedColorString(colorInstance, exportFormat);
             outputItems.push(individualColorFormatter(colorInstance, index, formattedColorString, exportFormat));
@@ -71,47 +49,63 @@ window.GPG = window.GPG || {};
         return outputItems.join('');
     }
 
+    function generateCssString() {
+        const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
+        const comment = generatePaintboxExportHeaderComment(exportFormat);
+        const cssVarLines = processColorsForExport(GPG.state.paintboxColors, exportFormat, (colorInstance, index, formattedString) => {
+            const varName = `--color-${String(index + 1).padStart(3, "0")}`;
+            return `  ${varName}: ${formattedString};\n`;
+        });
+
+        if (cssVarLines === null) return null;
+        return comment + ":root {\n" + cssVarLines + "}";
+    }
+
+    function generateXmlString() {
+        const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
+        const comment = generatePaintboxExportHeaderComment(exportFormat).replace(/\/\*/g, "<!--").replace(/\*\//g, "-->");
+
+        const xmlColorLines = processColorsForExport(GPG.state.paintboxColors, exportFormat, (colorInstance, index, formattedString, currentExportFormat) => {
+            let attrName = currentExportFormat + (colorInstance.a < 1 ? "a" : "") + "Value";
+            if (currentExportFormat === "hex" && colorInstance.a < 1) attrName = "hexaValue";
+            else if (currentExportFormat === "hex") attrName = "hexValue";
+
+            const name = `color${String(index + 1).padStart(3, "0")}`;
+
+            const valueAttrEscaped = formattedString
+                .replace(/&/g, "&" + "amp;")
+                .replace(/</g, "&" + "lt;")
+                .replace(/>/g, "&" + "gt;")
+                .replace(/"/g, "&" + "quot;")
+                .replace(/'/g, "&" + "apos;");
+
+            return `    <myColor ${attrName}="${valueAttrEscaped}" name="${name}" />\n`;
+        });
+
+        if (xmlColorLines === null) return null;
+        return `<?xml version="1.0" encoding="UTF-8"?>\n${comment}<Palette>\n\n${xmlColorLines}\n</Palette>`;
+    }
+
+
     GPG.exporter = {
-        exportCssPalette: function () {
-            const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
-            const comment = generateExportHeaderComment();
+        generateCssString: generateCssString,
 
-            const cssVarLines = processColorsForExport(exportFormat, (colorInstance, index, formattedString) => {
-                const varName = `--color-${String(index + 1).padStart(3, "0")}`;
-                return `  ${varName}: ${formattedString};\n`;
-            });
-
-            if (cssVarLines === null) return;
-
-            const cssContent = comment + ":root {\n" + cssVarLines + "}";
-            downloadFile(cssContent, generateExportFilename("palette", "css"), "text/css");
+        exportCssFile: function () {
+            const cssContent = generateCssString();
+            if (cssContent) {
+                downloadFile(cssContent, generateExportFilename("paintbox", "css"), "text/css");
+            } else {
+                alert("No valid colors in the paintbox to export!");
+            }
         },
 
-        exportXmlPalette: function () {
-            const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
-            const comment = generateExportHeaderComment().replace(/\/\*/g, "<!--").replace(/\*\//g, "-->");
-
-            const xmlColorLines = processColorsForExport(exportFormat, (colorInstance, index, formattedString, currentExportFormat) => {
-                let attrName = currentExportFormat + (colorInstance.a < 1 ? "a" : "") + "Value";
-                if (currentExportFormat === "hex" && colorInstance.a < 1) attrName = "hexaValue";
-                else if (currentExportFormat === "hex") attrName = "hexValue";
-
-                const name = `color${String(index + 1).padStart(3, "0")}`;
-
-                const valueAttrEscaped = formattedString
-                    .replace(/&/g, "&" + "amp;")
-                    .replace(/</g, "&" + "lt;")
-                    .replace(/>/g, "&" + "gt;")
-                    .replace(/"/g, "&" + "quot;")
-                    .replace(/'/g, "&" + "apos;");
-
-                return `    <myColor ${attrName}="${valueAttrEscaped}" name="${name}" />\n`;
-            });
-
-            if (xmlColorLines === null) return;
-
-            const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>\n${comment}<Palette>\n\n${xmlColorLines}\n</Palette>`;
-            downloadFile(xmlContent, generateExportFilename("palette", "xml"), "application/xml");
+        exportXmlFile: function () {
+            const xmlContent = generateXmlString();
+            if (xmlContent) {
+                downloadFile(xmlContent, generateExportFilename("paintbox", "xml"), "application/xml");
+            } else {
+                alert("No valid colors in the paintbox to export!");
+            }
         }
     };
 }(window.GPG));

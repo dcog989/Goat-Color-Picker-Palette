@@ -88,56 +88,55 @@
             <div id="palette-generator-panel" class="panel">
                 <h2>Palette Generator</h2>
                 <div class="palette-controls">
-                    <span>Create</span>
-                    <input type="number" id="swatch-count-input" class="slider-value-input" min="2" max="33" value="6">
-                    <span>swatches, varying</span>
+                    <span>Vary</span>
                     <select id="vary-param-select"></select>
-                    <span>by</span>
-                    <input type="range" id="variation-slider" min="0" max="100" value="100">
-                    <input type="number" id="variation-input" class="slider-value-input" min="0" max="100" value="100">
+                    <span>for</span>
+                    <input type="number" id="swatch-count-input" class="slider-value-input" min="2" max="33" value="6">
+                    <span>swatches</span>
                 </div>
                 <div id="palette-container"></div>
+                <button id="add-palette-to-paintbox-btn" class="button">Add Colors to Paintbox</button>
+            </div>
+            <div id="color-theory-panel" class="panel">
+                <h2>Color Theory</h2>
+                <div class="theory-controls">
+                    <label for="harmony-select" class="visually-hidden">Select Color Harmony</label>
+                    <select id="harmony-select">
+                        <option value="analogous" selected>Analogous</option>
+                        <option value="complementary">Complementary</option>
+                        <option value="monochromatic">Monochromatic</option>
+                        <option value="split-complementary">Split-Complementary</option>
+                        <option value="tetradic">Tetradic (Rectangular)</option>
+                        <option value="triadic">Triadic</option>
+                    </select>
+                </div>
+                <div id="theory-palette-swatches" aria-live="polite"></div>
+                <button id="copy-theory-to-paintbox-btn" class="button">Add Colors to Paintbox</button>
+            </div>
+            <div id="paintbox-panel" class="panel">
+                <h2>Paintbox</h2>
+                <div id="paintbox-grid">
+                    <div id="paintbox-bin" title="Drag here to remove color. Click to activate clear mode." role="button" tabindex="0" aria-label="Paintbox Bin: Drag color here to remove or click to activate clear mode">
+                        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12l1.41 1.41L13.41 14l2.12 2.12l-1.41 1.41L12 15.41l-2.12 2.12l-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                        </svg>
+                    </div>
+                </div>
                 <fieldset class="export-controls">
-                    <legend>Export Palette</legend>
+                    <legend>Export</legend>
                     <div class="radio-group justify-center">
                         <input type="radio" id="format-hsl" name="export-format" value="hsl" checked><label for="format-hsl">HSL</label>
                         <input type="radio" id="format-hex" name="export-format" value="hex"><label for="format-hex">Hex</label>
                         <input type="radio" id="format-rgb" name="export-format" value="rgb"><label for="format-rgb">RGB</label>
                         <input type="radio" id="format-oklch" name="export-format" value="oklch"><label for="format-oklch">OKLCH</label>
                     </div>
-                    <button id="export-button" class="button">Export to CSS</button>
-                    <button id="export-xml-button" class="button">Export to XML</button>
+                    <div class="radio-group justify-center">
+                        <input type="radio" id="dest-clipboard" name="export-destination" value="clipboard" checked><label for="dest-clipboard">Clipboard</label>
+                        <input type="radio" id="dest-css" name="export-destination" value="css-file"><label for="dest-css">CSS</label>
+                        <input type="radio" id="dest-xml" name="export-destination" value="xml-file"><label for="dest-xml">XML</label>
+                    </div>
+                    <button id="export-action-button" class="button">Export</button>
                 </fieldset>
-            </div>
-            <div class="side-panels-column">
-                <div id="color-theory-panel" class="panel">
-                    <h2>Color Theory</h2>
-                    <div class="theory-controls">
-                        <label for="harmony-select" class="visually-hidden">Select Color Harmony</label>
-                        <select id="harmony-select">
-                            <option value="analogous" selected>Analogous</option>
-                            <option value="complementary">Complementary</option>
-                            <option value="monochromatic">Monochromatic</option>
-                            <option value="split-complementary">Split-Complementary</option>
-                            <option value="tetradic">Tetradic (Rectangular)</option>
-                            <option value="triadic">Triadic</option>
-                        </select>
-                        <button id="copy-theory-to-paintbox-btn" class="button">Add Colors to Paintbox</button>
-                    </div>
-                    <div id="theory-palette-swatches" aria-live="polite"></div>
-                </div>
-                <div id="paintbox-panel" class="panel">
-                    <h2>Paintbox</h2>
-                    <div id="paintbox-grid"></div>
-                    <div id="paintbox-controls">
-                        <div id="paintbox-bin" title="Drag here to remove color. Click to activate clear mode." role="button" tabindex="0" aria-label="Paintbox Bin: Drag color here to remove or click to activate clear mode">
-                            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12l1.41 1.41L13.41 14l2.12 2.12l-1.41 1.41L12 15.41l-2.12 2.12l-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
-                            </svg>
-                        </div>
-                        <button id="export-paintbox-btn" class="button">Copy as CSS Variables</button>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -147,7 +146,7 @@
             <ul>
                 <li><strong>Slider (0-100%):</strong> This adjusts Chroma. 100% targets a reference colorfulness (around 0.4 in absolute OKLCH, typical for sRGB's brightest colors).</li>
                 <li><strong>Dynamic Range with L & H:</strong> The actual range of Chroma (vividness) you can achieve is not constant. It changes significantly depending on the current Lightness (L) and Hue (H) values you've selected.</li>
-                <li><strong>Adaptive Slider Track:</strong> The gradient on the Chroma slider's track <strong>dynamically updates</strong>. This visual guide shows you the maximum Chroma available within the sRGB color space for your current L and H settings. If you set Chroma beyond this visible limit, the color will be clamped to the most vivid sRGB-displayable equivalent.</li>
+                <li><strong>Adaptive Slider Track:</strong> The gradient on the Chroma slider's track <strong>dynamically updates</strong>. This visual guide shows you the maximum Chroma available within the sRGB color space for your current L and H settings. If you set Chroma beyond this visible limit, the a will be clamped to the most vivid sRGB-displayable equivalent.</li>
             </ul>
             </p>
         </div>

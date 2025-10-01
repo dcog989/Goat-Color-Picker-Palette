@@ -9,12 +9,6 @@
     box-sizing: border-box;
 }
 
-@property --button-animated-lightness {
-    syntax: "<percentage>";
-    inherits: false;
-    initial-value: 15%;
-}
-
 html {
     height: 100%;
     margin: 0;
@@ -72,16 +66,6 @@ h1 {
     color: transparent !important;
 }
 
-@keyframes cycleButtonLightness {
-    from {
-        --button-animated-lightness: 15%;
-    }
-
-    to {
-        --button-animated-lightness: 25%;
-    }
-}
-
 button,
 input,
 form,
@@ -129,22 +113,14 @@ textarea {
 }
 
 .main-controls-wrapper {
+    align-items: flex-start;
     display: flex;
     flex-direction: row;
     gap: 25px;
-    align-items: flex-start;
     width: 100%;
 }
 
-#palette-generator-panel {
-    flex-grow: 1;
-    min-width: 580px;
-}
-
-.side-panels-column {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    width: 300px;
-    flex-shrink: 0;
+.main-controls-wrapper > .panel {
+    flex: 1;
+    min-width: 0;
 }
