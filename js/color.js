@@ -27,22 +27,16 @@ window.GPG = window.GPG || {};
             } else { // oklch
                 let l = p3, cPercent = p2, h = p1;
                 cPercent = Math.max(0, Math.min(100, cPercent));
-                let cAbsolute;
 
-                // If Lightness or Hue are changing, preserve the old absolute chroma
-                // to provide a more intuitive user experience as the gamut changes.
-                if ((options.param === 'l' || options.param === 'h') && GPG.state.currentGoatColor && GPG.state.currentGoatColor.isValid()) {
-                    cAbsolute = GPG.state.currentGoatColor.toOklch().c;
-                } else {
-                    // If Chroma is changing or there's no prior state, calculate from the UI percentage.
-                    const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                    cAbsolute = (cPercent / 100) * maxAbsC;
-                }
+                // Always calculate absolute chroma from the UI percentage and the current L and H.
+                // This prevents creating colors far outside the sRGB gamut when L or H change,
+                // which was causing erratic slider behavior due to severe gamut clipping.
+                const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+                const cAbsolute = (cPercent / 100) * maxAbsC;
 
                 let hueForCreation = h;
                 if (cAbsolute < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
                     hueForCreation = GPG.state.lastOklchHue; // Use last hue if chroma is effectively zero
-                    cAbsolute = 0;
                 } else {
                     // Only update last hue from UI if chromatic
                     // This prevents achromatic colors from resetting the stored hue

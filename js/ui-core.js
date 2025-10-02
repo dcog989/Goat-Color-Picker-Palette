@@ -3,6 +3,7 @@ GPG.ui = GPG.ui || {};
 
 (function (GPG) {
     'use strict';
+
     function _updateCssVariables(opaqueBaseColor) {
         if (!opaqueBaseColor.isValid()) return;
 
@@ -69,14 +70,17 @@ GPG.ui = GPG.ui || {};
         const hDisplayOklch = GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
         const lDisplayOklch = Number(masterOklch.l.toFixed(1));
 
-        if (masterOklch.l > 0 && masterOklch.l < 100) {
+        let cPercentDisplayRounded = 0;
+        // Only calculate chroma % if not black or white, otherwise it's 0.
+        if (masterOklch.l > 0.01 && masterOklch.l < 99.99) {
             const maxCForCurrentLH = GoatColor.getMaxSRGBChroma(masterOklch.l, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
             let cPercentDisplay = maxCForCurrentLH > 0.0001 ? (masterOklch.c / maxCForCurrentLH) * 100 : 0;
             cPercentDisplay = Math.min(100, cPercentDisplay); // Clamp to 100
-            const cPercentDisplayRounded = Number(cPercentDisplay.toFixed(1));
-            GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplayRounded);
-            GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, cPercentDisplayRounded);
+            cPercentDisplayRounded = Number(cPercentDisplay.toFixed(1));
         }
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplayRounded);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, cPercentDisplayRounded);
+
 
         GPG.ui.updateUiElementValue(GPG.elements.pickerSlider3, lDisplayOklch);
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, lDisplayOklch);
@@ -114,23 +118,28 @@ GPG.ui = GPG.ui || {};
         },
 
         syncInstantUiFromState: function (options = {}) {
-            const { source = 'external' } = options;
+            const { source = 'external', isSlider = false } = options;
             const masterColor = GPG.state.currentGoatColor;
 
             // Update global styles
             document.body.style.backgroundColor = masterColor.toRgbaString();
             _updateCssVariables(masterColor.flatten());
 
-            // Update picker-specific controls if the update did not originate from them
+            const skipHslUpdate = isSlider && source === 'hsl';
+            const skipOklchUpdate = isSlider && source === 'oklch';
+
+            // Update picker-specific controls if the update did not originate from them,
+            // or if it's not a slider drag event (i.e., it's a final 'change' event).
             if (GPG.state.activePickerMode === 'hsl') {
-                if (source !== 'hsl') {
+                if (!skipHslUpdate) {
                     _updateHslPickerControls(masterColor.toHsl());
                 }
             } else { // oklch
-                if (source !== 'oklch') {
+                if (!skipOklchUpdate) {
                     _updateOklchPickerControls(masterColor.toOklch());
                 }
             }
+
 
             // Update Hue slider disabled state for OKLCH if needed
             if (GPG.state.activePickerMode === 'oklch') {
@@ -147,7 +156,7 @@ GPG.ui = GPG.ui || {};
 
             // Update Color String Input - Use picker values as source of truth when picker is the source
             let colorString;
-            if (source === 'hsl') {
+            if (source === 'hsl' && isSlider) {
                 const h = GPG.elements.pickerInput1.value;
                 const s = GPG.elements.pickerInput2.value;
                 const l = GPG.elements.pickerInput3.value;
@@ -155,11 +164,11 @@ GPG.ui = GPG.ui || {};
                 const alphaStr = o == 100 ? '' : ` / ${o}%`;
                 colorString = `hsl(${h} ${s}% ${l}%${alphaStr})`;
 
-            } else if (source === 'oklch') {
+            } else if (source === 'oklch' && isSlider) {
                 // The currentGoatColor was just updated from the picker, so we can use it
                 // and the utility function will format it correctly.
                 colorString = GPG.utils.getFormattedColorString(masterColor, 'oklch');
-            } else { // Source is external (e.g. text input, swatch click)
+            } else { // Source is external (e.g. text input, swatch click) or a final change event
                 colorString = GPG.state.activePickerMode === 'hsl' ? masterColor.toHslaString() : GPG.utils.getFormattedColorString(masterColor, 'oklch');
             }
             GPG.ui.updateUiElementValue(GPG.elements.colorStringInput, colorString);

@@ -69,11 +69,11 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
         if (isSliderEvent) {
             GPG.state.isProgrammaticUpdate = true;
-            GPG.ui.syncInstantUiFromState({ source: sourceMode });
+            GPG.ui.syncInstantUiFromState({ source: sourceMode, isSlider: isSliderEvent });
             GPG.state.isProgrammaticUpdate = false;
             GPG.ui.requestExpensiveUpdate();
         } else {
-            GPG.ui.syncAllUiFromState({ source: sourceMode });
+            GPG.ui.syncAllUiFromState({ source: sourceMode, isSlider: isSliderEvent });
             GPG.palette.generate();
             GPG.handlers.generateAndDisplayTheoryPalette();
         }
@@ -159,25 +159,14 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
             if (newColor.isValid()) {
                 inputElement.classList.remove('invalid');
+                GPG.state.currentGoatColor = newColor;
 
-                let finalColor = newColor;
-                const oklch = newColor.toOklch();
-
-                // If the new color is achromatic while in OKLCH mode, recreate it using the last known hue.
-                // This keeps the internal state consistent with the UI's hue-locking behavior for grays.
-                if (GPG.state.activePickerMode === 'oklch' && oklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                    finalColor = GoatColor(`oklch(${oklch.l}% ${oklch.c} ${GPG.state.lastOklchHue})`);
-                } else {
-                    GPG.state.lastOklchHue = GPG.utils.normalizeHueForDisplay(oklch.h);
-                }
-
-                GPG.state.currentGoatColor = finalColor;
-
-                // Also update the HSL hue cache
-                const hsl = finalColor.toHsl();
-                if (hsl.s > 0) {
-                    GPG.state.lastHslHue = GPG.utils.normalizeHueForDisplay(hsl.h);
-                }
+                // When a color is set via text input, update both hue caches
+                // to match the user's explicit intent for predictability.
+                const newHsl = newColor.toHsl();
+                const newOklch = newColor.toOklch();
+                GPG.state.lastHslHue = GPG.utils.normalizeHueForDisplay(newHsl.h);
+                GPG.state.lastOklchHue = GPG.utils.normalizeHueForDisplay(newOklch.h);
 
                 GPG.ui.syncAllUiFromState();
                 GPG.palette.generate();
