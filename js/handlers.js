@@ -9,6 +9,40 @@ window.GPG = window.GPG || {}; (function (GPG) {
         }, 2000);
     }
 
+    function _addColorsToPaintbox(colors, button) {
+        if (!colors || colors.length === 0) {
+            _provideButtonFeedback(button, false, "No Colors!");
+            return;
+        }
+        let appendedCount = 0;
+        let paintboxWasFull = false;
+        for (const color of colors) {
+            if (color && color.isValid()) {
+                const emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
+                if (emptyIdx !== -1) {
+                    const targetChild = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(emptyIdx));
+                    if (targetChild) {
+                        GPG.ui.updatePaintboxSwatchUI(targetChild, color);
+                        appendedCount++;
+                    }
+                } else {
+                    paintboxWasFull = true;
+                    break;
+                }
+            }
+        }
+
+        if (appendedCount > 0 && paintboxWasFull) {
+            _provideButtonFeedback(button, true, "Partial Add");
+        } else if (appendedCount > 0 && !paintboxWasFull) {
+            _provideButtonFeedback(button, true, "Added!");
+        } else if (appendedCount === 0 && paintboxWasFull) {
+            _provideButtonFeedback(button, false, "Full!");
+        } else if (appendedCount === 0 && !paintboxWasFull && colors.length > 0) {
+            _provideButtonFeedback(button, false, "No valid colors");
+        }
+    }
+
     function _processColorUpdate(newColor, sourceMode, isSliderEvent) {
         if (!newColor.isValid()) return;
 
@@ -190,72 +224,11 @@ window.GPG = window.GPG || {}; (function (GPG) {
         },
 
         copyTheoryToPaintbox: function () {
-            if (GPG.state.theoryPaletteCache.length === 0) {
-                _provideButtonFeedback(GPG.elements.copyTheoryToPaintboxBtn, false, "No Palette!");
-                return;
-            }
-            let appendedCount = 0;
-            let paintboxWasFull = false;
-            for (const theoryColor of GPG.state.theoryPaletteCache) {
-                if (theoryColor && theoryColor.isValid()) {
-                    const emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
-                    if (emptyIdx !== -1) {
-                        const targetChild = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(emptyIdx));
-                        if (targetChild) {
-                            GPG.ui.updatePaintboxSwatchUI(targetChild, theoryColor);
-                            appendedCount++;
-                        }
-                    } else {
-                        paintboxWasFull = true;
-                        break;
-                    }
-                }
-            }
-
-            if (appendedCount > 0 && paintboxWasFull) {
-                _provideButtonFeedback(GPG.elements.copyTheoryToPaintboxBtn, true, "Partial Add");
-            } else if (appendedCount > 0 && !paintboxWasFull) {
-                _provideButtonFeedback(GPG.elements.copyTheoryToPaintboxBtn, true, "Added!");
-            } else if (appendedCount === 0 && paintboxWasFull) {
-                _provideButtonFeedback(GPG.elements.copyTheoryToPaintboxBtn, false, "Full!");
-            } else if (appendedCount === 0 && !paintboxWasFull && GPG.state.theoryPaletteCache.length > 0) {
-                _provideButtonFeedback(GPG.elements.copyTheoryToPaintboxBtn, false, "No valid colors");
-            }
+            _addColorsToPaintbox(GPG.state.theoryPaletteCache, GPG.elements.copyTheoryToPaintboxBtn);
         },
 
         copyPaletteToPaintbox: function () {
-            const button = GPG.elements.addPaletteToPaintboxBtn;
-            if (GPG.state.generatedColors.length === 0) {
-                _provideButtonFeedback(button, false, "No Palette!");
-                return;
-            }
-            let appendedCount = 0;
-            let paintboxWasFull = false;
-            for (const paletteColor of GPG.state.generatedColors) {
-                if (paletteColor && paletteColor.isValid()) {
-                    const emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
-                    if (emptyIdx !== -1) {
-                        const targetChild = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(emptyIdx));
-                        if (targetChild) {
-                            GPG.ui.updatePaintboxSwatchUI(targetChild, paletteColor);
-                            appendedCount++;
-                        }
-                    } else {
-                        paintboxWasFull = true;
-                        break;
-                    }
-                }
-            }
-
-            if (appendedCount > 0 && paintboxWasFull) {
-                _provideButtonFeedback(button, true, "Partial Add");
-            } else if (appendedCount > 0 && !paintboxWasFull) {
-                _provideButtonFeedback(button, true, "Added!");
-            } else if (appendedCount === 0 && paintboxWasFull) {
-                _provideButtonFeedback(button, false, "Full!");
-            } else if (appendedCount === 0 && !paintboxWasFull && GPG.state.generatedColors.length > 0) {
-                _provideButtonFeedback(button, false, "No valid colors");
-            }
+            _addColorsToPaintbox(GPG.state.generatedColors, GPG.elements.addPaletteToPaintboxBtn);
         },
 
         handlePaintboxExport: function () {
@@ -283,7 +256,6 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 }
             }
         },
-
         resetDragState: function () {
             if (GPG.state.draggedItem.element) {
                 GPG.state.draggedItem.element.classList.remove("dragging");
@@ -292,7 +264,6 @@ window.GPG = window.GPG || {}; (function (GPG) {
             document.querySelectorAll('.drag-over, .drag-over-bin, .drag-over-main-target')
                 .forEach(el => el.classList.remove('drag-over', 'drag-over-bin', 'drag-over-main-target'));
         },
-
         handlePaintboxBinClick: function () {
             if (GPG.state.draggedItem.element) return;
 
@@ -346,7 +317,6 @@ window.GPG = window.GPG || {}; (function (GPG) {
             }
             GPG.handlers.resetDragState();
         },
-
         handleCopyButtonClick: function (event) {
             const button = event.target.closest(".copy-btn");
             if (!button || !button.dataset.target) return;
@@ -384,6 +354,5 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 setTimeout(restoreButtonState, 2000);
             }
         }
-
     };
 }(window.GPG));
