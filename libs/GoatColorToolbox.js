@@ -8,7 +8,7 @@
  * @author Chase McGoat
  * @createdAt 2025-04-20
  * @lastModified 2025-09-11
- * @version 1.3.3
+ * @version 1.3.4
  */
 
 (function (global, factory) {
