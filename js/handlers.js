@@ -80,7 +80,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
     }
 
     GPG.handlers = {
-        updateFromHslPicker: function (isSliderEvent = false) {
+        updateFromHslPicker: function (isSliderEvent = false, param = null) {
             if (GPG.state.isProgrammaticUpdate) return;
 
             const h = parseInt(GPG.elements.pickerInput1.value, 10);
@@ -90,11 +90,11 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
             if (isNaN(h) || isNaN(s) || isNaN(l) || isNaN(o)) return;
 
-            const newColor = GPG.color.createFromPicker('hsl', h, s, l, o);
+            const newColor = GPG.color.createFromPicker('hsl', h, s, l, o, { param: param });
             _processColorUpdate(newColor, 'hsl', isSliderEvent);
         },
 
-        updateFromOklchPicker: function (isSliderEvent = false) {
+        updateFromOklchPicker: function (isSliderEvent = false, param = null) {
             if (GPG.state.isProgrammaticUpdate) return;
 
             const l = parseFloat(GPG.elements.pickerInput3.value);
@@ -104,7 +104,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
             if (isNaN(l) || isNaN(cPercent) || isNaN(h) || isNaN(o)) return;
 
-            const newColor = GPG.color.createFromPicker('oklch', h, cPercent, l, o);
+            const newColor = GPG.color.createFromPicker('oklch', h, cPercent, l, o, { param: param });
             _processColorUpdate(newColor, 'oklch', isSliderEvent);
         },
 

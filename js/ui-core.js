@@ -33,13 +33,13 @@ GPG.ui = GPG.ui || {};
 
     function _updateOklchPickerControls(masterOklch) {
         const hDisplayOklch = GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
-        const lDisplayOklch = parseFloat(masterOklch.l.toFixed(1));
+        const lDisplayOklch = Number(masterOklch.l.toFixed(1));
 
-        if (lDisplayOklch > 0 && lDisplayOklch < 100) {
-            const maxCForCurrentLH = GoatColor.getMaxSRGBChroma(lDisplayOklch, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+        if (masterOklch.l > 0 && masterOklch.l < 100) {
+            const maxCForCurrentLH = GoatColor.getMaxSRGBChroma(masterOklch.l, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
             let cPercentDisplay = maxCForCurrentLH > 0.0001 ? (masterOklch.c / maxCForCurrentLH) * 100 : 0;
             cPercentDisplay = Math.min(100, cPercentDisplay); // Clamp to 100
-            const cPercentDisplayRounded = cPercentDisplay.toFixed(1);
+            const cPercentDisplayRounded = Number(cPercentDisplay.toFixed(1));
             GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplayRounded);
             GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, cPercentDisplayRounded);
         }
@@ -54,11 +54,6 @@ GPG.ui = GPG.ui || {};
         const currentAlphaPercent = Math.round(masterColor.a * 100);
         GPG.ui.updateUiElementValue(GPG.elements.pickerOpacitySlider, currentAlphaPercent);
         GPG.ui.updateUiElementValue(GPG.elements.pickerOpacityInput, currentAlphaPercent);
-
-        const colorString = GPG.state.activePickerMode === 'hsl' ? GPG.utils.getFormattedColorString(masterColor, 'hsl') : GPG.utils.getFormattedColorString(masterColor, 'oklch');
-        GPG.ui.updateUiElementValue(GPG.elements.colorStringInput, colorString);
-        GPG.elements.colorStringInput.classList.remove('invalid');
-
         GPG.elements.colorPreviewBox_colorOverlay.style.backgroundColor = masterColor.toRgbaString();
     }
 
@@ -113,8 +108,51 @@ GPG.ui = GPG.ui || {};
                 GPG.ui.updateOklchHueSliderState(cPercentForStateCheck, lForStateCheck, hForStateCheck);
             }
 
-            // Update shared UI elements and outputs
+            // Update shared UI elements (preview box, opacity)
             _updateSharedPickerUI(masterColor);
+
+            // Update Color String Input - Use picker values as source of truth when picker is the source
+            let colorString;
+            if (source === 'hsl') {
+                const h = GPG.elements.pickerInput1.value;
+                const s = GPG.elements.pickerInput2.value;
+                const l = GPG.elements.pickerInput3.value;
+                const o = GPG.elements.pickerOpacityInput.value;
+                const alphaStr = o == 100 ? '' : ` / ${o}%`;
+                colorString = `hsl(${h} ${s}% ${l}%${alphaStr})`;
+
+            } else if (source === 'oklch') {
+                const lVal = parseFloat(GPG.elements.pickerInput3.value);
+                const cPercent = parseFloat(GPG.elements.pickerInput2.value);
+                let hVal = parseInt(GPG.elements.pickerInput1.value, 10);
+                const oPercent = parseInt(GPG.elements.pickerOpacityInput.value, 10);
+                if (hVal === 360) hVal = 0;
+
+                const maxAbsC = GoatColor.getMaxSRGBChroma(lVal, hVal, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+                const cAbsolute = (cPercent / 100) * maxAbsC;
+
+                const round = (val, dec) => Number(Math.round(val + "e" + dec) + "e-" + dec);
+
+                let lStr = round(lVal / 100, 3).toString();
+                if (lStr.startsWith("0.")) lStr = lStr.substring(1);
+                let cStr = round(cAbsolute, 3).toString();
+                if (cStr.startsWith("0.")) cStr = cStr.substring(1);
+
+                if (oPercent === 100) {
+                    colorString = `oklch(${lStr} ${cStr} ${hVal})`;
+                } else {
+                    let aStr = round(oPercent / 100, 3).toString();
+                    if (aStr.startsWith("0.")) aStr = aStr.substring(1);
+                    colorString = `oklch(${lStr} ${cStr} ${hVal} / ${aStr})`;
+                }
+
+            } else { // Source is external (e.g. text input, swatch click)
+                colorString = GPG.state.activePickerMode === 'hsl' ? masterColor.toHslaString() : GPG.utils.getFormattedColorString(masterColor, 'oklch');
+            }
+            GPG.ui.updateUiElementValue(GPG.elements.colorStringInput, colorString);
+            GPG.elements.colorStringInput.classList.remove('invalid');
+
+            // Update remaining UI
             this.updateIncrementUI();
             this.updateColorOutputSpans();
             this.requestH1Update();

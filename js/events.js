@@ -7,16 +7,14 @@ window.GPG = window.GPG || {};
         slider.addEventListener("input", () => {
             if (GPG.state.isProgrammaticUpdate) return;
 
-            let value;
+            // For sliders with a step less than 1 (e.g. oklch), round to whole number for snapping effect.
+            // For other sliders, the value is already a whole number.
             const step = parseFloat(slider.step) || 1;
-            if (step < 1) {
-                const decimals = String(step).includes('.') ? String(step).split('.')[1].length : 0;
-                value = parseFloat(slider.value).toFixed(decimals);
-            } else {
-                value = Math.round(parseFloat(slider.value));
-            }
+            const value = step < 1 ? Math.round(parseFloat(slider.value)) : parseFloat(slider.value);
 
             GPG.state.isProgrammaticUpdate = true;
+            // Force the UI to the snapped value during dragging.
+            slider.value = value;
             input.value = value;
             GPG.state.isProgrammaticUpdate = false;
             updateCallback(true);
@@ -34,12 +32,13 @@ window.GPG = window.GPG || {};
                     numericValue = max;
                     input.value = max;
                 } else if (numericValue < min && input.value.length >= String(min).length) {
-                    numericValue = min;
+                    // Allow typing, but don't update slider if below min
+                } else {
+                    GPG.state.isProgrammaticUpdate = true;
+                    if (slider) slider.value = Math.max(min, Math.min(max, numericValue));
+                    GPG.state.isProgrammaticUpdate = false;
+                    updateCallback(true);
                 }
-                GPG.state.isProgrammaticUpdate = true;
-                if (slider) slider.value = Math.max(min, Math.min(max, numericValue));
-                GPG.state.isProgrammaticUpdate = false;
-                updateCallback(true);
             }
         });
 
@@ -54,7 +53,10 @@ window.GPG = window.GPG || {};
             } else if (numericValue > max) {
                 numericValue = max;
             }
-            const finalValue = input.classList.contains('increment-value-inline') ? Math.round(numericValue) : parseFloat(numericValue.toFixed(input.step && input.step.includes('.') ? String(input.step).split('.')[1].length : 0));
+
+            const step = input.step;
+            const decimals = (step && step.includes('.')) ? step.split('.')[1].length : 0;
+            const finalValue = Number(numericValue.toFixed(decimals)); // Use Number() to remove trailing .0
 
             GPG.state.isProgrammaticUpdate = true;
             input.value = finalValue;
@@ -67,18 +69,22 @@ window.GPG = window.GPG || {};
 
     GPG.events = {
         bindEventListeners: function () {
-            // Picker Controls
-            const updateFromPicker = (isSlider) => {
+            const updateFromHsl = (isSlider, param) => GPG.handlers.updateFromHslPicker(isSlider, param);
+            const updateFromOklch = (isSlider, param) => GPG.handlers.updateFromOklchPicker(isSlider, param);
+
+            const createUpdateCallback = (paramHsl, paramOklch) => (isSlider) => {
                 if (GPG.state.activePickerMode === 'hsl') {
-                    GPG.handlers.updateFromHslPicker(isSlider);
+                    updateFromHsl(isSlider, paramHsl);
                 } else {
-                    GPG.handlers.updateFromOklchPicker(isSlider);
+                    updateFromOklch(isSlider, paramOklch);
                 }
             };
-            setupSliderInputPair(GPG.elements.pickerSlider1, GPG.elements.pickerInput1, updateFromPicker);
-            setupSliderInputPair(GPG.elements.pickerSlider2, GPG.elements.pickerInput2, updateFromPicker);
-            setupSliderInputPair(GPG.elements.pickerSlider3, GPG.elements.pickerInput3, updateFromPicker);
-            setupSliderInputPair(GPG.elements.pickerOpacitySlider, GPG.elements.pickerOpacityInput, updateFromPicker);
+
+            // Picker Controls
+            setupSliderInputPair(GPG.elements.pickerSlider1, GPG.elements.pickerInput1, createUpdateCallback('h', 'h'));
+            setupSliderInputPair(GPG.elements.pickerSlider2, GPG.elements.pickerInput2, createUpdateCallback('s', 'c'));
+            setupSliderInputPair(GPG.elements.pickerSlider3, GPG.elements.pickerInput3, createUpdateCallback('l', 'l'));
+            setupSliderInputPair(GPG.elements.pickerOpacitySlider, GPG.elements.pickerOpacityInput, createUpdateCallback('o', 'o'));
 
             if (GPG.elements.colorStringInput) {
                 const input = GPG.elements.colorStringInput;

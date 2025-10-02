@@ -11,9 +11,11 @@ window.GPG = window.GPG || {};
          * @param {number} p2 - Saturation (HSL) or Chroma % (OKLCH).
          * @param {number} p3 - Lightness (HSL/OKLCH).
          * @param {number} opacityPercent - Opacity from 0 to 100.
+         * @param {object} [options={}] - Additional options.
+         * @param {string} [options.param] - The specific UI parameter being changed ('l', 'c', 'h').
          * @returns {GoatColor} A valid GoatColor instance.
          */
-        createFromPicker: function (mode, p1, p2, p3, opacityPercent) {
+        createFromPicker: function (mode, p1, p2, p3, opacityPercent, options = {}) {
             if (mode === 'hsl') {
                 let h = p1, s = p2, l = p3;
                 if (s > 0) {
@@ -25,9 +27,17 @@ window.GPG = window.GPG || {};
             } else { // oklch
                 let l = p3, cPercent = p2, h = p1;
                 cPercent = Math.max(0, Math.min(100, cPercent));
+                let cAbsolute;
 
-                const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                let cAbsolute = (cPercent / 100) * maxAbsC;
+                // If Lightness or Hue are changing, preserve the old absolute chroma
+                // to provide a more intuitive user experience as the gamut changes.
+                if ((options.param === 'l' || options.param === 'h') && GPG.state.currentGoatColor && GPG.state.currentGoatColor.isValid()) {
+                    cAbsolute = GPG.state.currentGoatColor.toOklch().c;
+                } else {
+                    // If Chroma is changing or there's no prior state, calculate from the UI percentage.
+                    const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+                    cAbsolute = (cPercent / 100) * maxAbsC;
+                }
 
                 let hueForCreation = h;
                 if (cAbsolute < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
