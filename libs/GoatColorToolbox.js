@@ -699,6 +699,8 @@
                 case "hslalegacy": return this.toHslaString(true);
                 case "oklch": return this.toOklchString();
                 case "oklcha": return this.toOklchaString();
+                case "oklch_frac": return this._toOklchStringFractional(false);
+                case "oklcha_frac": return this._toOklchStringFractional(true);
                 case "auto":
                 default:
                     if (this.a < 1) {
@@ -717,6 +719,30 @@
                     if (this.input && typeof this.input === 'string' && this.input.toLowerCase().startsWith("rgb")) return this.toRgbString();
                     return this.toHex();
             }
+        }
+
+        _toOklchStringFractional(includeAlpha = false) {
+            if (!this.valid) return this.error || "Invalid Color";
+            const oklcha = this.toOklcha();
+
+            let lStr = round(oklcha.l / 100, 3).toString();
+            if (lStr.startsWith("0.")) lStr = lStr.substring(1);
+
+            let cStr = round(oklcha.c, 3).toString();
+            if (cStr.startsWith("0.")) cStr = cStr.substring(1);
+
+            const hStr = round(oklcha.h, 0);
+
+            if (!includeAlpha || this.a === 1) {
+                return `oklch(${lStr} ${cStr} ${hStr})`;
+            }
+
+            const tempInstanceForAlpha = new GoatColorInternal(null);
+            tempInstanceForAlpha.a = this.a;
+            tempInstanceForAlpha._alphaInputStyleHint = ALPHA_STYLE_HINT_NUMBER;
+            const aStr = tempInstanceForAlpha._getAlphaString();
+
+            return `oklch(${lStr} ${cStr} ${hStr} / ${aStr})`;
         }
 
         /**

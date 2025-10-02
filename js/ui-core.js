@@ -151,14 +151,18 @@ GPG.ui = GPG.ui || {};
                 return;
             }
 
-            let hexOutputValue = colorToDisplay.toHexaShort();
+            // Clone the color and set the alpha style hint to number for consistent fractional display in UI
+            const displayColor = GoatColor(colorToDisplay.toRgbaString());
+            displayColor.setAlpha(displayColor.a, GoatColor.ALPHA_STYLE_HINT_NUMBER);
+
+            let hexOutputValue = displayColor.toHexaShort();
             if (!hexOutputValue) {
-                hexOutputValue = colorToDisplay.a < 1 ? colorToDisplay.toHexa() : colorToDisplay.toHexShort() || colorToDisplay.toHex();
+                hexOutputValue = displayColor.a < 1 ? displayColor.toHexa() : displayColor.toHexShort() || displayColor.toHex();
             }
             GPG.elements.outputSpans.hex.textContent = hexOutputValue;
-            GPG.elements.outputSpans.hsl.textContent = colorToDisplay.toHslaString();
-            GPG.elements.outputSpans.rgb.textContent = colorToDisplay.toRgbaString();
-            GPG.elements.outputSpans.oklch.textContent = colorToDisplay.toOklchaString();
+            GPG.elements.outputSpans.hsl.textContent = GPG.utils.getFormattedColorString(displayColor, 'hsl');
+            GPG.elements.outputSpans.rgb.textContent = GPG.utils.getFormattedColorString(displayColor, 'rgb');
+            GPG.elements.outputSpans.oklch.textContent = GPG.utils.getFormattedColorString(displayColor, 'oklch');
         },
 
         updateUiElementValue: function (element, value) {

@@ -22,7 +22,7 @@ window.GPG = window.GPG || {};
                 case "rgb":
                     return hasOpacity ? colorInstance.toRgbaString() : colorInstance.toRgbString();
                 case "oklch":
-                    return hasOpacity ? colorInstance.toOklchaString() : colorInstance.toOklchString();
+                    return hasOpacity ? colorInstance.toString('oklcha_frac') : colorInstance.toString('oklch_frac');
                 case "hex":
                 default:
                     return hasOpacity ? colorInstance.toHexa() : colorInstance.toHex();

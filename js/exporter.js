@@ -38,7 +38,7 @@ window.GPG = window.GPG || {};
             return null;
         }
 
-        const opacityStyleHint = GPG.state.currentGoatColor._alphaInputStyleHint || GoatColor.ALPHA_STYLE_HINT_NUMBER;
+        const opacityStyleHint = GoatColor.ALPHA_STYLE_HINT_NUMBER;
 
         let outputItems = [];
         validColors.forEach((colorInstance, index) => {
@@ -47,6 +47,25 @@ window.GPG = window.GPG || {};
             outputItems.push(individualColorFormatter(colorInstance, index, formattedColorString, exportFormat));
         });
         return outputItems.join('');
+    }
+
+    function generatePlainColorListString() {
+        const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
+        const colors = GPG.state.paintboxColors;
+        const validColors = colors.filter(c => c && c.isValid());
+
+        if (validColors.length === 0) {
+            return null;
+        }
+
+        const opacityStyleHint = GoatColor.ALPHA_STYLE_HINT_NUMBER;
+
+        let outputItems = [];
+        validColors.forEach((colorInstance) => {
+            colorInstance.setAlpha(colorInstance.a, opacityStyleHint);
+            outputItems.push(GPG.utils.getFormattedColorString(colorInstance, exportFormat));
+        });
+        return outputItems.join('\n');
     }
 
     function generateCssString() {
@@ -89,6 +108,7 @@ window.GPG = window.GPG || {};
 
     GPG.exporter = {
         generateCssString: generateCssString,
+        generatePlainColorListString: generatePlainColorListString,
 
         exportCssFile: function () {
             const cssContent = generateCssString();

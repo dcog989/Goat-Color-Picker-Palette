@@ -222,6 +222,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 _provideButtonFeedback(GPG.elements.copyTheoryToPaintboxBtn, false, "No valid colors");
             }
         },
+
         copyPaletteToPaintbox: function () {
             const button = GPG.elements.addPaletteToPaintboxBtn;
             if (GPG.state.generatedColors.length === 0) {
@@ -256,6 +257,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 _provideButtonFeedback(button, false, "No valid colors");
             }
         },
+
         handlePaintboxExport: function () {
             const button = GPG.elements.exportActionButton;
             const destination = document.querySelector('input[name="export-destination"]:checked').value;
@@ -271,9 +273,9 @@ window.GPG = window.GPG || {}; (function (GPG) {
             } else if (destination === 'xml-file') {
                 GPG.exporter.exportXmlFile();
             } else if (destination === 'clipboard') {
-                const cssContent = GPG.exporter.generateCssString();
-                if (cssContent) {
-                    navigator.clipboard.writeText(cssContent).then(() => {
+                const plainTextContent = GPG.exporter.generatePlainColorListString();
+                if (plainTextContent) {
+                    navigator.clipboard.writeText(plainTextContent).then(() => {
                         _provideButtonFeedback(button, true, "Copied!");
                     }).catch(() => {
                         _provideButtonFeedback(button, false, "Failed!");
@@ -281,6 +283,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 }
             }
         },
+
         resetDragState: function () {
             if (GPG.state.draggedItem.element) {
                 GPG.state.draggedItem.element.classList.remove("dragging");
@@ -289,6 +292,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             document.querySelectorAll('.drag-over, .drag-over-bin, .drag-over-main-target')
                 .forEach(el => el.classList.remove('drag-over', 'drag-over-bin', 'drag-over-main-target'));
         },
+
         handlePaintboxBinClick: function () {
             if (GPG.state.draggedItem.element) return;
 
@@ -342,6 +346,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             }
             GPG.handlers.resetDragState();
         },
+
         handleCopyButtonClick: function (event) {
             const button = event.target.closest(".copy-btn");
             if (!button || !button.dataset.target) return;
@@ -379,5 +384,6 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 setTimeout(restoreButtonState, 2000);
             }
         }
+
     };
 }(window.GPG));
