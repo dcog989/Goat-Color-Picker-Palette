@@ -4,6 +4,33 @@ GPG.ui = GPG.ui || {};
 (function (GPG) {
     'use strict';
 
+    function _applyColorToSwatchElement(element, colorInstance) {
+        element.innerHTML = ""; // Clear existing content
+
+        const currentGC = (colorInstance && colorInstance.isValid()) ? colorInstance : null;
+
+        if (currentGC) {
+            const hex = currentGC.toHex().toUpperCase();
+            element.title = `${hex}\nDrag or click to select.`;
+            element.dataset.color = currentGC.toHexa();
+
+            const checkerboardDiv = document.createElement("div");
+            checkerboardDiv.className = "checkerboard-element";
+            checkerboardDiv.style.opacity = (1 - currentGC.a).toFixed(2);
+
+            const colorOverlayDiv = document.createElement("div");
+            colorOverlayDiv.className = "color-overlay-element";
+            colorOverlayDiv.style.backgroundColor = currentGC.toRgbaString();
+
+            element.appendChild(checkerboardDiv);
+            element.appendChild(colorOverlayDiv);
+        } else {
+            element.title = "Empty";
+            element.dataset.color = "";
+            element.style.backgroundColor = "var(--color-bg-input)";
+        }
+    }
+
     function _addDragListenersToSwatch(swatch) {
         swatch.addEventListener("dragstart", (e) => {
             GPG.state.draggedItem.element = e.currentTarget;
@@ -105,19 +132,7 @@ GPG.ui = GPG.ui || {};
             swatch.draggable = true;
             if (index !== -1) swatch.dataset.index = index;
 
-            const currentGC = (colorInstance && colorInstance.isValid()) ? colorInstance : null;
-
-            if (currentGC) {
-                const hex = currentGC.toHex().toUpperCase();
-                const hexa = currentGC.toHexa();
-                swatch.style.backgroundColor = hexa;
-                swatch.title = `${hex}\nDrag or click to select.`;
-                swatch.dataset.color = hexa;
-            } else {
-                swatch.style.backgroundColor = "var(--color-bg-input)";
-                swatch.title = "Empty";
-                swatch.dataset.color = "";
-            }
+            _applyColorToSwatchElement(swatch, colorInstance);
 
             _addDragListenersToSwatch(swatch);
             if (className !== 'color-input-main') {
@@ -200,17 +215,9 @@ GPG.ui = GPG.ui || {};
             const index = parseInt(swatchElement.dataset.index, 10);
             GPG.state.paintboxColors[index] = (goatColorInstance && goatColorInstance.isValid()) ? goatColorInstance : null;
 
-            if (goatColorInstance && goatColorInstance.isValid()) {
-                const hex = goatColorInstance.toHex().toUpperCase();
-                const hexa = goatColorInstance.toHexa();
-                swatchElement.style.backgroundColor = hexa;
-                swatchElement.title = `${hex}\nDrag or click to select.`;
-                swatchElement.dataset.color = hexa;
-            } else {
-                swatchElement.style.backgroundColor = "var(--color-bg-input)";
-                swatchElement.title = "Empty";
-                swatchElement.dataset.color = "";
-            }
+            swatchElement.style.backgroundColor = ''; // Remove direct background color
+            _applyColorToSwatchElement(swatchElement, GPG.state.paintboxColors[index]);
+
             const hasColors = GPG.state.paintboxColors.some((c) => c && c.isValid());
             GPG.elements.exportActionButton.disabled = !hasColors;
         }
