@@ -60,7 +60,6 @@ GPG.ui = GPG.ui || {};
         GPG.elements.colorStringInput.classList.remove('invalid');
 
         GPG.elements.colorPreviewBox_colorOverlay.style.backgroundColor = masterColor.toRgbaString();
-        GPG.elements.colorPreviewBox_checkerboard.style.opacity = (1 - masterColor.a).toFixed(2);
     }
 
 

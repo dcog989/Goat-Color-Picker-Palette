@@ -16,7 +16,6 @@ GPG.ui = GPG.ui || {};
 
             const checkerboardDiv = document.createElement("div");
             checkerboardDiv.className = "checkerboard-element";
-            checkerboardDiv.style.opacity = (1 - currentGC.a).toFixed(2);
 
             const colorOverlayDiv = document.createElement("div");
             colorOverlayDiv.className = "color-overlay-element";
@@ -87,49 +86,6 @@ GPG.ui = GPG.ui || {};
             GPG.palette.generate();
             GPG.handlers.generateAndDisplayTheoryPalette();
         });
-    }
-
-    function _addColorsToPaintbox(colors, button) {
-        if (!colors || colors.length === 0) {
-            _provideButtonFeedback(button, false, "No Colors!");
-            return;
-        }
-
-        let appendedCount = 0;
-        let paintboxWasFull = false;
-
-        for (const color of colors) {
-            if (color && color.isValid()) {
-                let emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
-
-                // If no empty slot, try to add a new one
-                if (emptyIdx === -1 && GPG.state.paintboxColors.length < GPG.PAINTBOX_MAX_SWATCHES) {
-                    GPG.ui.addSwatchToPaintbox(null); // Add a new empty swatch
-                    emptyIdx = GPG.state.paintboxColors.length - 1; // It's the last one
-                }
-
-                if (emptyIdx !== -1) {
-                    const targetChild = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(emptyIdx));
-                    if (targetChild) {
-                        GPG.ui.updatePaintboxSwatchUI(targetChild, color);
-                        appendedCount++;
-                    }
-                } else {
-                    paintboxWasFull = true;
-                    break; // Stop if paintbox is truly full
-                }
-            }
-        }
-
-        if (appendedCount > 0 && paintboxWasFull) {
-            _provideButtonFeedback(button, true, "Partial Add");
-        } else if (appendedCount > 0 && !paintboxWasFull) {
-            _provideButtonFeedback(button, true, "Added!");
-        } else if (appendedCount === 0 && paintboxWasFull) {
-            _provideButtonFeedback(button, false, "Full!");
-        } else if (appendedCount === 0 && !paintboxWasFull && colors.length > 0) {
-            _provideButtonFeedback(button, false, "No valid colors");
-        }
     }
 
     function _addDropListenersToPaintboxSwatch(swatch) {
@@ -203,6 +159,7 @@ GPG.ui = GPG.ui || {};
             return swatch;
         },
 
+
         initializePaintbox: function () {
             // Remove only old swatches, keeping the bin element
             GPG.elements.paintboxGrid.querySelectorAll('.paintbox-swatch').forEach(swatch => swatch.remove());
@@ -225,7 +182,6 @@ GPG.ui = GPG.ui || {};
 
             const hexForTooltip = swatchGoatColor.toHex().toUpperCase();
             const swatchRgba = swatchGoatColor.toRgba();
-            const o = swatchGoatColor.a;
 
             const colorItem = document.createElement("div");
             colorItem.classList.add("color-item");
@@ -254,7 +210,6 @@ GPG.ui = GPG.ui || {};
 
             const checkerboardDiv = document.createElement("div");
             checkerboardDiv.classList.add("checkerboard-element");
-            checkerboardDiv.style.opacity = (1 - o).toFixed(2);
 
             const colorOverlayDiv = document.createElement("div");
             colorOverlayDiv.classList.add("color-overlay-element");
