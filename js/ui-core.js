@@ -269,22 +269,11 @@ GPG.ui = GPG.ui || {};
             const select = GPG.elements.varyParamSelect;
             if (!select || !GPG.state.currentGoatColor || !GPG.state.currentGoatColor.isValid()) return;
 
+            const activeMode = GPG.state.activePickerMode;
             const previousValue = select.value;
             select.innerHTML = ''; // Clear existing options
 
-            const options = GPG.state.activePickerMode === 'hsl'
-                ? [
-                    { value: 'hue', text: 'Hue' },
-                    { value: 'saturation', text: 'Saturation' },
-                    { value: 'lightness', text: 'Lightness' },
-                    { value: 'opacity', text: 'Alpha' }
-                ]
-                : [ // oklch
-                    { value: 'oklch_l', text: 'Lightness' },
-                    { value: 'oklch_c', text: 'Chroma' },
-                    { value: 'oklch_h', text: 'Hue' },
-                    { value: 'opacity', text: 'Alpha' }
-                ];
+            const options = GPG.PALETTE_VARY_PARAMS[activeMode];
 
             options.forEach(optData => {
                 const option = document.createElement('option');
@@ -294,34 +283,34 @@ GPG.ui = GPG.ui || {};
             });
 
             // Try to restore selection
-            const valueMap = {
-                'hue': 'oklch_h', 'oklch_h': 'hue',
-                'saturation': 'oklch_c', 'oklch_c': 'saturation',
-                'lightness': 'oklch_l', 'oklch_l': 'lightness',
-                'opacity': 'opacity'
-            };
-            const equivalentValue = valueMap[previousValue];
+            const currentOptionsValues = options.map(opt => opt.value);
+            let newSelection = '';
 
-            if (options.some(opt => opt.value === previousValue)) {
-                select.value = previousValue;
-            } else if (equivalentValue && options.some(opt => opt.value === equivalentValue)) {
-                select.value = equivalentValue;
+            if (currentOptionsValues.includes(previousValue)) {
+                newSelection = previousValue;
             } else {
-                select.value = GPG.state.activePickerMode === 'hsl' ? 'saturation' : 'oklch_l';
+                const otherMode = activeMode === 'hsl' ? 'oklch' : 'hsl';
+                const previousOptionData = GPG.PALETTE_VARY_PARAMS[otherMode].find(opt => opt.value === previousValue);
+                if (previousOptionData && currentOptionsValues.includes(previousOptionData.equivalent)) {
+                    newSelection = previousOptionData.equivalent;
+                }
             }
 
+            select.value = newSelection || (activeMode === 'hsl' ? 'saturation' : 'oklch_l');
+
             // Disable hue option if color is achromatic
-            const isAchromatic = GPG.state.activePickerMode === 'hsl'
+            const isAchromatic = activeMode === 'hsl'
                 ? GPG.state.currentGoatColor.toHsl().s < 0.1
                 : GPG.state.currentGoatColor.toOklch().c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD;
 
-            const hueOptionValue = GPG.state.activePickerMode === 'hsl' ? 'hue' : 'oklch_h';
-            const hueOption = select.querySelector(`option[value="${hueOptionValue}"]`);
-
-            if (hueOption) {
-                hueOption.disabled = isAchromatic;
-                if (isAchromatic && hueOption.selected) {
-                    select.value = GPG.state.activePickerMode === 'hsl' ? 'saturation' : 'oklch_l';
+            const hueOptionConfig = options.find(opt => opt.isHue);
+            if (hueOptionConfig) {
+                const hueOption = select.querySelector(`option[value="${hueOptionConfig.value}"]`);
+                if (hueOption) {
+                    hueOption.disabled = isAchromatic;
+                    if (isAchromatic && hueOption.selected) {
+                        select.value = activeMode === 'hsl' ? 'saturation' : 'oklch_l';
+                    }
                 }
             }
         },

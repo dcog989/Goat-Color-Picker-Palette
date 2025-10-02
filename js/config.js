@@ -16,5 +16,20 @@ window.GPG = window.GPG || {};
     GPG.PAINTBOX_COLS = 5;
     GPG.MONOCHROMATIC_PALETTE_SIZE = 5;
 
+    GPG.PALETTE_VARY_PARAMS = {
+        hsl: [
+            { value: 'hue', text: 'Hue', equivalent: 'oklch_h', isHue: true },
+            { value: 'saturation', text: 'Saturation', equivalent: 'oklch_c' },
+            { value: 'lightness', text: 'Lightness', equivalent: 'oklch_l' },
+            { value: 'opacity', text: 'Alpha', equivalent: 'opacity' }
+        ],
+        oklch: [
+            { value: 'oklch_l', text: 'Lightness', equivalent: 'lightness' },
+            { value: 'oklch_c', text: 'Chroma', equivalent: 'saturation' },
+            { value: 'oklch_h', text: 'Hue', equivalent: 'hue', isHue: true },
+            { value: 'opacity', text: 'Alpha', equivalent: 'opacity' }
+        ]
+    };
+
 
 }(window.GPG));
