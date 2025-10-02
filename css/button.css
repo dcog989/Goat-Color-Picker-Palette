@@ -7,8 +7,8 @@ Buttons
     border-radius: var(--radius-global);
     cursor: pointer;
     padding: 8px 15px;
-    background-color: hsl(var(--animation-base-hue), var(--button-saturation), 20%);
-    color: var(--text-highlight-on-dark);
+    background-color: var(--color-accent-main);
+    color: var(--color-text-on-accent);
     transition: filter 0.2s ease, background-color 0.3s ease-out, color 0.3s ease-out;
 }
 

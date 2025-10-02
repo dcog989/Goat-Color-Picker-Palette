@@ -27,6 +27,10 @@
     --button-saturation: 90%;
     --h1-block-lightness: 50%;
 
+    /* Accent Color - Updated dynamically via JS */
+    --color-accent-main: #4a4a4a;
+    --color-text-on-accent: #ffffff;
+
     /* Default Dark Theme Colors */
     --color-bg-button-hover: #666;
     --color-bg-button-disabled: #404040;

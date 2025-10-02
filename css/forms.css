@@ -43,9 +43,9 @@ legend {
 }
 
 .radio-group input[type="radio"]:checked + label {
-    background-color: hsl(var(--animation-base-hue), var(--animation-base-saturation), 20%);
-    border-color: white;
-    color: white;
+    background-color: var(--color-accent-main);
+    border-color: var(--color-text-on-accent);
+    color: var(--color-text-on-accent);
 }
 
 .radio-group label.disabled-control {
