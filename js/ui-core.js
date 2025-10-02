@@ -3,6 +3,67 @@ GPG.ui = GPG.ui || {};
 
 (function (GPG) {
     'use strict';
+
+    function _updateCssVariables(opaqueBaseColor) {
+        if (!opaqueBaseColor.isValid()) return;
+
+        const baseHsl = opaqueBaseColor.toHsl();
+        const roundedS = Math.round(baseHsl.s);
+        const roundedL = Math.round(baseHsl.l);
+        const isAchromatic = roundedS === 0 || roundedL === 0 || roundedL === 100;
+        let hueForCssVars = isAchromatic ? GPG.state.lastHslHue : Math.round(baseHsl.h);
+        const buttonSaturation = isAchromatic ? 0 : 90;
+
+        const rootStyle = document.documentElement.style;
+        rootStyle.setProperty("--animation-base-hue", `${hueForCssVars}deg`);
+        rootStyle.setProperty("--animation-base-saturation", `${roundedS}%`);
+        rootStyle.setProperty("--animation-base-lightness", `${roundedL}%`);
+        rootStyle.setProperty("--button-saturation", `${buttonSaturation}%`);
+    }
+
+    function _updateHslPickerControls(masterHsl) {
+        const hDisplayHsl = GPG.utils.normalizeHueForDisplay(masterHsl.s < 1 ? GPG.state.lastHslHue : masterHsl.h);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider1, hDisplayHsl);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput1, hDisplayHsl);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, Math.round(masterHsl.s));
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, Math.round(masterHsl.s));
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider3, Math.round(masterHsl.l));
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, Math.round(masterHsl.l));
+    }
+
+    function _updateOklchPickerControls(masterOklch) {
+        const hDisplayOklch = GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
+        const lDisplayOklch = Math.round(masterOklch.l);
+
+        if (lDisplayOklch > 0 && lDisplayOklch < 100) {
+            const maxCForCurrentLH = GoatColor.getMaxSRGBChroma(lDisplayOklch, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+            let cPercentDisplay = maxCForCurrentLH > 0.0001 ? (masterOklch.c / maxCForCurrentLH) * 100 : 0;
+            cPercentDisplay = Math.min(100, cPercentDisplay); // Clamp to 100
+            const cPercentDisplayRounded = cPercentDisplay.toFixed(1);
+            GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplayRounded);
+            GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, cPercentDisplayRounded);
+        }
+
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider3, lDisplayOklch);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, lDisplayOklch);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider1, hDisplayOklch);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput1, hDisplayOklch);
+    }
+
+    function _updateSharedPickerUI(masterColor) {
+        const currentAlphaPercent = Math.round(masterColor.a * 100);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerOpacitySlider, currentAlphaPercent);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerOpacityInput, currentAlphaPercent);
+
+        const colorString = GPG.state.activePickerMode === 'hsl' ? GPG.utils.getFormattedColorString(masterColor, 'hsl') : GPG.utils.getFormattedColorString(masterColor, 'oklch');
+        GPG.ui.updateUiElementValue(GPG.elements.colorStringInput, colorString);
+        GPG.elements.colorStringInput.classList.remove('invalid');
+
+        GPG.elements.colorPreviewBox_colorOverlay.style.backgroundColor = masterColor.toRgbaString();
+        GPG.elements.colorPreviewBox_checkerboard.style.opacity = (1 - masterColor.a).toFixed(2);
+    }
+
+
     Object.assign(GPG.ui, {
         showBinNotification: function (message, targetElement) {
             if (GPG.state.binClearState.notificationElement) GPG.state.binClearState.notificationElement.remove();
@@ -26,82 +87,35 @@ GPG.ui = GPG.ui || {};
 
         syncInstantUiFromState: function (options = {}) {
             const { source = 'external' } = options;
-
             const masterColor = GPG.state.currentGoatColor;
+
+            // Update global styles
             document.body.style.backgroundColor = masterColor.toRgbaString();
+            _updateCssVariables(masterColor.flatten());
 
-            const opaqueBaseColor = masterColor.flatten();
-            if (opaqueBaseColor.isValid()) {
-                const baseHsl = opaqueBaseColor.toHsl();
-                const roundedS = Math.round(baseHsl.s);
-                const roundedL = Math.round(baseHsl.l);
-                const isAchromatic = roundedS === 0 || roundedL === 0 || roundedL === 100;
-                let hueForCssVars = isAchromatic ? GPG.state.lastHslHue : Math.round(baseHsl.h);
-                const buttonSaturation = isAchromatic ? 0 : 90;
-
-                document.documentElement.style.setProperty("--animation-base-hue", `${hueForCssVars}deg`);
-                document.documentElement.style.setProperty("--animation-base-saturation", `${roundedS}%`);
-                document.documentElement.style.setProperty("--animation-base-lightness", `${roundedL}%`);
-                document.documentElement.style.setProperty("--button-saturation", `${buttonSaturation}%`);
-            }
-
-            const masterHsl = masterColor.toHsl();
-            const masterOklch = masterColor.toOklch();
-            const currentAlphaPercent = Math.round(masterColor.a * 100);
-
+            // Update picker-specific controls if the update did not originate from them
             if (GPG.state.activePickerMode === 'hsl') {
                 if (source !== 'hsl') {
-                    const hDisplayHsl = GPG.utils.normalizeHueForDisplay(masterHsl.s < 1 ? GPG.state.lastHslHue : masterHsl.h);
-                    this.updateUiElementValue(GPG.elements.pickerSlider1, hDisplayHsl);
-                    this.updateUiElementValue(GPG.elements.pickerInput1, hDisplayHsl);
-                    this.updateUiElementValue(GPG.elements.pickerSlider2, Math.round(masterHsl.s));
-                    this.updateUiElementValue(GPG.elements.pickerInput2, Math.round(masterHsl.s));
-                    this.updateUiElementValue(GPG.elements.pickerSlider3, Math.round(masterHsl.l));
-                    this.updateUiElementValue(GPG.elements.pickerInput3, Math.round(masterHsl.l));
+                    _updateHslPickerControls(masterColor.toHsl());
                 }
             } else { // oklch
                 if (source !== 'oklch') {
-                    const hDisplayOklch = GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
-                    const lDisplayOklch = Math.round(masterOklch.l);
-
-                    if (lDisplayOklch > 0 && lDisplayOklch < 100) {
-                        const maxCForCurrentLH = GoatColor.getMaxSRGBChroma(lDisplayOklch, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                        let cPercentDisplay = maxCForCurrentLH > 0.0001 ? (masterOklch.c / maxCForCurrentLH) * 100 : 0;
-
-                        // Clamp percentage to a max of 100 to account for floating point inaccuracies during color conversion round trips.
-                        cPercentDisplay = Math.min(100, cPercentDisplay);
-
-                        const cPercentDisplayRounded = cPercentDisplay.toFixed(1);
-                        this.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplayRounded);
-                        this.updateUiElementValue(GPG.elements.pickerInput2, cPercentDisplayRounded);
-                    }
-
-                    this.updateUiElementValue(GPG.elements.pickerSlider3, lDisplayOklch);
-                    this.updateUiElementValue(GPG.elements.pickerInput3, lDisplayOklch);
-                    this.updateUiElementValue(GPG.elements.pickerSlider1, hDisplayOklch);
-                    this.updateUiElementValue(GPG.elements.pickerInput1, hDisplayOklch);
+                    _updateOklchPickerControls(masterColor.toOklch());
                 }
             }
 
+            // Update Hue slider disabled state for OKLCH if needed
             if (GPG.state.activePickerMode === 'oklch') {
+                const masterOklch = masterColor.toOklch();
                 const lForStateCheck = (source === 'oklch' && !isNaN(parseInt(GPG.elements.pickerInput3.value, 10))) ? parseInt(GPG.elements.pickerInput3.value, 10) : Math.round(masterOklch.l);
-                const cPercentForStateCheck = (source === 'oklch' && !isNaN(parseFloat(GPG.elements.pickerInput2.value))) ? parseFloat(GPG.elements.pickerInput2.value) : (GoatColor.getMaxSRGBChroma(lForStateCheck, GPG.utils.normalizeHueForDisplay(masterOklch.h), GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE) > 0.0001 ? (masterOklch.c / GoatColor.getMaxSRGBChroma(lForStateCheck, GPG.utils.normalizeHueForDisplay(masterOklch.h), GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE)) * 100 : 0);
+                const maxC = GoatColor.getMaxSRGBChroma(lForStateCheck, GPG.utils.normalizeHueForDisplay(masterOklch.h), GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+                const cPercentForStateCheck = (source === 'oklch' && !isNaN(parseFloat(GPG.elements.pickerInput2.value))) ? parseFloat(GPG.elements.pickerInput2.value) : (maxC > 0.0001 ? (masterOklch.c / maxC) * 100 : 0);
                 const hForStateCheck = (source === 'oklch' && !isNaN(parseInt(GPG.elements.pickerInput1.value, 10))) ? parseInt(GPG.elements.pickerInput1.value, 10) : GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
                 GPG.ui.updateOklchHueSliderState(cPercentForStateCheck, lForStateCheck, hForStateCheck);
             }
 
-            this.updateUiElementValue(GPG.elements.pickerOpacitySlider, currentAlphaPercent);
-            this.updateUiElementValue(GPG.elements.pickerOpacityInput, currentAlphaPercent);
-
-            const colorString = GPG.state.activePickerMode === 'hsl' ? GPG.utils.getFormattedColorString(masterColor, 'hsl') : GPG.utils.getFormattedColorString(masterColor, 'oklch');
-            this.updateUiElementValue(GPG.elements.colorStringInput, colorString);
-            GPG.elements.colorStringInput.classList.remove('invalid');
-
-            const previewColorString = masterColor.toRgbaString();
-            GPG.elements.colorPreviewBox_colorOverlay.style.backgroundColor = previewColorString;
-            const checkerOpacity = (1 - masterColor.a).toFixed(2);
-            GPG.elements.colorPreviewBox_checkerboard.style.opacity = checkerOpacity;
-
+            // Update shared UI elements and outputs
+            _updateSharedPickerUI(masterColor);
             this.updateIncrementUI();
             this.updateColorOutputSpans();
             this.requestH1Update();
