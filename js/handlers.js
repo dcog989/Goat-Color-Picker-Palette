@@ -263,6 +263,46 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 }
             }
         },
+
+        showOklchInfoPopup: function () {
+            const template = document.getElementById('oklch-popup-template');
+            if (!template) return;
+
+            const popupFragment = template.content.cloneNode(true);
+            const popupOverlay = popupFragment.querySelector('.popup-overlay');
+            const closeButton = popupFragment.querySelector('.popup-close-btn');
+
+            function closePopup() {
+                popupOverlay.classList.remove('visible');
+                setTimeout(() => {
+                    if (document.body.contains(popupOverlay)) {
+                        document.body.removeChild(popupOverlay);
+                    }
+                }, 300); // match transition duration
+            }
+
+            closeButton.addEventListener('click', closePopup);
+            popupOverlay.addEventListener('click', (e) => {
+                if (e.target === popupOverlay) {
+                    closePopup();
+                }
+            });
+            document.addEventListener('keydown', function onKeydown(e) {
+                if (e.key === 'Escape') {
+                    closePopup();
+                    document.removeEventListener('keydown', onKeydown);
+                }
+            });
+
+
+            document.body.appendChild(popupFragment);
+
+            // Trigger transition
+            requestAnimationFrame(() => {
+                popupOverlay.classList.add('visible');
+            });
+        },
+
         resetDragState: function () {
             if (GPG.state.draggedItem.element) {
                 GPG.state.draggedItem.element.classList.remove("dragging");
@@ -271,6 +311,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             document.querySelectorAll('.drag-over, .drag-over-bin, .drag-over-main-target')
                 .forEach(el => el.classList.remove('drag-over', 'drag-over-bin', 'drag-over-main-target'));
         },
+
         handlePaintboxBinClick: function () {
             if (GPG.state.draggedItem.element) return;
 

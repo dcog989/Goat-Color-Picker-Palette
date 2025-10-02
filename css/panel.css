@@ -66,21 +66,13 @@ Panel Styles
 
 /* OKLCH Info Panel */
 #oklchInfoPanel {
-    opacity: 0;
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    overflow: hidden;
-    transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out, padding-top 0.3s ease-in-out, padding-bottom 0.3s ease-in-out, margin-top 0.3s ease-in-out, margin-bottom 0.3s ease-in-out;
+    display: none;
+    text-align: center;
+    padding-top: 10px;
 }
 
 #oklchInfoPanel.visible {
-    opacity: 1;
-    max-height: 500px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    display: block;
 }
 
 /* Color Output Panel */
@@ -125,4 +117,74 @@ Panel Styles
     flex-direction: column;
     gap: 15px;
     margin-top: 20px;
+}
+
+/* Popup / Modal for Info */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: hsla(0, 0%, 0%, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s 0.3s;
+}
+
+.popup-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+}
+
+.popup-content {
+    background-color: var(--color-accent-main);
+    color: var(--color-text-on-accent);
+    padding: 20px 30px;
+    border-radius: var(--radius-global);
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 5px 15px hsla(0, 0%, 0%, 0.4);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.popup-overlay.visible .popup-content {
+    transform: scale(1);
+}
+
+.popup-content ul {
+    padding-left: 20px;
+    text-align: left;
+}
+
+.popup-content li {
+    margin-bottom: 0.5em;
+}
+
+.popup-content p {
+    text-align: left;
+}
+
+.popup-close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 2.2em;
+    font-weight: bold;
+    color: var(--color-text-on-accent);
+    cursor: pointer;
+    line-height: 1;
+    padding: 5px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.popup-close-btn:hover {
+    opacity: 1;
 }

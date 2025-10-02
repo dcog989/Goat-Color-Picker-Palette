@@ -45,7 +45,8 @@ window.GPG = window.GPG || {};
             paintboxBin: "paintbox-bin",
             colorOutputContainer: "colorOutput",
             themeSelect: "theme-select",
-            exportActionButton: "export-action-button"
+            exportActionButton: "export-action-button",
+            oklchInfoButton: "oklch-info-button"
         };
 
         for (const key in elementIdMap) {
@@ -82,7 +83,8 @@ window.GPG = window.GPG || {};
             "harmonySelect", "copyTheoryToPaintboxBtn", "theoryPaletteSwatches",
             "paintboxGrid", "paintboxBin",
             "themeSelect",
-            "exportActionButton"
+            "exportActionButton",
+            "oklchInfoButton"
         ];
 
         let initFailed = false;

@@ -137,6 +137,8 @@ window.GPG = window.GPG || {};
                 if (GPG.elements.themeSelect.value === 'system') GPG.theme.applyTheme('system');
             });
 
+            GPG.elements.oklchInfoButton.addEventListener('click', GPG.handlers.showOklchInfoPopup);
+
             // Global Drag/Drop
             if (GPG.elements.colorPreviewBox) {
                 const box = GPG.elements.colorPreviewBox;

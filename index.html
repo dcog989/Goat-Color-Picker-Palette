@@ -141,16 +141,25 @@
         </div>
 
         <div class="info-panel" id="oklchInfoPanel">
-            <p><strong>Understanding OKLCH Chroma (C):</strong><br>
-                Chroma (C) controls the color's intensity or 'vividness'.
-            <ul>
-                <li><strong>Slider (0-100%):</strong> This adjusts Chroma. 100% targets a reference colorfulness (around 0.4 in absolute OKLCH, typical for sRGB's brightest colors).</li>
-                <li><strong>Dynamic Range with L & H:</strong> The actual range of Chroma (vividness) you can achieve is not constant. It changes significantly depending on the current Lightness (L) and Hue (H) values you've selected.</li>
-                <li><strong>Adaptive Slider Track:</strong> The gradient on the Chroma slider's track <strong>dynamically updates</strong>. This visual guide shows you the maximum Chroma available within the sRGB color space for your current L and H settings. If you set Chroma beyond this visible limit, the a will be clamped to the most vivid sRGB-displayable equivalent.</li>
-            </ul>
-            </p>
+            <button id="oklch-info-button" class="text-button">Understanding OKLCH Chroma...</button>
         </div>
     </div>
+
+    <template id="oklch-popup-template">
+        <div class="popup-overlay">
+            <div class="popup-content">
+                <button class="popup-close-btn" aria-label="Close dialog">&times;</button>
+                <p><strong>Understanding OKLCH Chroma (C):</strong><br>
+                    Chroma (C) controls the color's intensity or 'vividness'.
+                <ul>
+                    <li><strong>Slider (0-100%):</strong> This adjusts Chroma. 100% targets a reference colorfulness (around 0.4 in absolute OKLCH, typical for sRGB's brightest colors).</li>
+                    <li><strong>Dynamic Range with L & H:</strong> The actual range of Chroma (vividness) you can achieve is not constant. It changes significantly depending on the current Lightness (L) and Hue (H) values you've selected.</li>
+                    <li><strong>Adaptive Slider Track:</strong> The gradient on the Chroma slider's track <strong>dynamically updates</strong>. This visual guide shows you the maximum Chroma available within the sRGB color space for your current L and H settings. If you set Chroma beyond this visible limit, the a will be clamped to the most vivid sRGB-displayable equivalent.</li>
+                </ul>
+                </p>
+            </div>
+        </div>
+    </template>
 
     <script src="libs/GoatColorToolbox.js"></script>
     <script src="js/config.js"></script>

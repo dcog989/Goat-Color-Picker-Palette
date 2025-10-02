@@ -24,6 +24,20 @@ Buttons
     animation: none !important;
 }
 
+.text-button {
+    background: none;
+    border: none;
+    color: var(--color-text-page);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.9em;
+}
+
+.text-button:hover {
+    color: var(--color-accent-main);
+}
+
 .theory-controls {
     display: flex;
     flex-direction: column;
