@@ -31,5 +31,10 @@ window.GPG = window.GPG || {};
         ]
     };
 
+    GPG.PALETTE_GENERATOR_RANGES = {
+        lightness: { min: 10, range: 80 }, // Generates lightness from 10% to 90%
+        chroma: { min: 5, range: 95 }      // Generates chroma % from 5% to 100%
+    };
+
 
 }(window.GPG));

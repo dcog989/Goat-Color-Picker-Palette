@@ -53,7 +53,7 @@ window.GPG = window.GPG || {};
                         s = stepPercent * 100;
                         break;
                     case 'lightness':
-                        l = 10 + (stepPercent * 80); // Range 10-90
+                        l = GPG.PALETTE_GENERATOR_RANGES.lightness.min + (stepPercent * GPG.PALETTE_GENERATOR_RANGES.lightness.range);
                         break;
                     case 'opacity':
                         o = stepPercent * 100;
@@ -64,10 +64,10 @@ window.GPG = window.GPG || {};
                 let l = baseOklch.l, cPercent = baseChromaPercent, h = stableOklchHue, o = baseOpacityPercent;
                 switch (varyParam) {
                     case 'oklch_l':
-                        l = 10 + (stepPercent * 80); // Range 10-90
+                        l = GPG.PALETTE_GENERATOR_RANGES.lightness.min + (stepPercent * GPG.PALETTE_GENERATOR_RANGES.lightness.range);
                         break;
                     case 'oklch_c':
-                        cPercent = 5 + (stepPercent * 95); // Range 5-100 to avoid gray
+                        cPercent = GPG.PALETTE_GENERATOR_RANGES.chroma.min + (stepPercent * GPG.PALETTE_GENERATOR_RANGES.chroma.range);
                         break;
                     case 'oklch_h':
                         h = (i / numTotalSwatches) * 360;
@@ -96,6 +96,7 @@ window.GPG = window.GPG || {};
         }
         GPG.elements.paletteContainer.appendChild(fragment);
     }
+
     GPG.palette = {
         generate: generatePalette
     };
