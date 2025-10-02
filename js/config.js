@@ -3,7 +3,7 @@ window.GPG = window.GPG || {};
 (function (GPG) {
     'use strict';
 
-    GPG.APP_VERSION = "1.1.1";
+    GPG.APP_VERSION = "1.2.0";
     GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE = 0.4;
     GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD = 0.005;
     GPG.SVG_COPY_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">
@@ -15,6 +15,7 @@ window.GPG = window.GPG || {};
     GPG.PAINTBOX_ROWS = 3;
     GPG.PAINTBOX_COLS = 5;
     GPG.MONOCHROMATIC_PALETTE_SIZE = 5;
+    GPG.PAINTBOX_MAX_SWATCHES = 44;
 
     GPG.PALETTE_VARY_PARAMS = {
         hsl: [
@@ -35,6 +36,5 @@ window.GPG = window.GPG || {};
         lightness: { min: 10, range: 80 }, // Generates lightness from 10% to 90%
         chroma: { min: 5, range: 95 }      // Generates chroma % from 5% to 100%
     };
-
 
 }(window.GPG));

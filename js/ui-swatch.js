@@ -89,6 +89,49 @@ GPG.ui = GPG.ui || {};
         });
     }
 
+    function _addColorsToPaintbox(colors, button) {
+        if (!colors || colors.length === 0) {
+            _provideButtonFeedback(button, false, "No Colors!");
+            return;
+        }
+
+        let appendedCount = 0;
+        let paintboxWasFull = false;
+
+        for (const color of colors) {
+            if (color && color.isValid()) {
+                let emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
+
+                // If no empty slot, try to add a new one
+                if (emptyIdx === -1 && GPG.state.paintboxColors.length < GPG.PAINTBOX_MAX_SWATCHES) {
+                    GPG.ui.addSwatchToPaintbox(null); // Add a new empty swatch
+                    emptyIdx = GPG.state.paintboxColors.length - 1; // It's the last one
+                }
+
+                if (emptyIdx !== -1) {
+                    const targetChild = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(emptyIdx));
+                    if (targetChild) {
+                        GPG.ui.updatePaintboxSwatchUI(targetChild, color);
+                        appendedCount++;
+                    }
+                } else {
+                    paintboxWasFull = true;
+                    break; // Stop if paintbox is truly full
+                }
+            }
+        }
+
+        if (appendedCount > 0 && paintboxWasFull) {
+            _provideButtonFeedback(button, true, "Partial Add");
+        } else if (appendedCount > 0 && !paintboxWasFull) {
+            _provideButtonFeedback(button, true, "Added!");
+        } else if (appendedCount === 0 && paintboxWasFull) {
+            _provideButtonFeedback(button, false, "Full!");
+        } else if (appendedCount === 0 && !paintboxWasFull && colors.length > 0) {
+            _provideButtonFeedback(button, false, "No valid colors");
+        }
+    }
+
     function _addDropListenersToPaintboxSwatch(swatch) {
         swatch.addEventListener("dragover", (e) => {
             e.preventDefault();
@@ -144,17 +187,31 @@ GPG.ui = GPG.ui || {};
             return swatch;
         },
 
+        addSwatchToPaintbox: function (colorInstance) {
+            const newIndex = GPG.state.paintboxColors.length;
+            if (newIndex >= GPG.PAINTBOX_MAX_SWATCHES) {
+                return null; // Do not add if max is reached
+            }
+
+            GPG.state.paintboxColors.push(null); // Add placeholder to state array first
+            const swatch = GPG.ui.createDraggableSwatchElement(null, "paintbox-swatch", true, newIndex);
+            GPG.elements.paintboxGrid.insertBefore(swatch, GPG.elements.paintboxBin);
+
+            if (colorInstance && colorInstance.isValid()) {
+                GPG.ui.updatePaintboxSwatchUI(swatch, colorInstance);
+            }
+            return swatch;
+        },
+
         initializePaintbox: function () {
             // Remove only old swatches, keeping the bin element
             GPG.elements.paintboxGrid.querySelectorAll('.paintbox-swatch').forEach(swatch => swatch.remove());
 
-            const numSwatches = GPG.PAINTBOX_ROWS * GPG.PAINTBOX_COLS - 1;
-            GPG.state.paintboxColors = Array(numSwatches).fill(null);
+            const initialSwatchCount = GPG.PAINTBOX_ROWS * GPG.PAINTBOX_COLS - 1;
+            GPG.state.paintboxColors = []; // Reset state
 
-            for (let i = 0; i < numSwatches; i++) {
-                const swatch = GPG.ui.createDraggableSwatchElement(null, "paintbox-swatch", true, i);
-                // Insert new swatches before the bin element
-                GPG.elements.paintboxGrid.insertBefore(swatch, GPG.elements.paintboxBin);
+            for (let i = 0; i < initialSwatchCount; i++) {
+                this.addSwatchToPaintbox(null);
             }
 
             GPG.elements.exportActionButton.disabled = true;
@@ -221,5 +278,6 @@ GPG.ui = GPG.ui || {};
             const hasColors = GPG.state.paintboxColors.some((c) => c && c.isValid());
             GPG.elements.exportActionButton.disabled = !hasColors;
         }
+
     });
 }(window.GPG));

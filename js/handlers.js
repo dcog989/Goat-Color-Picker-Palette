@@ -18,7 +18,14 @@ window.GPG = window.GPG || {}; (function (GPG) {
         let paintboxWasFull = false;
         for (const color of colors) {
             if (color && color.isValid()) {
-                const emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
+                let emptyIdx = GPG.state.paintboxColors.findIndex(c => !c || !c.isValid());
+
+                // If no empty slot, try to add a new one
+                if (emptyIdx === -1 && GPG.state.paintboxColors.length < GPG.PAINTBOX_MAX_SWATCHES) {
+                    GPG.ui.addSwatchToPaintbox(null); // Add a new empty swatch
+                    emptyIdx = GPG.state.paintboxColors.length - 1; // It's the last one
+                }
+
                 if (emptyIdx !== -1) {
                     const targetChild = Array.from(GPG.elements.paintboxGrid.children).find(child => child.dataset.index === String(emptyIdx));
                     if (targetChild) {
