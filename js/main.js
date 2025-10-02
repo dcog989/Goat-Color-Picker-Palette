@@ -48,7 +48,7 @@ window.GPG = window.GPG || {};
         GPG.state.lastHslHue = initialHsl.h;
         GPG.state.lastOklchHue = initialOklch.h;
 
-        GPG.elements.swatchCountInput.value = 6;
+        GPG.elements.swatchCountInput.value = 8;
 
         document.getElementById("format-hsl").checked = true;
 
