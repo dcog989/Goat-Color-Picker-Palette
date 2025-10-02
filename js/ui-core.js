@@ -122,30 +122,9 @@ GPG.ui = GPG.ui || {};
                 colorString = `hsl(${h} ${s}% ${l}%${alphaStr})`;
 
             } else if (source === 'oklch') {
-                const lVal = parseFloat(GPG.elements.pickerInput3.value);
-                const cPercent = parseFloat(GPG.elements.pickerInput2.value);
-                let hVal = parseInt(GPG.elements.pickerInput1.value, 10);
-                const oPercent = parseInt(GPG.elements.pickerOpacityInput.value, 10);
-                if (hVal === 360) hVal = 0;
-
-                const maxAbsC = GoatColor.getMaxSRGBChroma(lVal, hVal, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                const cAbsolute = (cPercent / 100) * maxAbsC;
-
-                const round = (val, dec) => Number(Math.round(val + "e" + dec) + "e-" + dec);
-
-                let lStr = round(lVal / 100, 3).toString();
-                if (lStr.startsWith("0.")) lStr = lStr.substring(1);
-                let cStr = round(cAbsolute, 3).toString();
-                if (cStr.startsWith("0.")) cStr = cStr.substring(1);
-
-                if (oPercent === 100) {
-                    colorString = `oklch(${lStr} ${cStr} ${hVal})`;
-                } else {
-                    let aStr = round(oPercent / 100, 3).toString();
-                    if (aStr.startsWith("0.")) aStr = aStr.substring(1);
-                    colorString = `oklch(${lStr} ${cStr} ${hVal} / ${aStr})`;
-                }
-
+                // The currentGoatColor was just updated from the picker, so we can use it
+                // and the utility function will format it correctly.
+                colorString = GPG.utils.getFormattedColorString(masterColor, 'oklch');
             } else { // Source is external (e.g. text input, swatch click)
                 colorString = GPG.state.activePickerMode === 'hsl' ? masterColor.toHslaString() : GPG.utils.getFormattedColorString(masterColor, 'oklch');
             }
