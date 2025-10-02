@@ -97,7 +97,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
         updateFromOklchPicker: function (isSliderEvent = false) {
             if (GPG.state.isProgrammaticUpdate) return;
 
-            const l = parseInt(GPG.elements.pickerInput3.value, 10);
+            const l = parseFloat(GPG.elements.pickerInput3.value);
             const cPercent = parseFloat(GPG.elements.pickerInput2.value);
             const h = parseInt(GPG.elements.pickerInput1.value, 10);
             const o = parseInt(GPG.elements.pickerOpacityInput.value, 10);

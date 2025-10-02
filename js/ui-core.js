@@ -33,7 +33,7 @@ GPG.ui = GPG.ui || {};
 
     function _updateOklchPickerControls(masterOklch) {
         const hDisplayOklch = GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
-        const lDisplayOklch = Math.round(masterOklch.l);
+        const lDisplayOklch = parseFloat(masterOklch.l.toFixed(1));
 
         if (lDisplayOklch > 0 && lDisplayOklch < 100) {
             const maxCForCurrentLH = GoatColor.getMaxSRGBChroma(lDisplayOklch, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
@@ -106,7 +106,7 @@ GPG.ui = GPG.ui || {};
             // Update Hue slider disabled state for OKLCH if needed
             if (GPG.state.activePickerMode === 'oklch') {
                 const masterOklch = masterColor.toOklch();
-                const lForStateCheck = (source === 'oklch' && !isNaN(parseInt(GPG.elements.pickerInput3.value, 10))) ? parseInt(GPG.elements.pickerInput3.value, 10) : Math.round(masterOklch.l);
+                const lForStateCheck = (source === 'oklch' && !isNaN(parseFloat(GPG.elements.pickerInput3.value))) ? parseFloat(GPG.elements.pickerInput3.value) : masterOklch.l;
                 const maxC = GoatColor.getMaxSRGBChroma(lForStateCheck, GPG.utils.normalizeHueForDisplay(masterOklch.h), GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
                 const cPercentForStateCheck = (source === 'oklch' && !isNaN(parseFloat(GPG.elements.pickerInput2.value))) ? parseFloat(GPG.elements.pickerInput2.value) : (maxC > 0.0001 ? (masterOklch.c / maxC) * 100 : 0);
                 const hForStateCheck = (source === 'oklch' && !isNaN(parseInt(GPG.elements.pickerInput1.value, 10))) ? parseInt(GPG.elements.pickerInput1.value, 10) : GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);

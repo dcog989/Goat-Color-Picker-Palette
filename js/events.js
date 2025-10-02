@@ -6,7 +6,16 @@ window.GPG = window.GPG || {};
     function setupSliderInputPair(slider, input, updateCallback) {
         slider.addEventListener("input", () => {
             if (GPG.state.isProgrammaticUpdate) return;
-            let value = Math.round(parseFloat(slider.value));
+
+            let value;
+            const step = parseFloat(slider.step) || 1;
+            if (step < 1) {
+                const decimals = String(step).includes('.') ? String(step).split('.')[1].length : 0;
+                value = parseFloat(slider.value).toFixed(decimals);
+            } else {
+                value = Math.round(parseFloat(slider.value));
+            }
+
             GPG.state.isProgrammaticUpdate = true;
             input.value = value;
             GPG.state.isProgrammaticUpdate = false;

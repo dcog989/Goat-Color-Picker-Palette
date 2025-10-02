@@ -262,8 +262,8 @@ GPG.ui = GPG.ui || {};
                 // Group 3 -> Lightness
                 pickerLabel3.textContent = "Lightness:"; pickerLabel3.htmlFor = 'picker-slider-3';
                 pickerSlider3.className = 'oklch-l-slider';
-                pickerSlider3.min = 0; pickerSlider3.max = 100; pickerSlider3.step = 1;
-                pickerInput3.min = 0; pickerInput3.max = 100; pickerInput3.step = 1;
+                pickerSlider3.min = 0; pickerSlider3.max = 100; pickerSlider3.step = 0.1;
+                pickerInput3.min = 0; pickerInput3.max = 100; pickerInput3.step = 0.1;
                 pickerUnit3.textContent = '%';
 
                 // Group 2 -> Chroma
