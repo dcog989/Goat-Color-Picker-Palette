@@ -277,8 +277,8 @@ GPG.ui = GPG.ui || {};
                 // Group 1 -> Hue
                 pickerLabel1.textContent = "Hue:"; pickerLabel1.htmlFor = 'picker-slider-1';
                 pickerSlider1.className = 'oklch-h-slider';
-                pickerSlider1.min = 0; pickerSlider1.max = 359; pickerSlider1.step = 1;
-                pickerInput1.min = 0; pickerInput1.max = 359; pickerInput1.step = 1;
+                pickerSlider1.min = 0; pickerSlider1.max = 360; pickerSlider1.step = 1;
+                pickerInput1.min = 0; pickerInput1.max = 360; pickerInput1.step = 1;
                 pickerUnit1.textContent = '°';
             }
             // Always ensure the opacity slider is last.
