@@ -60,6 +60,7 @@ window.GPG = window.GPG || {};
             hsl: document.getElementById("goatHslOutput"),
             rgb: document.getElementById("goatRgbOutput"),
             oklch: document.getElementById("goatOklchOutput"),
+            cmyk: document.getElementById("goatCmykOutput"),
         };
         GPG.elements.pickerModeRadios = document.querySelectorAll('input[name="picker-mode"]');
         GPG.elements.exportFormatRadios = document.querySelectorAll('input[name="export-format"]');
@@ -98,7 +99,7 @@ window.GPG = window.GPG || {};
                 initFailed = true;
             }
         });
-        if (GPG.elements.outputSpans && (!GPG.elements.outputSpans.hex || !GPG.elements.outputSpans.hsl || !GPG.elements.outputSpans.rgb || !GPG.elements.outputSpans.oklch)) {
+        if (GPG.elements.outputSpans && (!GPG.elements.outputSpans.hex || !GPG.elements.outputSpans.hsl || !GPG.elements.outputSpans.rgb || !GPG.elements.outputSpans.oklch || !GPG.elements.outputSpans.cmyk)) {
             console.error("Missing one or more output span elements.");
             initFailed = true;
         }

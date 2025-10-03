@@ -84,7 +84,7 @@ Panel Styles
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 8px 15px;
+    gap: 8px 12px;
     margin-top: 15px;
     padding: 10px 15px;
     width: 100%;
@@ -109,6 +109,7 @@ Panel Styles
     font-family: "Source Code Pro", Consolas, "Courier New", Courier, monospace;
     word-break: break-all;
     text-align: left;
+    font-size: 0.92em;
 }
 
 .export-controls {

@@ -704,6 +704,44 @@
         }
 
         /**
+        * Gets the color as a CMYK object.
+        * @returns {{c: number, m: number, y: number, k: number}} CMYK object with values 0-100.
+        */
+        toCmyk() {
+            if (!this.valid) return { c: 0, m: 0, y: 0, k: 0 };
+            const rP = this.r / 255;
+            const gP = this.g / 255;
+            const bP = this.b / 255;
+
+            const k = 1 - Math.max(rP, gP, bP);
+            if (Math.abs(k - 1) < 1e-9) { // Check for black
+                return { c: 0, m: 0, y: 0, k: 100 };
+            }
+
+            const c = (1 - rP - k) / (1 - k);
+            const m = (1 - gP - k) / (1 - k);
+            const y = (1 - bP - k) / (1 - k);
+
+            return {
+                c: c * 100,
+                m: m * 100,
+                y: y * 100,
+                k: k * 100
+            };
+        }
+
+        /**
+         * Converts the color to its CMYK string representation.
+         * @returns {string} The CMYK string or "Invalid" if the color is not valid.
+         */
+        toCmykString() {
+            if (!this.valid) return this.error || "Invalid Color";
+            const { c, m, y, k } = this.toCmyk();
+            const cS = round(c, 0), mS = round(m, 0), yS = round(y, 0), kS = round(k, 0);
+            return `cmyk(${cS}%, ${mS}%, ${yS}%, ${kS}%)`;
+        }
+
+        /**
          * Converts the color to a string representation, attempting to use the most common or shortest form.
          * @param {string} [format="auto"] - The desired format ("auto", "hex", "hexa", "rgb", "rgba", "hsl", "hsla", "oklch", "oklcha", or legacy variants).
          * When `format` is 'auto', the method attempts to use the original color model family (e.g., HSL input might produce HSL/HSLA output) if the original input string is available and recognized, otherwise it falls back to Hex/HexA or RGB/RGBA.

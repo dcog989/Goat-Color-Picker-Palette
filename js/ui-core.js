@@ -298,6 +298,7 @@ GPG.ui = GPG.ui || {};
                 GPG.elements.outputSpans.hsl.textContent = errorMsg;
                 GPG.elements.outputSpans.rgb.textContent = errorMsg;
                 GPG.elements.outputSpans.oklch.textContent = errorMsg;
+                GPG.elements.outputSpans.cmyk.textContent = errorMsg;
                 return;
             }
 
@@ -313,6 +314,7 @@ GPG.ui = GPG.ui || {};
             GPG.elements.outputSpans.hsl.textContent = GPG.utils.getFormattedColorString(displayColor, 'hsl');
             GPG.elements.outputSpans.rgb.textContent = GPG.utils.getFormattedColorString(displayColor, 'rgb');
             GPG.elements.outputSpans.oklch.textContent = GPG.utils.getFormattedColorString(displayColor, 'oklch');
+            GPG.elements.outputSpans.cmyk.textContent = displayColor.toCmykString();
         },
 
         updateUiElementValue: function (element, value) {
