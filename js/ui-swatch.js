@@ -190,13 +190,17 @@ GPG.ui = GPG.ui || {};
             colorItem.addEventListener('dragstart', (e) => {
                 GPG.state.draggedItem.element = e.currentTarget;
                 e.currentTarget.classList.add("dragging");
-                GPG.state.draggedItem.colorInstance = swatchGoatColor;
+
+                const mainDiv = e.currentTarget.querySelector('.color-input-main');
+                const colorString = mainDiv ? mainDiv.dataset.color : null;
+                GPG.state.draggedItem.colorInstance = colorString ? GoatColor(colorString) : null;
+
                 GPG.state.draggedItem.sourceType = "palette";
                 GPG.state.draggedItem.originalIndex = -1;
 
                 e.dataTransfer.effectAllowed = "copy";
                 try {
-                    e.dataTransfer.setData("text/plain", swatchGoatColor.toHexa());
+                    e.dataTransfer.setData("text/plain", colorString || "invalid");
                 } catch (err) {
                     console.error("Error setting drag data:", err);
                 }
@@ -232,6 +236,24 @@ GPG.ui = GPG.ui || {};
 
             const hasColors = GPG.state.paintboxColors.some((c) => c && c.isValid());
             GPG.elements.exportActionButton.disabled = !hasColors;
+        },
+
+        updateGeneratedSwatch: function (swatchElement, swatchGoatColor) {
+            if (!swatchGoatColor || !swatchGoatColor.isValid() || !swatchElement) {
+                return;
+            }
+
+            const colorInputMainDiv = swatchElement.querySelector('.color-input-main');
+            const colorOverlayDiv = swatchElement.querySelector('.color-overlay-element');
+
+            if (!colorInputMainDiv || !colorOverlayDiv) return;
+
+            const tooltipString = swatchGoatColor.toHslaString();
+            const swatchRgba = swatchGoatColor.toRgba();
+
+            colorInputMainDiv.title = `${tooltipString}\nDrag or click to select.`;
+            colorInputMainDiv.dataset.color = swatchGoatColor.toHexa();
+            colorOverlayDiv.style.backgroundColor = `rgba(${swatchRgba.r}, ${swatchRgba.g}, ${swatchRgba.b}, ${swatchRgba.a})`;
         }
 
     });

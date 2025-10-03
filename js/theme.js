@@ -18,17 +18,6 @@ window.GPG = window.GPG || {};
             GPG.ui.updateAllSliderBackgrounds();
             GPG.ui.updateDynamicSliderThumbStyles();
             GPG.ui.updateH1CharacterStyles();
-            if (GPG.state.generatedColors.length > 0) {
-                GPG.elements.paletteContainer.innerHTML = "";
-                const fragment = document.createDocumentFragment();
-                for (const color of GPG.state.generatedColors) {
-                    const swatchEl = GPG.ui.createSwatch(color);
-                    if (swatchEl) {
-                        fragment.appendChild(swatchEl);
-                    }
-                }
-                GPG.elements.paletteContainer.appendChild(fragment);
-            }
         }
     };
 }(window.GPG));

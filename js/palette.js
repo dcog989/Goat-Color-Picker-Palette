@@ -32,7 +32,6 @@ window.GPG = window.GPG || {};
         }
         GPG.ui.updateIncrementUI();
 
-        GPG.elements.paletteContainer.innerHTML = "";
         GPG.state.generatedColors = [];
 
         if (isNaN(numTotalSwatches) || numTotalSwatches < 1) {
@@ -87,14 +86,26 @@ window.GPG = window.GPG || {};
             }
         }
 
-        const fragment = document.createDocumentFragment();
-        for (const colorData of GPG.state.generatedColors) {
-            const swatchEl = GPG.ui.createSwatch(colorData);
-            if (swatchEl) {
-                fragment.appendChild(swatchEl);
+        const container = GPG.elements.paletteContainer;
+        const existingSwatches = Array.from(container.children);
+        const newColors = GPG.state.generatedColors;
+
+        newColors.forEach((color, i) => {
+            if (i < existingSwatches.length) {
+                GPG.ui.updateGeneratedSwatch(existingSwatches[i], color);
+            } else {
+                const newSwatch = GPG.ui.createSwatch(color);
+                if (newSwatch) {
+                    container.appendChild(newSwatch);
+                }
+            }
+        });
+
+        if (existingSwatches.length > newColors.length) {
+            for (let i = existingSwatches.length - 1; i >= newColors.length; i--) {
+                container.removeChild(existingSwatches[i]);
             }
         }
-        GPG.elements.paletteContainer.appendChild(fragment);
     }
 
     GPG.palette = {
