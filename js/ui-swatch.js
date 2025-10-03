@@ -10,8 +10,8 @@ GPG.ui = GPG.ui || {};
         const currentGC = (colorInstance && colorInstance.isValid()) ? colorInstance : null;
 
         if (currentGC) {
-            const hex = currentGC.toHex().toUpperCase();
-            element.title = `${hex}\nDrag or click to select.`;
+            const tooltipString = currentGC.toHslaString();
+            element.title = `${tooltipString}\nDrag or click to select.`;
             element.dataset.color = currentGC.toHexa();
 
             const checkerboardDiv = document.createElement("div");
@@ -180,7 +180,7 @@ GPG.ui = GPG.ui || {};
                 return null;
             }
 
-            const hexForTooltip = swatchGoatColor.toHex().toUpperCase();
+            const tooltipString = swatchGoatColor.toHslaString();
             const swatchRgba = swatchGoatColor.toRgba();
 
             const colorItem = document.createElement("div");
@@ -205,7 +205,7 @@ GPG.ui = GPG.ui || {};
 
             const colorInputMainDiv = document.createElement("div");
             colorInputMainDiv.classList.add("color-input-main");
-            colorInputMainDiv.title = `${hexForTooltip}\nDrag or click to select.`;
+            colorInputMainDiv.title = `${tooltipString}\nDrag or click to select.`;
             colorInputMainDiv.dataset.color = swatchGoatColor.toHexa();
 
             const checkerboardDiv = document.createElement("div");

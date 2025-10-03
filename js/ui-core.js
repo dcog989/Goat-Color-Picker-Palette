@@ -69,7 +69,7 @@ GPG.ui = GPG.ui || {};
         if (accentColor.isValid()) {
             rootStyle.setProperty('--color-accent-main', accentColor.toRgbString());
 
-            const TARGET_CONTRAST = 4.5;
+            const TARGET_CONTRAST = 5;
             const textColorDark = GoatColor(`hsl(${accentHue}, ${accentSat}%, 30%)`);
             const textColorLight = GoatColor(`hsl(${accentHue}, ${accentSat}%, 70%)`);
             let accentTextColor;

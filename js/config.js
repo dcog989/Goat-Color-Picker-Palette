@@ -3,7 +3,7 @@ window.GPG = window.GPG || {};
 (function (GPG) {
     'use strict';
 
-    GPG.APP_VERSION = "1.2.1";
+    GPG.APP_VERSION = "1.3.0";
     GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE = 0.4;
     GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD = 0.005;
     GPG.SVG_COPY_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">
