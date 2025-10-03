@@ -29,11 +29,13 @@ window.GPG = window.GPG || {};
             }
         },
 
-        formatOklchForPicker: function (colorInstance) {
+        formatOklchForPicker: function (colorInstance, rawPickerValues = null) {
             if (!colorInstance || !colorInstance.isValid()) return "Invalid Color";
 
             const oklcha = colorInstance.toOklcha();
-            const lStr = oklcha.l.toFixed(1);
+            const lightnessToDisplay = (rawPickerValues && rawPickerValues.l !== undefined) ? rawPickerValues.l : oklcha.l;
+            const lStr = Number(parseFloat(lightnessToDisplay).toFixed(1));
+
             const cStr = Number(oklcha.c.toFixed(3));
             let hStr = Math.round(oklcha.h);
             if (hStr === 360) hStr = 0;

@@ -50,7 +50,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
         }
     }
 
-    function _processColorUpdate(newColor, sourceMode, isSliderEvent, sourceElement = null) {
+    function _processColorUpdate(newColor, sourceMode, isSliderEvent, sourceElement = null, rawPickerValues = null) {
         if (!newColor.isValid()) return;
 
         GPG.state.currentGoatColor = newColor;
@@ -67,7 +67,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             }
         }
 
-        const options = { source: sourceMode, isSlider: isSliderEvent, sourceElement: sourceElement };
+        const options = { source: sourceMode, isSlider: isSliderEvent, sourceElement: sourceElement, rawPickerValues };
         if (isSliderEvent) {
             GPG.ui.syncInstantUiFromState(options);
             GPG.ui.requestExpensiveUpdate();
@@ -87,8 +87,9 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
             if (isNaN(h) || isNaN(s) || isNaN(l) || isNaN(o)) return;
 
+            const rawPickerValues = { h, s, l, o };
             const newColor = GPG.color.createFromPicker('hsl', h, s, l, o, { param: param });
-            _processColorUpdate(newColor, 'hsl', isSliderEvent, sourceElement);
+            _processColorUpdate(newColor, 'hsl', isSliderEvent, sourceElement, rawPickerValues);
         },
 
         updateFromOklchPicker: function (isSliderEvent = false, param = null, sourceElement = null) {
@@ -99,8 +100,9 @@ window.GPG = window.GPG || {}; (function (GPG) {
 
             if (isNaN(l) || isNaN(cPercent) || isNaN(h) || isNaN(o)) return;
 
+            const rawPickerValues = { l, cPercent, h, o };
             const newColor = GPG.color.createFromPicker('oklch', h, cPercent, l, o, { param: param });
-            _processColorUpdate(newColor, 'oklch', isSliderEvent, sourceElement);
+            _processColorUpdate(newColor, 'oklch', isSliderEvent, sourceElement, rawPickerValues);
         },
 
         dragOverHandler: function (e) {
