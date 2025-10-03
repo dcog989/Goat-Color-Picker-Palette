@@ -8,7 +8,7 @@
  * @author Chase McGoat
  * @createdAt 2025-04-20
  * @lastModified 2025-09-11
- * @version 1.3.4
+ * @version 1.3.5
  */
 
 (function (global, factory) {
@@ -16,34 +16,34 @@
 })(this, function () {
     "use strict";
     const SRGB_TO_XYZ_MATRIX = [
-        [0.4123907993, 0.3575843394, 0.1804807884],
-        [0.2126390059, 0.7151686788, 0.0721923154],
-        [0.0193308187, 0.1191947798, 0.9505321522],
+        [0.41239079926595934, 0.357584339383878, 0.1804807884018343],
+        [0.21263900587151027, 0.715168678767756, 0.07219231536073371],
+        [0.01933081871559182, 0.11919477979462598, 0.9505321522496607],
     ];
     const XYZ_TO_SRGB_MATRIX = [
-        [3.240969942, -1.5373831776, -0.4986107603],
-        [-0.9692436363, 1.8759675015, 0.0415550574],
-        [0.0556300797, -0.2039769589, 1.0569715142],
+        [3.2409699419045226, -1.537383177570094, -0.4986107602930034],
+        [-0.9692436362808796, 1.8759675015077202, 0.04155505740717559],
+        [0.05563007969699366, -0.20397695888897652, 1.0569715142428786],
     ];
     const OKLAB_XYZ_TO_LMS_MATRIX = [
-        [0.8189330101, 0.3618667424, -0.1288597137],
-        [0.0329845436, 0.9293118715, 0.0361456387],
-        [0.0482003018, 0.2643662691, 0.633851707],
+        [0.8190224379967030, 0.3619062600528904, -0.1288737815209879],
+        [0.0329836539323885, 0.9292868615863434, 0.0361446663506424],
+        [0.0481771893596242, 0.2642395317527308, 0.6335478284694309],
     ];
     const OKLAB_LMS_P_TO_LAB_MATRIX = [
-        [0.2104542553, 0.793617785, -0.0040720468],
-        [1.9779984951, -2.428592205, 0.4505937099],
-        [0.0259040371, 0.7827717662, -0.808675766],
+        [0.2104542683093140, 0.7936177747023054, -0.0040720430116193],
+        [1.9779985324311684, -2.4285922420485799, 0.4505937096174110],
+        [0.0259040424655478, 0.7827717124575296, -0.8086757549230774],
     ];
     const OKLAB_LAB_TO_LMS_P_MATRIX = [
-        [0.99999999845051981432, 0.39633777736240243769, 0.21580375730249306069],
-        [1.00000000838056630002, -0.10556134579289659905, -0.06385417279300911922],
-        [1.00000005467234261899, -0.08948417752909546082, -1.2914855480408174125],
+        [1.0, 0.3963377773761749, 0.2158037573099136],
+        [1.0, -0.1055613458156586, -0.0638541728258133],
+        [1.0, -0.0894841775298119, -1.2914855480194092],
     ];
     const OKLAB_LMS_CUBED_TO_XYZ_MATRIX = [
-        [1.226879878071479, -0.5578149965684922, 0.2813910501598616],
-        [-0.04057575003935402, 1.112286829376436, -0.07171107933708207],
-        [-0.07637293665230801, -0.4214933235444953, 1.586161639400282],
+        [1.2268798758459243, -0.5578149944602171, 0.2813910456659647],
+        [-0.0405757452148008, 1.1122868032803170, -0.0717110580655164],
+        [-0.0763729366746601, -0.4214933324022432, 1.5869240198367816],
     ];
 
     const ALPHA_STYLE_HINT_PERCENT = "percent";
@@ -210,6 +210,24 @@
             this._parse(colorInput);
         }
 
+        _oklchToLinearSrgb(l_val, c_val, h_val) {
+            const L_oklab_norm = l_val / 100.0;
+            const C_oklch_val = c_val;
+            const H_rad = (h_val * Math.PI) / 180.0;
+
+            const a_oklab_comp = C_oklch_val * Math.cos(H_rad);
+            const b_oklab_comp = C_oklch_val * Math.sin(H_rad);
+
+            const [l_p, m_p, s_p] = multiplyMatrix(OKLAB_LAB_TO_LMS_P_MATRIX, [L_oklab_norm, a_oklab_comp, b_oklab_comp]);
+            const l_p_cubed = Math.pow(l_p, 3);
+            const m_p_cubed = Math.pow(m_p, 3);
+            const s_p_cubed = Math.pow(s_p, 3);
+
+            const [x, y, z] = multiplyMatrix(OKLAB_LMS_CUBED_TO_XYZ_MATRIX, [l_p_cubed, m_p_cubed, s_p_cubed]);
+            const [r_lin, g_lin, b_lin] = multiplyMatrix(XYZ_TO_SRGB_MATRIX, [x, y, z]);
+            return [r_lin, g_lin, b_lin];
+        }
+
         _parse(rawInput) {
             this.valid = false; // Reset validity and error
             this.error = null;
@@ -323,16 +341,28 @@
                     this.a = alphaInfo.value;
                     this._alphaInputStyleHint = alphaInfo.styleHint;
 
-                    const L_oklab_norm = l_val / 100.0;
-                    const C_oklch_val = c_val;
-                    const H_rad = (h_val * Math.PI) / 180.0;
+                    const isLinearSrgbInGamut = ([r, g, b]) => r >= -0.00001 && r <= 1.00001 && g >= -0.00001 && g <= 1.00001 && b >= -0.00001 && b <= 1.00001;
+                    let [r_lin, g_lin, b_lin] = this._oklchToLinearSrgb(l_val, c_val, h_val);
 
-                    const a_oklab_comp = C_oklch_val * Math.cos(H_rad);
-                    const b_oklab_comp = C_oklch_val * Math.sin(H_rad);
+                    if (!isLinearSrgbInGamut([r_lin, g_lin, b_lin])) {
+                        let low = 0;
+                        let high = c_val;
+                        let final_c = c_val;
+                        const precision = 0.0001;
+                        const maxIterations = 15;
 
-                    const [l_p, m_p, s_p] = multiplyMatrix(OKLAB_LAB_TO_LMS_P_MATRIX, [L_oklab_norm, a_oklab_comp, b_oklab_comp]);
-                    const [x, y, z] = multiplyMatrix(OKLAB_LMS_CUBED_TO_XYZ_MATRIX, [Math.pow(l_p, 3), Math.pow(m_p, 3), Math.pow(s_p, 3)]);
-                    const [r_lin, g_lin, b_lin] = multiplyMatrix(XYZ_TO_SRGB_MATRIX, [x, y, z]);
+                        for (let i = 0; i < maxIterations && (high - low) > precision; i++) {
+                            const midC = (low + high) / 2;
+                            const [test_r, test_g, test_b] = this._oklchToLinearSrgb(l_val, midC, h_val);
+                            if (isLinearSrgbInGamut([test_r, test_g, test_b])) {
+                                final_c = midC;
+                                low = midC;
+                            } else {
+                                high = midC;
+                            }
+                        }
+                        [r_lin, g_lin, b_lin] = this._oklchToLinearSrgb(l_val, final_c, h_val);
+                    }
 
                     this.r = linearToSrgb(r_lin);
                     this.g = linearToSrgb(g_lin);

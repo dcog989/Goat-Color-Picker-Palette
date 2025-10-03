@@ -188,3 +188,21 @@ Panel Styles
 .popup-close-btn:hover {
     opacity: 1;
 }
+
+/* Diagnostics Panel */
+#diagnostics-panel {
+    background-color: var(--color-bg-input-darker);
+    border-color: var(--color-border-input);
+}
+
+#diagnostics-output {
+    background-color: var(--color-bg-page);
+    color: var(--color-text-page-secondary);
+    font-family: "Source Code Pro", Menlo, Consolas, Monaco, "Liberation Mono", "Lucida Console", monospace;
+    font-size: 0.8em;
+    padding: 10px;
+    border-radius: var(--radius-global);
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.4;
+}

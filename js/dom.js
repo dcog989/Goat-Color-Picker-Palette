@@ -46,7 +46,9 @@ window.GPG = window.GPG || {};
             colorOutputContainer: "colorOutput",
             themeSelect: "theme-select",
             exportActionButton: "export-action-button",
-            oklchInfoButton: "oklch-info-button"
+            oklchInfoButton: "oklch-info-button",
+            diagnosticsPanel: "diagnostics-panel",
+            diagnosticsOutput: "diagnostics-output"
         };
 
         for (const key in elementIdMap) {
@@ -84,7 +86,9 @@ window.GPG = window.GPG || {};
             "paintboxGrid", "paintboxBin",
             "themeSelect",
             "exportActionButton",
-            "oklchInfoButton"
+            "oklchInfoButton",
+            "diagnosticsPanel",
+            "diagnosticsOutput"
         ];
 
         let initFailed = false;

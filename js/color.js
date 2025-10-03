@@ -41,7 +41,7 @@ window.GPG = window.GPG || {};
                     // Only update last hue from UI if chromatic
                     // This prevents achromatic colors from resetting the stored hue
                 }
-                return GoatColor(`oklch(${l}% ${cAbsolute.toFixed(4)} ${hueForCreation} / ${opacityPercent / 100})`);
+                return GoatColor(`oklch(${l}% ${cAbsolute.toFixed(8)} ${hueForCreation} / ${opacityPercent / 100})`);
             }
         }
     };

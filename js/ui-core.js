@@ -4,6 +4,45 @@ GPG.ui = GPG.ui || {};
 (function (GPG) {
     'use strict';
 
+    // --- Diagnostics Conversion Logic (for display only) ---
+    // This logic is duplicated from the reference source to avoid modifying the library.
+    const DIAG = {};
+    DIAG.multiplyMatrices = (A, B) => {
+        const C = [
+            A[0] * B[0] + A[1] * B[1] + A[2] * B[2],
+            A[3] * B[0] + A[4] * B[1] + A[5] * B[2],
+            A[6] * B[0] + A[7] * B[1] + A[8] * B[2]
+        ];
+        return C;
+    };
+    DIAG.multiplyMatrixVector = (matrix, vector) => {
+        return [
+            matrix[0][0] * vector[0] + matrix[0][1] * vector[1] + matrix[0][2] * vector[2],
+            matrix[1][0] * vector[0] + matrix[1][1] * vector[1] + matrix[1][2] * vector[2],
+            matrix[2][0] * vector[0] + matrix[2][1] * vector[1] + matrix[2][2] * vector[2]
+        ];
+    };
+    DIAG.oklch_to_oklab = ([l, c, h]) => [l, isNaN(h) ? 0 : c * Math.cos(h * Math.PI / 180), isNaN(h) ? 0 : c * Math.sin(h * Math.PI / 180)];
+    DIAG.oklab_to_xyz = (lab) => {
+        const LMSg = DIAG.multiplyMatrixVector(GPG.DIAG_MATRICES.OKLAB_LAB_TO_LMS_P_MATRIX, lab);
+        const LMS = LMSg.map(val => val ** 3);
+        return DIAG.multiplyMatrixVector(GPG.DIAG_MATRICES.OKLAB_LMS_CUBED_TO_XYZ_MATRIX, LMS);
+    };
+    DIAG.xyz_to_linear_srgb = (xyz) => {
+        return DIAG.multiplyMatrixVector(GPG.DIAG_MATRICES.XYZ_TO_SRGB_MATRIX, xyz);
+    };
+    DIAG.linear_srgb_to_srgb = (rgb_linear) => {
+        return rgb_linear.map(c => {
+            const abs_c = Math.abs(c);
+            const sign = c < 0 ? -1 : 1;
+            if (abs_c > 0.0031308) {
+                return sign * (1.055 * (abs_c ** (1 / 2.4)) - 0.055);
+            }
+            return 12.92 * c;
+        });
+    };
+    // --- End Diagnostics Logic ---
+
     function _updateCssVariables(opaqueBaseColor) {
         if (!opaqueBaseColor.isValid()) return;
 
@@ -178,6 +217,7 @@ GPG.ui = GPG.ui || {};
             this.updateIncrementUI();
             this.updateColorOutputSpans();
             this.requestH1Update();
+            this.updateDiagnosticsPanel();
         },
 
         performExpensiveUpdates: function () {
@@ -206,6 +246,33 @@ GPG.ui = GPG.ui || {};
             this.syncInstantUiFromState(options);
             this.performExpensiveUpdates();
             GPG.state.isProgrammaticUpdate = false;
+        },
+
+        updateDiagnosticsPanel: function () {
+            if (GPG.state.activePickerMode !== 'oklch' || !GPG.state.currentGoatColor || !GPG.state.currentGoatColor.isValid()) {
+                GPG.elements.diagnosticsOutput.textContent = "Diagnostics are only available for the OKLCH color mode.";
+                return;
+            }
+
+            const oklch = GPG.state.currentGoatColor.toOklch();
+            const lch_input = [oklch.l / 100, oklch.c, oklch.h];
+            const lab = DIAG.oklch_to_oklab(lch_input);
+            const xyz = DIAG.oklab_to_xyz(lab);
+            const linear_rgb = DIAG.xyz_to_linear_srgb(xyz);
+            const final_rgb = DIAG.linear_srgb_to_srgb(linear_rgb);
+            const final_rgb_int = final_rgb.map(c => Math.round(c * 255));
+
+            const format = (arr, precision = 8) => `[ ${arr.map(n => n.toFixed(precision)).join(', ')} ]`;
+
+            let outputStr = "";
+            outputStr += `OKLCH Input    : L=${lch_input[0].toFixed(5)}, C=${lch_input[1].toFixed(5)}, H=${lch_input[2].toFixed(2)}\n`;
+            outputStr += `-> Oklab        : ${format(lab)}\n`;
+            outputStr += `-> XYZ          : ${format(xyz)}\n`;
+            outputStr += `-> Linear sRGB  : ${format(linear_rgb)}\n`;
+            outputStr += `-> sRGB (0-1)   : ${format(final_rgb)}\n`;
+            outputStr += `-> sRGB (0-255) : [ ${final_rgb_int.join(', ')} ]\n`;
+
+            GPG.elements.diagnosticsOutput.textContent = outputStr;
         },
 
         updateColorOutputSpans: function () {
