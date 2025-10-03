@@ -194,6 +194,7 @@ Panel Styles
 #diagnostics-panel {
     background-color: var(--color-bg-input-darker);
     border-color: var(--color-border-input);
+    display: none;
 }
 
 #diagnostics-output {

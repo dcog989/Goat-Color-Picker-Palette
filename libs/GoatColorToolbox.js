@@ -704,9 +704,9 @@
         }
 
         /**
-        * Gets the color as a CMYK object.
-        * @returns {{c: number, m: number, y: number, k: number}} CMYK object with values 0-100.
-        */
+         * Gets the color as a CMYK object.
+         * @returns {{c: number, m: number, y: number, k: number}} CMYK object with values 0-100.
+         */
         toCmyk() {
             if (!this.valid) return { c: 0, m: 0, y: 0, k: 0 };
             const rP = this.r / 255;
@@ -1141,6 +1141,63 @@
             }
         }
         return Math.max(0, maxAchievableC);
+    };
+
+    /**
+     * Finds the sRGB-gamut lightness range for a given Chroma and Hue.
+     * @param {number} chroma - The absolute chroma value.
+     * @param {number} hue - The hue angle (0-360).
+     * @param {number} [precision=0.1] - The search precision for lightness.
+     * @param {number} [iterations=15] - Max iterations for each binary search.
+     * @returns {{minL: number, maxL: number}} The min and max lightness (0-100) representable in sRGB.
+     */
+    GoatColorFactory.getSRGBLightnessRange = function (chroma, hue, precision = 0.1, iterations = 15) {
+        hue = ((hue % 360) + 360) % 360;
+        if (chroma < 0.001) {
+            return { minL: 0, maxL: 100 };
+        }
+
+        const isColorInGamut = (l_test) => {
+            const testColor = new GoatColorInternal(`oklch(${l_test}% ${chroma} ${hue})`);
+            if (!testColor.isValid()) return false;
+
+            const roundTrippedColor = new GoatColorInternal(testColor.toRgbString());
+            const oklch_rt = roundTrippedColor.toOklch();
+            let hDiff = Math.abs(oklch_rt.h - hue);
+            if (hDiff > 180) hDiff = 360 - hDiff;
+
+            return oklch_rt.c > (chroma - 0.005) && hDiff < 2;
+        };
+
+        let minL = 0, maxL = 100;
+
+        let low_min = 0, high_min = 100, foundMin = false;
+        for (let i = 0; i < iterations; i++) {
+            const mid = (low_min + high_min) / 2;
+            if (isColorInGamut(mid)) {
+                foundMin = true;
+                minL = mid;
+                high_min = mid;
+            } else {
+                low_min = mid;
+            }
+            if ((high_min - low_min) < precision) break;
+        }
+
+        let low_max = minL, high_max = 100, foundMax = false;
+        for (let i = 0; i < iterations; i++) {
+            const mid = (low_max + high_max) / 2;
+            if (isColorInGamut(mid)) {
+                foundMax = true;
+                maxL = mid;
+                low_max = mid;
+            } else {
+                high_max = mid;
+            }
+            if ((high_max - low_max) < precision) break;
+        }
+
+        return (foundMin || foundMax) ? { minL, maxL } : { minL: 50, maxL: 50 };
     };
 
     return GoatColorFactory;

@@ -18,6 +18,10 @@ window.GPG = window.GPG || {};
         draggedItem: { element: null, colorInstance: null, sourceType: null, originalIndex: -1 },
         binClearState: { ready: false, timeoutId: null, notificationElement: null },
         originalBinTitle: "",
+        diag: {
+            createFromPicker: {},
+            sliderGradient: {}
+        }
     };
 
 }(window.GPG));

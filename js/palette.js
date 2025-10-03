@@ -3,6 +3,11 @@ window.GPG = window.GPG || {};
 (function (GPG) {
     'use strict';
 
+    function findCusp(h) {
+        const cuspColor = GoatColor(`oklch(60% 0.5 ${h})`);
+        return cuspColor.toOklch();
+    }
+
     function generatePalette() {
         if (!GPG.state.currentGoatColor || !GPG.state.currentGoatColor.isValid()) {
             return;
@@ -15,13 +20,8 @@ window.GPG = window.GPG || {};
         const baseHsl = baseColor.toHsl();
         const baseOklch = baseColor.toOklch();
 
-        // Use the same hue-locking logic as the UI for consistency
         const stableHslHue = GPG.utils.normalizeHueForDisplay(baseHsl.s < 1 ? GPG.state.lastHslHue : baseHsl.h);
         const stableOklchHue = GPG.utils.normalizeHueForDisplay(baseOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : baseOklch.h);
-
-        // For OKLCH, we need the base chroma percentage relative to its own L/H
-        const maxChromaForBase = GoatColor.getMaxSRGBChroma(baseOklch.l, stableOklchHue, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-        const baseChromaPercent = maxChromaForBase > 0.0001 ? (baseOklch.c / maxChromaForBase) * 100 : 0;
 
         let numTotalSwatches = parseInt(GPG.elements.swatchCountInput.value, 10);
         const varyParam = GPG.elements.varyParamSelect.value;
@@ -37,6 +37,18 @@ window.GPG = window.GPG || {};
         if (isNaN(numTotalSwatches) || numTotalSwatches < 1) {
             numTotalSwatches = 1;
         }
+
+        const cusp = findCusp(stableOklchHue);
+        let baseChromaPercent = 0;
+        if (cusp.c > 0) {
+            let max_c_at_base_L = baseOklch.l < cusp.l
+                ? (baseOklch.l / cusp.l) * cusp.c
+                : ((100 - baseOklch.l) / (100 - cusp.l)) * cusp.c;
+            if (max_c_at_base_L > 0) {
+                baseChromaPercent = (baseOklch.c / max_c_at_base_L) * 100;
+            }
+        }
+
 
         for (let i = 0; i < numTotalSwatches; i++) {
             const stepPercent = (numTotalSwatches <= 1) ? 0.5 : i / (numTotalSwatches - 1);

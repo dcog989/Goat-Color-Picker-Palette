@@ -3,6 +3,13 @@ window.GPG = window.GPG || {};
 (function (GPG) {
     'use strict';
 
+    function findCusp(h) {
+        // Find the cusp by creating an out-of-gamut color with high chroma
+        // and letting the library's clipping bring it back to the gamut edge.
+        const cuspColor = GoatColor(`oklch(60% 0.5 ${h})`);
+        return cuspColor.toOklch();
+    }
+
     GPG.color = {
         /**
          * Creates a GoatColor instance from picker values, handling mode-specific logic.
@@ -25,23 +32,33 @@ window.GPG = window.GPG || {};
                 }
                 return GoatColor(`hsla(${h}, ${s}%, ${l}%, ${opacityPercent / 100})`);
             } else { // oklch
-                let l = p3, cPercent = p2, h = p1;
-                cPercent = Math.max(0, Math.min(100, cPercent));
+                let l_slider = p3, c_percent = p2, h_from_slider = p1;
 
-                // Always calculate absolute chroma from the UI percentage and the current L and H.
-                // This prevents creating colors far outside the sRGB gamut when L or H change,
-                // which was causing erratic slider behavior due to severe gamut clipping.
-                const maxAbsC = GoatColor.getMaxSRGBChroma(l, h, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                const cAbsolute = (cPercent / 100) * maxAbsC;
-
-                let hueForCreation = h;
-                if (cAbsolute < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
-                    hueForCreation = GPG.state.lastOklchHue; // Use last hue if chroma is effectively zero
-                } else {
-                    // Only update last hue from UI if chromatic
-                    // This prevents achromatic colors from resetting the stored hue
+                let hue_for_calc = GPG.state.lastOklchHue;
+                if (options.param === 'h' || (options.param === 'c' && c_percent > 0.1)) {
+                    GPG.state.lastOklchHue = h_from_slider;
+                    hue_for_calc = h_from_slider;
                 }
-                return GoatColor(`oklch(${l}% ${cAbsolute.toFixed(8)} ${hueForCreation} / ${opacityPercent / 100})`);
+
+                let final_l = l_slider;
+                let final_c;
+
+                const cusp = findCusp(hue_for_calc);
+                let max_c_at_L;
+
+                if (l_slider < cusp.l) {
+                    max_c_at_L = cusp.l > 0 ? (l_slider / cusp.l) * cusp.c : 0;
+                } else {
+                    max_c_at_L = (100 - cusp.l) > 0.01 ? ((100 - l_slider) / (100 - cusp.l)) * cusp.c : 0;
+                }
+
+                final_c = (c_percent / 100) * max_c_at_L;
+
+                if (final_c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD) {
+                    final_c = 0;
+                }
+
+                return GoatColor(`oklch(${final_l}% ${final_c.toFixed(8)} ${hue_for_calc} / ${opacityPercent / 100})`);
             }
         }
     };

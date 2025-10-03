@@ -70,26 +70,35 @@ GPG.ui = GPG.ui || {};
             }
 
             // OKLCH Sliders
-            const l_oklch = parseFloat(GPG.elements.pickerInput3.value);
             const c_percent_oklch = parseFloat(GPG.elements.pickerInput2.value);
             const h_oklch = parseFloat(GPG.elements.pickerInput1.value);
-            if (!isNaN(l_oklch) && !isNaN(c_percent_oklch) && !isNaN(h_oklch)) {
-                const stable_h_oklch = c_percent_oklch < 1 ? GPG.state.lastOklchHue : h_oklch;
-                const max_c_for_tracks = GoatColor.getMaxSRGBChroma(l_oklch, stable_h_oklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                const intended_absolute_c = (c_percent_oklch / 100) * max_c_for_tracks;
+            if (!isNaN(c_percent_oklch) && !isNaN(h_oklch)) {
+                const stable_h_oklch = GPG.state.lastOklchHue;
 
-                const lTrackStart = GoatColor(`oklch(0% ${intended_absolute_c.toFixed(4)} ${stable_h_oklch})`).toRgbString();
-                const lTrackMid = `oklch(50% ${intended_absolute_c.toFixed(4)} ${stable_h_oklch})`;
-                const lTrackEnd = GoatColor(`oklch(100% ${intended_absolute_c.toFixed(4)} ${stable_h_oklch})`).toRgbString();
-                root.style.setProperty("--background-image-slider-track-oklch-l", `linear-gradient(to right, ${lTrackStart}, ${lTrackMid}, ${lTrackEnd})`);
+                const cusp = GoatColor(`oklch(60% 0.5 ${stable_h_oklch})`).toOklch();
+                const target_abs_c_at_cusp = (c_percent_oklch / 100) * cusp.c;
 
-                const cTrackStart = `oklch(${l_oklch}% 0 ${stable_h_oklch})`;
-                const cTrackEnd = `oklch(${l_oklch}% ${max_c_for_tracks.toFixed(4)} ${stable_h_oklch})`;
-                root.style.setProperty("--background-image-slider-track-oklch-c", `linear-gradient(to right, ${cTrackStart}, ${cTrackEnd})`);
+                // OKLCH L-Slider Background
+                const stop1 = `oklch(0% 0 ${stable_h_oklch})`;
+                const stop2 = `oklch(${cusp.l}% ${target_abs_c_at_cusp} ${stable_h_oklch})`;
+                const stop3 = `oklch(100% 0 ${stable_h_oklch})`;
+                const gradient = `linear-gradient(to right, ${stop1}, ${stop2} ${cusp.l}%, ${stop3})`;
+                root.style.setProperty("--background-image-slider-track-oklch-l", gradient);
 
-                const hTrackGradientOklch = this.generateOklchHueTrackGradientString(l_oklch, intended_absolute_c);
+                // OKLCH C-Slider Background
+                const l_oklch_for_c = parseFloat(GPG.elements.pickerInput3.value);
+                if (!isNaN(l_oklch_for_c)) {
+                    const cTrackStart = `oklch(${l_oklch_for_c}% 0 ${stable_h_oklch})`;
+                    const max_c_for_c_track = GoatColor.getMaxSRGBChroma(l_oklch_for_c, stable_h_oklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+                    const cTrackEnd = `oklch(${l_oklch_for_c}% ${max_c_for_c_track.toFixed(4)} ${stable_h_oklch})`;
+                    root.style.setProperty("--background-image-slider-track-oklch-c", `linear-gradient(to right, ${cTrackStart}, ${cTrackEnd})`);
+                }
+
+                // OKLCH H-Slider Background
+                const hTrackGradientOklch = this.generateOklchHueTrackGradientString(l_oklch_for_c, target_abs_c_at_cusp);
                 root.style.setProperty("--background-image-slider-track-oklch-h", hTrackGradientOklch);
             }
+
 
             // Opacity slider (common to both)
             const masterRgb = masterColor.toRgb();
@@ -230,8 +239,8 @@ GPG.ui = GPG.ui || {};
                 // Group 1 -> Hue
                 pickerLabel1.textContent = "Hue:"; pickerLabel1.htmlFor = 'picker-slider-1';
                 pickerSlider1.className = 'hue-slider';
-                pickerSlider1.min = 0; pickerSlider1.max = 359; pickerSlider1.step = 1;
-                pickerInput1.min = 0; pickerInput1.max = 359; pickerInput1.step = 1;
+                pickerSlider1.min = 0; pickerSlider1.max = 360; pickerSlider1.step = 1;
+                pickerInput1.min = 0; pickerInput1.max = 360; pickerInput1.step = 1;
                 pickerUnit1.textContent = '°';
 
                 // Group 2 -> Saturation

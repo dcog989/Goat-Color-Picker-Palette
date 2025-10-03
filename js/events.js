@@ -50,14 +50,11 @@ window.GPG = window.GPG || {};
 
     GPG.events = {
         bindEventListeners: function () {
-            const updateFromHsl = (isSlider, sourceElement) => GPG.handlers.updateFromHslPicker(isSlider, null, sourceElement);
-            const updateFromOklch = (isSlider, sourceElement) => GPG.handlers.updateFromOklchPicker(isSlider, null, sourceElement);
-
             const createUpdateCallback = (paramHsl, paramOklch) => (isSlider, sourceElement) => {
                 if (GPG.state.activePickerMode === 'hsl') {
-                    updateFromHsl(isSlider, sourceElement);
+                    GPG.handlers.updateFromHslPicker(isSlider, paramHsl, sourceElement);
                 } else {
-                    updateFromOklch(isSlider, sourceElement);
+                    GPG.handlers.updateFromOklchPicker(isSlider, paramOklch, sourceElement);
                 }
             };
 

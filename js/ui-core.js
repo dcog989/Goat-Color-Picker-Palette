@@ -96,52 +96,42 @@ GPG.ui = GPG.ui || {};
     }
 
     function _updateHslPickerControls(masterHsl, options = {}) {
-        const { source = 'external', rawPickerValues = null } = options;
-
-        let hDisplayHsl, s, l;
-
-        if (source === 'hsl' && rawPickerValues) {
-            hDisplayHsl = rawPickerValues.h;
-            s = rawPickerValues.s;
-            l = rawPickerValues.l;
-        } else {
-            hDisplayHsl = GPG.utils.normalizeHueForDisplay(masterHsl.s < 1 ? GPG.state.lastHslHue : masterHsl.h);
-            s = Math.round(masterHsl.s);
-            l = Math.round(masterHsl.l);
+        const { source = 'external', isSlider = false } = options;
+        if (source === 'hsl' && isSlider) {
+            return;
         }
 
+        const hDisplayHsl = GPG.utils.normalizeHueForDisplay(masterHsl.s < 1 ? GPG.state.lastHslHue : masterHsl.h);
         GPG.ui.updateUiElementValue(GPG.elements.pickerSlider1, hDisplayHsl);
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput1, hDisplayHsl);
-        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, s);
-        GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, s);
-        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider3, l);
-        GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, l);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, Math.round(masterHsl.s));
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, Math.round(masterHsl.s));
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider3, Math.round(masterHsl.l));
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, Math.round(masterHsl.l));
     }
 
     function _updateOklchPickerControls(masterOklch, options = {}) {
-        const { source = 'external', rawPickerValues = null } = options;
-
-        let hDisplayOklch, cPercentDisplayRounded, lDisplayOklch;
-
-        if (source === 'oklch' && rawPickerValues) {
-            hDisplayOklch = rawPickerValues.h;
-            cPercentDisplayRounded = rawPickerValues.cPercent;
-            lDisplayOklch = rawPickerValues.l;
-        } else {
-            hDisplayOklch = GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
-            lDisplayOklch = Number(masterOklch.l.toFixed(1));
-
-            cPercentDisplayRounded = 0;
-            if (masterOklch.l > 0.01 && masterOklch.l < 99.99) {
-                const maxCForCurrentLH = GoatColor.getMaxSRGBChroma(masterOklch.l, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                let cPercentDisplay = maxCForCurrentLH > 0.0001 ? (masterOklch.c / maxCForCurrentLH) * 100 : 0;
-                cPercentDisplay = Math.min(100, cPercentDisplay);
-                cPercentDisplayRounded = Number(cPercentDisplay.toFixed(1));
-            }
+        const { source = 'external', isSlider = false } = options;
+        if (source === 'oklch' && isSlider) {
+            return;
         }
 
+        const hDisplayOklch = GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
+        const lDisplayOklch = Number(masterOklch.l.toFixed(1));
+
+        let cPercentDisplayRounded = 0;
+        if (masterOklch.l > 0.01 && masterOklch.l < 99.99) {
+            const max_chroma_ref = GoatColor.getMaxSRGBChroma(70, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+            if (max_chroma_ref > 0.0001) {
+                const oklch_c = masterOklch.c;
+                const cPercentDisplay = (oklch_c / max_chroma_ref) * 100;
+                cPercentDisplayRounded = Number(Math.min(100, cPercentDisplay).toFixed(1));
+            }
+        }
         GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplayRounded);
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, cPercentDisplayRounded);
+
+
         GPG.ui.updateUiElementValue(GPG.elements.pickerSlider3, lDisplayOklch);
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, lDisplayOklch);
         GPG.ui.updateUiElementValue(GPG.elements.pickerSlider1, hDisplayOklch);
@@ -259,28 +249,59 @@ GPG.ui = GPG.ui || {};
         },
 
         updateDiagnosticsPanel: function () {
-            if (GPG.state.activePickerMode !== 'oklch' || !GPG.state.currentGoatColor || !GPG.state.currentGoatColor.isValid()) {
+            if (GPG.state.activePickerMode !== 'oklch') {
                 GPG.elements.diagnosticsOutput.textContent = "Diagnostics are only available for the OKLCH color mode.";
                 return;
             }
 
-            const oklch = GPG.state.currentGoatColor.toOklch();
-            const lch_input = [oklch.l / 100, oklch.c, oklch.h];
-            const lab = DIAG.oklch_to_oklab(lch_input);
-            const xyz = DIAG.oklab_to_xyz(lab);
-            const linear_rgb = DIAG.xyz_to_linear_srgb(xyz);
-            const final_rgb = DIAG.linear_srgb_to_srgb(linear_rgb);
-            const final_rgb_int = final_rgb.map(c => Math.round(c * 255));
+            let outputStr = "--- OKLCH to sRGB Conversion ---\n";
+            if (GPG.state.currentGoatColor && GPG.state.currentGoatColor.isValid()) {
+                const oklch = GPG.state.currentGoatColor.toOklch();
+                const lch_input = [oklch.l / 100, oklch.c, oklch.h];
+                const lab = DIAG.oklch_to_oklab(lch_input);
+                const xyz = DIAG.oklab_to_xyz(lab);
+                const linear_rgb = DIAG.xyz_to_linear_srgb(xyz);
+                const final_rgb = DIAG.linear_srgb_to_srgb(linear_rgb);
+                const final_rgb_int = final_rgb.map(c => Math.round(c * 255));
 
-            const format = (arr, precision = 8) => `[ ${arr.map(n => n.toFixed(precision)).join(', ')} ]`;
+                const format = (arr, precision = 8) => `[ ${arr.map(n => n.toFixed(precision)).join(', ')} ]`;
 
-            let outputStr = "";
-            outputStr += `OKLCH Input    : L=${lch_input[0].toFixed(5)}, C=${lch_input[1].toFixed(5)}, H=${lch_input[2].toFixed(2)}\n`;
-            outputStr += `-> Oklab        : ${format(lab)}\n`;
-            outputStr += `-> XYZ          : ${format(xyz)}\n`;
-            outputStr += `-> Linear sRGB  : ${format(linear_rgb)}\n`;
-            outputStr += `-> sRGB (0-1)   : ${format(final_rgb)}\n`;
-            outputStr += `-> sRGB (0-255) : [ ${final_rgb_int.join(', ')} ]\n`;
+                outputStr += `OKLCH Input    : L=${lch_input[0].toFixed(5)}, C=${lch_input[1].toFixed(5)}, H=${lch_input[2].toFixed(2)}\n`;
+                outputStr += `-> Oklab        : ${format(lab)}\n`;
+                outputStr += `-> XYZ          : ${format(xyz)}\n`;
+                outputStr += `-> Linear sRGB  : ${format(linear_rgb)}\n`;
+                outputStr += `-> sRGB (0-1)   : ${format(final_rgb)}\n`;
+                outputStr += `-> sRGB (0-255) : [ ${final_rgb_int.join(', ')} ]\n\n`;
+            } else {
+                outputStr += "Invalid color.\n\n";
+            }
+
+            outputStr += "--- Lightness Slider Calculation (createFromPicker) ---\n";
+            const pickerDiags = GPG.state.diag.createFromPicker;
+            if (pickerDiags && pickerDiags.l_slider !== undefined) {
+                outputStr += `User Input L-Slider: ${pickerDiags.l_slider}\n`;
+                outputStr += `Target Chroma:       ${pickerDiags.target_chroma}\n`;
+                outputStr += `Gamut L-Range:       [${pickerDiags.minL} ... ${pickerDiags.maxL}]\n`;
+                outputStr += `Executed Path:       ${pickerDiags.path}\n`;
+                outputStr += `Final Calculated L:  ${pickerDiags.final_l}\n`;
+                outputStr += `Final Calculated C:  ${pickerDiags.final_c}\n\n`;
+            } else {
+                outputStr += "No picker data generated yet.\n\n";
+            }
+
+            outputStr += "--- Lightness Slider Gradient (updateAllSliderBackgrounds) ---\n";
+            const gradientDiags = GPG.state.diag.sliderGradient;
+            if (gradientDiags && gradientDiags.minL !== undefined) {
+                outputStr += `Gamut L-Range used: [${gradientDiags.minL} ... ${gradientDiags.maxL}]\n`;
+                outputStr += `Gradient Stops:\n`;
+                outputStr += `  1 (0%):   ${gradientDiags.stops[0]}\n`;
+                outputStr += `  2 (${gradientDiags.minL}%): ${gradientDiags.stops[1]}\n`;
+                outputStr += `  3 (${gradientDiags.maxL}%): ${gradientDiags.stops[2]}\n`;
+                outputStr += `  4 (100%): ${gradientDiags.stops[3]}\n`;
+            } else {
+                outputStr += "No gradient data generated yet.\n";
+            }
+
 
             GPG.elements.diagnosticsOutput.textContent = outputStr;
         },
