@@ -202,18 +202,15 @@ GPG.ui = GPG.ui || {};
                     const o = GPG.elements.pickerOpacityInput.value;
                     const alphaStr = o == 100 ? '' : ` / ${o}%`;
                     colorString = `hsl(${h} ${s}% ${l}%${alphaStr})`;
-
-                } else if (source === 'oklch' && isSlider) {
-                    colorString = GPG.utils.getFormattedColorString(masterColor, 'oklch');
-                } else {
-                    colorString = GPG.state.activePickerMode === 'hsl' ? masterColor.toHslaString() : GPG.utils.getFormattedColorString(masterColor, 'oklch');
+                } else if (GPG.state.activePickerMode === 'oklch') {
+                    colorString = GPG.utils.formatOklchForPicker(masterColor);
+                } else { // HSL mode, not slider drag
+                    colorString = masterColor.toHslaString();
                 }
                 GPG.ui.updateUiElementValue(GPG.elements.colorStringInput, colorString);
             }
-
             GPG.elements.colorStringInput.classList.remove('invalid');
 
-            // Update remaining UI
             this.updateIncrementUI();
             this.updateColorOutputSpans();
             this.requestH1Update();
