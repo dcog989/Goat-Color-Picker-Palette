@@ -4,46 +4,29 @@ window.GPG = window.GPG || {};
     'use strict';
 
     function setupSliderInputPair(slider, input, updateCallback) {
-        slider.addEventListener("input", () => {
-            if (GPG.state.isProgrammaticUpdate) return;
-
-            // For sliders with a step less than 1 (e.g. oklch), round to whole number for snapping effect.
-            // For other sliders, the value is already a whole number.
+        slider.addEventListener("input", (e) => {
             const step = parseFloat(slider.step) || 1;
             const value = step < 1 ? Math.round(parseFloat(slider.value)) : parseFloat(slider.value);
-
-            GPG.state.isProgrammaticUpdate = true;
-            // Force the UI to the snapped value during dragging.
             slider.value = value;
             input.value = value;
-            GPG.state.isProgrammaticUpdate = false;
-            updateCallback(true);
+            updateCallback(true, e.currentTarget);
         });
 
-        input.addEventListener("input", () => {
-            if (GPG.state.isProgrammaticUpdate) return;
-
-            let numericValue = parseFloat(input.value);
+        input.addEventListener("input", (e) => {
+            const numericValue = parseFloat(input.value);
             const min = parseFloat(input.min);
             const max = parseFloat(input.max);
 
-            if (!isNaN(numericValue)) {
-                if (numericValue > max) {
-                    numericValue = max;
-                    input.value = max;
-                } else if (numericValue < min && input.value.length >= String(min).length) {
-                    // Allow typing, but don't update slider if below min
-                } else {
-                    GPG.state.isProgrammaticUpdate = true;
-                    if (slider) slider.value = Math.max(min, Math.min(max, numericValue));
-                    GPG.state.isProgrammaticUpdate = false;
-                    updateCallback(true);
-                }
+            if (!isNaN(numericValue) && numericValue >= min && numericValue <= max) {
+                slider.value = numericValue;
+            }
+
+            if (input.validity.valid || (numericValue < min && input.value.length < String(min).length)) {
+                updateCallback(true, e.currentTarget);
             }
         });
 
-        input.addEventListener("change", () => {
-            if (GPG.state.isProgrammaticUpdate) return;
+        input.addEventListener("change", (e) => {
             let numericValue = parseFloat(input.value);
             const min = parseFloat(input.min);
             const max = parseFloat(input.max);
@@ -56,27 +39,25 @@ window.GPG = window.GPG || {};
 
             const step = input.step;
             const decimals = (step && step.includes('.')) ? step.split('.')[1].length : 0;
-            const finalValue = Number(numericValue.toFixed(decimals)); // Use Number() to remove trailing .0
+            const finalValue = Number(numericValue.toFixed(decimals));
 
-            GPG.state.isProgrammaticUpdate = true;
             input.value = finalValue;
-            if (slider) slider.value = finalValue;
-            GPG.state.isProgrammaticUpdate = false;
+            slider.value = finalValue;
 
-            if (updateCallback) updateCallback(false);
+            updateCallback(false, e.currentTarget);
         });
     }
 
     GPG.events = {
         bindEventListeners: function () {
-            const updateFromHsl = (isSlider, param) => GPG.handlers.updateFromHslPicker(isSlider, param);
-            const updateFromOklch = (isSlider, param) => GPG.handlers.updateFromOklchPicker(isSlider, param);
+            const updateFromHsl = (isSlider, sourceElement) => GPG.handlers.updateFromHslPicker(isSlider, null, sourceElement);
+            const updateFromOklch = (isSlider, sourceElement) => GPG.handlers.updateFromOklchPicker(isSlider, null, sourceElement);
 
-            const createUpdateCallback = (paramHsl, paramOklch) => (isSlider) => {
+            const createUpdateCallback = (paramHsl, paramOklch) => (isSlider, sourceElement) => {
                 if (GPG.state.activePickerMode === 'hsl') {
-                    updateFromHsl(isSlider, paramHsl);
+                    updateFromHsl(isSlider, sourceElement);
                 } else {
-                    updateFromOklch(isSlider, paramOklch);
+                    updateFromOklch(isSlider, sourceElement);
                 }
             };
 

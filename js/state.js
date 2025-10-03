@@ -10,7 +10,6 @@ window.GPG = window.GPG || {};
         h1UpdateDebounceTimer: null,
         generatedColors: [],
         h1Chars: [],
-        isProgrammaticUpdate: false,
         isUiUpdateThrottled: false,
         lastHslHue: 0,
         lastOklchHue: 0,

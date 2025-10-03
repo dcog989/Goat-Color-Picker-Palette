@@ -50,7 +50,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
         }
     }
 
-    function _processColorUpdate(newColor, sourceMode, isSliderEvent) {
+    function _processColorUpdate(newColor, sourceMode, isSliderEvent, sourceElement = null) {
         if (!newColor.isValid()) return;
 
         GPG.state.currentGoatColor = newColor;
@@ -67,22 +67,19 @@ window.GPG = window.GPG || {}; (function (GPG) {
             }
         }
 
+        const options = { source: sourceMode, isSlider: isSliderEvent, sourceElement: sourceElement };
         if (isSliderEvent) {
-            GPG.state.isProgrammaticUpdate = true;
-            GPG.ui.syncInstantUiFromState({ source: sourceMode, isSlider: isSliderEvent });
-            GPG.state.isProgrammaticUpdate = false;
+            GPG.ui.syncInstantUiFromState(options);
             GPG.ui.requestExpensiveUpdate();
         } else {
-            GPG.ui.syncAllUiFromState({ source: sourceMode, isSlider: isSliderEvent });
+            GPG.ui.syncAllUiFromState(options);
             GPG.palette.generate();
             GPG.handlers.generateAndDisplayTheoryPalette();
         }
     }
 
     GPG.handlers = {
-        updateFromHslPicker: function (isSliderEvent = false, param = null) {
-            if (GPG.state.isProgrammaticUpdate) return;
-
+        updateFromHslPicker: function (isSliderEvent = false, param = null, sourceElement = null) {
             const h = parseInt(GPG.elements.pickerInput1.value, 10);
             const s = parseInt(GPG.elements.pickerInput2.value, 10);
             const l = parseInt(GPG.elements.pickerInput3.value, 10);
@@ -91,12 +88,10 @@ window.GPG = window.GPG || {}; (function (GPG) {
             if (isNaN(h) || isNaN(s) || isNaN(l) || isNaN(o)) return;
 
             const newColor = GPG.color.createFromPicker('hsl', h, s, l, o, { param: param });
-            _processColorUpdate(newColor, 'hsl', isSliderEvent);
+            _processColorUpdate(newColor, 'hsl', isSliderEvent, sourceElement);
         },
 
-        updateFromOklchPicker: function (isSliderEvent = false, param = null) {
-            if (GPG.state.isProgrammaticUpdate) return;
-
+        updateFromOklchPicker: function (isSliderEvent = false, param = null, sourceElement = null) {
             const l = parseFloat(GPG.elements.pickerInput3.value);
             const cPercent = parseFloat(GPG.elements.pickerInput2.value);
             const h = parseInt(GPG.elements.pickerInput1.value, 10);
@@ -105,7 +100,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             if (isNaN(l) || isNaN(cPercent) || isNaN(h) || isNaN(o)) return;
 
             const newColor = GPG.color.createFromPicker('oklch', h, cPercent, l, o, { param: param });
-            _processColorUpdate(newColor, 'oklch', isSliderEvent);
+            _processColorUpdate(newColor, 'oklch', isSliderEvent, sourceElement);
         },
 
         dragOverHandler: function (e) {
@@ -137,7 +132,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
                         GPG.state.lastOklchHue = GPG.utils.normalizeHueForDisplay(newOklch.h);
                     }
 
-                    GPG.ui.syncAllUiFromState();
+                    GPG.ui.syncAllUiFromState({ sourceElement: event.currentTarget });
                     GPG.palette.generate();
                     GPG.handlers.generateAndDisplayTheoryPalette();
                 } else {
@@ -161,14 +156,12 @@ window.GPG = window.GPG || {}; (function (GPG) {
                 inputElement.classList.remove('invalid');
                 GPG.state.currentGoatColor = newColor;
 
-                // When a color is set via text input, update both hue caches
-                // to match the user's explicit intent for predictability.
                 const newHsl = newColor.toHsl();
                 const newOklch = newColor.toOklch();
                 GPG.state.lastHslHue = GPG.utils.normalizeHueForDisplay(newHsl.h);
                 GPG.state.lastOklchHue = GPG.utils.normalizeHueForDisplay(newOklch.h);
 
-                GPG.ui.syncAllUiFromState();
+                GPG.ui.syncAllUiFromState({ sourceElement: inputElement });
                 GPG.palette.generate();
                 GPG.handlers.generateAndDisplayTheoryPalette();
             } else {
@@ -338,7 +331,7 @@ window.GPG = window.GPG || {}; (function (GPG) {
             GPG.ui.updatePickerControls(newMode);
             GPG.ui.updateIncrementUI();
             GPG.ui.updateInfoPanel();
-            GPG.ui.syncAllUiFromState();
+            GPG.ui.syncAllUiFromState({ sourceElement: event.currentTarget });
             GPG.palette.generate();
         },
 

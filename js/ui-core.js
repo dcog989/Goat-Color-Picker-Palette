@@ -95,7 +95,10 @@ GPG.ui = GPG.ui || {};
         }
     }
 
-    function _updateHslPickerControls(masterHsl) {
+    function _updateHslPickerControls(masterHsl, options = {}) {
+        const { source = 'external' } = options;
+        if (source === 'hsl') return;
+
         const hDisplayHsl = GPG.utils.normalizeHueForDisplay(masterHsl.s < 1 ? GPG.state.lastHslHue : masterHsl.h);
         GPG.ui.updateUiElementValue(GPG.elements.pickerSlider1, hDisplayHsl);
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput1, hDisplayHsl);
@@ -105,7 +108,10 @@ GPG.ui = GPG.ui || {};
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, Math.round(masterHsl.l));
     }
 
-    function _updateOklchPickerControls(masterOklch) {
+    function _updateOklchPickerControls(masterOklch, options = {}) {
+        const { source = 'external' } = options;
+        if (source === 'oklch') return;
+
         const hDisplayOklch = GPG.utils.normalizeHueForDisplay(masterOklch.c < GPG.OKLCH_ACHROMATIC_CHROMA_THRESHOLD ? GPG.state.lastOklchHue : masterOklch.h);
         const lDisplayOklch = Number(masterOklch.l.toFixed(1));
 
@@ -127,10 +133,13 @@ GPG.ui = GPG.ui || {};
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput1, hDisplayOklch);
     }
 
-    function _updateSharedPickerUI(masterColor) {
+    function _updateSharedPickerUI(masterColor, options = {}) {
+        const { sourceElement = null } = options;
         const currentAlphaPercent = Math.round(masterColor.a * 100);
-        GPG.ui.updateUiElementValue(GPG.elements.pickerOpacitySlider, currentAlphaPercent);
-        GPG.ui.updateUiElementValue(GPG.elements.pickerOpacityInput, currentAlphaPercent);
+
+        if (sourceElement !== GPG.elements.pickerOpacitySlider) GPG.ui.updateUiElementValue(GPG.elements.pickerOpacitySlider, currentAlphaPercent);
+        if (sourceElement !== GPG.elements.pickerOpacityInput) GPG.ui.updateUiElementValue(GPG.elements.pickerOpacityInput, currentAlphaPercent);
+
         GPG.elements.colorPreviewBox_colorOverlay.style.backgroundColor = masterColor.toRgbaString();
     }
 
@@ -157,26 +166,17 @@ GPG.ui = GPG.ui || {};
         },
 
         syncInstantUiFromState: function (options = {}) {
-            const { source = 'external', isSlider = false } = options;
+            const { source = 'external', isSlider = false, sourceElement = null } = options;
             const masterColor = GPG.state.currentGoatColor;
 
             // Update global styles
             document.body.style.backgroundColor = masterColor.toRgbaString();
             _updateCssVariables(masterColor.flatten());
 
-            const skipHslUpdate = isSlider && source === 'hsl';
-            const skipOklchUpdate = isSlider && source === 'oklch';
-
-            // Update picker-specific controls if the update did not originate from them,
-            // or if it's not a slider drag event (i.e., it's a final 'change' event).
             if (GPG.state.activePickerMode === 'hsl') {
-                if (!skipHslUpdate) {
-                    _updateHslPickerControls(masterColor.toHsl());
-                }
+                _updateHslPickerControls(masterColor.toHsl(), options);
             } else { // oklch
-                if (!skipOklchUpdate) {
-                    _updateOklchPickerControls(masterColor.toOklch());
-                }
+                _updateOklchPickerControls(masterColor.toOklch(), options);
             }
 
 
@@ -191,26 +191,26 @@ GPG.ui = GPG.ui || {};
             }
 
             // Update shared UI elements (preview box, opacity)
-            _updateSharedPickerUI(masterColor);
+            _updateSharedPickerUI(masterColor, options);
 
-            // Update Color String Input - Use picker values as source of truth when picker is the source
-            let colorString;
-            if (source === 'hsl' && isSlider) {
-                const h = GPG.elements.pickerInput1.value;
-                const s = GPG.elements.pickerInput2.value;
-                const l = GPG.elements.pickerInput3.value;
-                const o = GPG.elements.pickerOpacityInput.value;
-                const alphaStr = o == 100 ? '' : ` / ${o}%`;
-                colorString = `hsl(${h} ${s}% ${l}%${alphaStr})`;
+            if (sourceElement !== GPG.elements.colorStringInput) {
+                let colorString;
+                if (source === 'hsl' && isSlider) {
+                    const h = GPG.elements.pickerInput1.value;
+                    const s = GPG.elements.pickerInput2.value;
+                    const l = GPG.elements.pickerInput3.value;
+                    const o = GPG.elements.pickerOpacityInput.value;
+                    const alphaStr = o == 100 ? '' : ` / ${o}%`;
+                    colorString = `hsl(${h} ${s}% ${l}%${alphaStr})`;
 
-            } else if (source === 'oklch' && isSlider) {
-                // The currentGoatColor was just updated from the picker, so we can use it
-                // and the utility function will format it correctly.
-                colorString = GPG.utils.getFormattedColorString(masterColor, 'oklch');
-            } else { // Source is external (e.g. text input, swatch click) or a final change event
-                colorString = GPG.state.activePickerMode === 'hsl' ? masterColor.toHslaString() : GPG.utils.getFormattedColorString(masterColor, 'oklch');
+                } else if (source === 'oklch' && isSlider) {
+                    colorString = GPG.utils.getFormattedColorString(masterColor, 'oklch');
+                } else {
+                    colorString = GPG.state.activePickerMode === 'hsl' ? masterColor.toHslaString() : GPG.utils.getFormattedColorString(masterColor, 'oklch');
+                }
+                GPG.ui.updateUiElementValue(GPG.elements.colorStringInput, colorString);
             }
-            GPG.ui.updateUiElementValue(GPG.elements.colorStringInput, colorString);
+
             GPG.elements.colorStringInput.classList.remove('invalid');
 
             // Update remaining UI
@@ -242,10 +242,8 @@ GPG.ui = GPG.ui || {};
                 console.warn("syncAllUiFromState called with invalid currentGoatColor");
                 return;
             }
-            GPG.state.isProgrammaticUpdate = true;
             this.syncInstantUiFromState(options);
             this.performExpensiveUpdates();
-            GPG.state.isProgrammaticUpdate = false;
         },
 
         updateDiagnosticsPanel: function () {

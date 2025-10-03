@@ -5,9 +5,21 @@ window.GPG = window.GPG || {};
 (function (GPG) {
     'use strict';
 
+    let initRetries = 0;
+    const MAX_INIT_RETRIES = 60; // 3-second timeout (60 * 50ms)
+
     function initializeApp() {
         if (typeof GoatColor === "undefined" || typeof GoatColor.getMaxSRGBChroma === "undefined") {
-            setTimeout(initializeApp, 50);
+            initRetries++;
+            if (initRetries < MAX_INIT_RETRIES) {
+                setTimeout(initializeApp, 50);
+            } else {
+                console.error("GoatColor library failed to load in time.");
+                const paletteContainer = document.getElementById("palette-container");
+                if (paletteContainer) {
+                    paletteContainer.innerHTML = "<p>Error: Core library failed to load. Please refresh the page.</p>";
+                }
+            }
             return;
         }
 

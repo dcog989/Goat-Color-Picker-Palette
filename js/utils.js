@@ -22,30 +22,7 @@ window.GPG = window.GPG || {};
                 case "rgb":
                     return hasOpacity ? colorInstance.toRgbaString() : colorInstance.toRgbString();
                 case "oklch":
-                    {
-                        const oklcha = colorInstance.toOklcha();
-
-                        const round = (val, dec) => Number(Math.round(val + "e" + dec) + "e-" + dec);
-
-                        let lStr = round(oklcha.l / 100, 3).toString();
-                        if (lStr.startsWith("0.")) lStr = lStr.substring(1);
-
-                        let cStr = round(oklcha.c, 3).toString();
-                        if (cStr.startsWith("0.")) cStr = cStr.substring(1);
-
-                        let hStr = round(oklcha.h, 0);
-                        if (hStr === 360) hStr = 0;
-
-                        if (!hasOpacity) {
-                            return `oklch(${lStr} ${cStr} ${hStr})`;
-                        }
-
-                        let aStr = round(oklcha.a, 3).toString();
-                        if (aStr.startsWith("0.")) aStr = aStr.substring(1);
-                        if (aStr === '1') return `oklch(${lStr} ${cStr} ${hStr})`;
-
-                        return `oklch(${lStr} ${cStr} ${hStr} / ${aStr})`;
-                    }
+                    return hasOpacity ? colorInstance.toOklchaString() : colorInstance.toOklchString();
                 case "hex":
                 default:
                     return hasOpacity ? colorInstance.toHexa() : colorInstance.toHex();
