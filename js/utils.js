@@ -33,7 +33,14 @@ window.GPG = window.GPG || {};
             if (!colorInstance || !colorInstance.isValid()) return "Invalid Color";
 
             const oklcha = colorInstance.toOklcha();
-            const lightnessToDisplay = (rawPickerValues && rawPickerValues.l !== undefined) ? rawPickerValues.l : oklcha.l;
+
+            // Use the actual L from the color instance (which is the gamut-clipped result)
+            let lightnessToDisplay = oklcha.l;
+
+            // For display purposes, round L=0.01% down to 0% and L=99.99% up to 100%
+            if (lightnessToDisplay < 0.1) lightnessToDisplay = 0;
+            else if (lightnessToDisplay > 99.9) lightnessToDisplay = 100;
+
             const lStr = Number(parseFloat(lightnessToDisplay).toFixed(1));
 
             const cStr = Number(oklcha.c.toFixed(3));

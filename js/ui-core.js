@@ -4,6 +4,18 @@ GPG.ui = GPG.ui || {};
 (function (GPG) {
     'use strict';
 
+    // --- L_r functions (Tone-Mapped Lightness) from reference app's gamut.rs ---
+    const K1 = 0.206;
+    const K2 = 0.03;
+    const K3 = (1. + K1) / (1. + K2);
+    function toe_inv(lr) {
+        return (lr * (lr + K1)) / (K3 * (lr + K2));
+    }
+    function toe(l) {
+        return 0.5 * (K3 * l - K1 + Math.sqrt((K3 * l - K1) * (K3 * l - K1) + 4. * K2 * K3 * l));
+    }
+    // --- End L_r functions ---
+
     // --- Diagnostics Conversion Logic (for display only) ---
     // This logic is duplicated from the reference source to avoid modifying the library.
     const DIAG = {};
@@ -43,7 +55,7 @@ GPG.ui = GPG.ui || {};
     };
     // --- End Diagnostics Logic ---
 
-    // --- Contrast Helper Function ---
+    // --- Contrast Helper Function (Refactoring 3) ---
     function _getContrastingTextColor(bgColorInstance, targetContrast = 5) {
         if (!bgColorInstance.isValid()) return GoatColor('black');
 
@@ -111,6 +123,7 @@ GPG.ui = GPG.ui || {};
         if (accentColor.isValid()) {
             rootStyle.setProperty('--color-accent-main', accentColor.toRgbString());
 
+            // Use refactored helper with 5:1 contrast
             const accentTextColor = _getContrastingTextColor(accentColor, 5);
 
             rootStyle.setProperty('--color-text-on-accent', accentTextColor.toRgbString());
@@ -142,22 +155,36 @@ GPG.ui = GPG.ui || {};
         const lDisplayOklch = Number(masterOklch.l.toFixed(1));
 
         let cPercentDisplayRounded = 0;
+        let max_c_at_L_current = 0;
+
         if (lDisplayOklch > 0.01 && lDisplayOklch < 99.99) {
-            // FIX: Use the actual max chroma at the current L/H for a consistent 0-100% Chroma slider scale.
-            const max_chroma_at_current_L = GoatColor.getMaxSRGBChroma(lDisplayOklch, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-            if (max_chroma_at_current_L > 0.0001) {
+            max_c_at_L_current = GoatColor.getMaxSRGBChroma(lDisplayOklch, hDisplayOklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+            if (max_c_at_L_current > 0.0001) {
                 const oklch_c = masterOklch.c;
-                // Calculate percentage relative to the current gamut edge (0-100%)
-                const cPercentDisplay = (oklch_c / max_chroma_at_current_L) * 100;
+                const cPercentDisplay = (oklch_c / max_c_at_L_current) * 100;
                 cPercentDisplayRounded = Number(Math.min(100, cPercentDisplay).toFixed(1));
             }
         }
         GPG.ui.updateUiElementValue(GPG.elements.pickerSlider2, cPercentDisplayRounded);
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput2, cPercentDisplayRounded);
 
+        // --- Start Lr Slider Value Calculation ---
+        let lrSliderValue;
 
-        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider3, lDisplayOklch);
-        GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, lDisplayOklch);
+        if (masterOklch.l <= 0.1) {
+            lrSliderValue = 0;
+        } else if (masterOklch.l >= 99.9) {
+            lrSliderValue = 100;
+        } else {
+            // Convert actual L (clipped) to Lr for setting the slider value
+            lrSliderValue = toe(masterOklch.l / 100) * 100;
+        }
+
+        const lSliderValueRounded = Number(lrSliderValue.toFixed(1));
+        GPG.ui.updateUiElementValue(GPG.elements.pickerSlider3, lSliderValueRounded);
+        GPG.ui.updateUiElementValue(GPG.elements.pickerInput3, lSliderValueRounded);
+        // --- End Lr Slider Value Calculation ---
+
         GPG.ui.updateUiElementValue(GPG.elements.pickerSlider1, hDisplayOklch);
         GPG.ui.updateUiElementValue(GPG.elements.pickerInput1, hDisplayOklch);
     }
@@ -308,9 +335,9 @@ GPG.ui = GPG.ui || {};
             outputStr += "--- Lightness Slider Calculation (createFromPicker) ---\n";
             const pickerDiags = GPG.state.diag.createFromPicker;
             if (pickerDiags && pickerDiags.l_slider !== undefined) {
-                outputStr += `User Input L-Slider: ${pickerDiags.l_slider}\n`;
+                outputStr += `User Input Lr-Slider: ${pickerDiags.l_slider}\n`;
                 outputStr += `Target Chroma:       ${pickerDiags.target_chroma}\n`;
-                outputStr += `Gamut L-Range:       [${pickerDiags.minL} ... ${pickerDiags.maxL}]\n`;
+                outputStr += `Gamut L-Range:       [${pickerDiags.minL} ... ${pickerDiags.maxL}] (N/A in Lr mode)\n`;
                 outputStr += `Executed Path:       ${pickerDiags.path}\n`;
                 outputStr += `Final Calculated L:  ${pickerDiags.final_l}\n`;
                 outputStr += `Final Calculated C:  ${pickerDiags.final_c}\n\n`;
@@ -320,13 +347,9 @@ GPG.ui = GPG.ui || {};
 
             outputStr += "--- Lightness Slider Gradient (updateAllSliderBackgrounds) ---\n";
             const gradientDiags = GPG.state.diag.sliderGradient;
-            if (gradientDiags && gradientDiags.minL !== undefined) {
-                outputStr += `Gamut L-Range used: [${gradientDiags.minL} ... ${gradientDiags.maxL}]\n`;
-                outputStr += `Gradient Stops:\n`;
-                outputStr += `  1 (0%):   ${gradientDiags.stops[0]}\n`;
-                outputStr += `  2 (${gradientDiags.minL}%): ${gradientDiags.stops[1]}\n`;
-                outputStr += `  3 (${gradientDiags.maxL}%): ${gradientDiags.stops[2]}\n`;
-                outputStr += `  4 (100%): ${gradientDiags.stops[3]}\n`;
+            if (gradientDiags && gradientDiags.stops !== undefined) {
+                outputStr += `Gamut Lr-Range used: [${gradientDiags.minL} ... ${gradientDiags.maxL}]\n`;
+                outputStr += `Gradient Stops: ${gradientDiags.stops.length}\n`;
             } else {
                 outputStr += "No gradient data generated yet.\n";
             }
@@ -420,6 +443,7 @@ GPG.ui = GPG.ui || {};
             const blockBgColor = GoatColor(`hsl(${bgHue}, ${bgSat}%, ${bgLightness}%)`);
             if (!blockBgColor.isValid()) return;
 
+            // Use refactored helper with 5:1 contrast
             const finalTextColor = _getContrastingTextColor(blockBgColor, 5);
 
             const finalBgString = blockBgColor.toRgbString();

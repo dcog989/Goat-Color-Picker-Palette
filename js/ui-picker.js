@@ -3,6 +3,18 @@ GPG.ui = GPG.ui || {};
 
 (function (GPG) {
     'use strict';
+    // --- L_r functions (Tone-Mapped Lightness) from reference app's gamut.rs ---
+    const K1 = 0.206;
+    const K2 = 0.03;
+    const K3 = (1. + K1) / (1. + K2);
+    function toe_inv(lr) {
+        return (lr * (lr + K1)) / (K3 * (lr + K2));
+    }
+    function toe(l) {
+        return 0.5 * (K3 * l - K1 + Math.sqrt((K3 * l - K1) * (K3 * l - K1) + 4. * K2 * K3 * l));
+    }
+    // --- End L_r functions ---
+
     Object.assign(GPG.ui, {
         generateHslHueTrackGradientString: function (s, l, steps = 12) {
             if (s < 1 || l <= 0 || l >= 100) {
@@ -73,36 +85,50 @@ GPG.ui = GPG.ui || {};
             const masterOklch = masterColor.toOklch();
             const c_percent_oklch = parseFloat(GPG.elements.pickerInput2.value);
             const h_oklch = parseFloat(GPG.elements.pickerInput1.value);
-            const l_oklch = parseFloat(GPG.elements.pickerInput3.value); // Use L from the input
 
-            if (!isNaN(c_percent_oklch) && !isNaN(h_oklch) && !isNaN(l_oklch)) {
+            // L_r is the value in the input field
+            const lr_oklch_percent = parseFloat(GPG.elements.pickerInput3.value);
+
+            if (!isNaN(c_percent_oklch) && !isNaN(h_oklch) && !isNaN(lr_oklch_percent)) {
                 const stable_h_oklch = GPG.state.lastOklchHue;
-
-                // Absolute chroma of the current color (already gamut-clipped by color.js)
                 const current_abs_c = masterOklch.c;
 
-                // OKLCH L-Slider Background: Sweep L from 0 to 100, using current C and H.
-                // The gradient should go from black to current color at current L to white.
-                const stop0 = `oklch(0% 0 ${stable_h_oklch})`; // Black (actual oklch(0%...))
-                const stop1 = masterColor.toRgbString(); // Current color (at current L, C, H)
-                const stop2 = `oklch(100% 0 ${stable_h_oklch})`; // White (actual oklch(100%...))
+                // Calculate the actual Oklab Lightness (L) from the current Lr (L-slider value)
+                const current_l_oklab = toe_inv(lr_oklch_percent / 100) * 100;
 
-                const gradient = `linear-gradient(to right, ${stop0} 0%, ${stop1} ${l_oklch}%, ${stop2} 100%)`;
+
+                // --- OKLCH Lr-Slider Background (Tone-Mapped Track) ---
+                const target_abs_c_for_gradient = (c_percent_oklch / 100) * GoatColor.getMaxSRGBChroma(50, stable_h_oklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+
+                const LrStops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+                const LrColors = LrStops.map(lr_percent => {
+                    const l = toe_inv(lr_percent / 100) * 100;
+                    return GoatColor(`oklch(${l}% ${target_abs_c_for_gradient} ${stable_h_oklch})`).toRgbString();
+                });
+                const gradient = `linear-gradient(to right, ${LrColors.map((c, i) => `${c} ${LrStops[i]}%`).join(', ')})`;
+
                 root.style.setProperty("--background-image-slider-track-oklch-l", gradient);
 
-                // OKLCH C-Slider Background
-                const l_oklch_for_c = l_oklch; // Use L from the input/state
+                GPG.state.diag.sliderGradient = {
+                    minL: 0, maxL: 100, // Lr is 0-100%
+                    stops: LrColors
+                };
+
+
+                // --- OKLCH C-Slider Background (Dynamic Max Chroma Track) ---
+                const l_oklch_for_c = current_l_oklab; // Use the *actual* L derived from Lr
                 const stable_h_for_c = stable_h_oklch;
                 if (!isNaN(l_oklch_for_c)) {
                     const cTrackStart = `oklch(${l_oklch_for_c}% 0 ${stable_h_for_c})`;
+                    // Find the actual sRGB gamut maximum Chroma for this L and H
                     const max_c_for_c_track = GoatColor.getMaxSRGBChroma(l_oklch_for_c, stable_h_for_c, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
                     const cTrackEnd = `oklch(${l_oklch_for_c}% ${max_c_for_c_track.toFixed(4)} ${stable_h_for_c})`;
                     root.style.setProperty("--background-image-slider-track-oklch-c", `linear-gradient(to right, ${cTrackStart}, ${cTrackEnd})`);
                 }
 
-                // OKLCH H-Slider Background
-                // The H-slider should use the current L and C, and sweep the hue.
-                const hTrackGradientOklch = this.generateOklchHueTrackGradientString(l_oklch, current_abs_c);
+                // --- OKLCH H-Slider Background ---
+                // The H-slider should use the actual L and the final clipped C.
+                const hTrackGradientOklch = this.generateOklchHueTrackGradientString(masterOklch.l, current_abs_c);
                 root.style.setProperty("--background-image-slider-track-oklch-h", hTrackGradientOklch);
             }
 
@@ -270,13 +296,13 @@ GPG.ui = GPG.ui || {};
                 pickerInput1.disabled = false;
                 pickerSlider1.title = "";
             } else { // oklch
-                // Order: L, C, H
+                // Order: Lr, C, H
                 controlsContainer.appendChild(pickerGroup3);
                 controlsContainer.appendChild(pickerGroup2);
                 controlsContainer.appendChild(pickerGroup1);
 
-                // Group 3 -> Lightness
-                pickerLabel3.textContent = "Lightness:"; pickerLabel3.htmlFor = 'picker-slider-3';
+                // Group 3 -> Lightness (Lr)
+                pickerLabel3.textContent = "Lr:"; pickerLabel3.htmlFor = 'picker-slider-3';
                 pickerSlider3.className = 'oklch-l-slider';
                 pickerSlider3.min = 0; pickerSlider3.max = 100; pickerSlider3.step = 0.1;
                 pickerInput3.min = 0; pickerInput3.max = 100; pickerInput3.step = 0.1;

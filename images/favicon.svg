@@ -1,19 +1,44 @@
-<svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<svg width="64" height="64" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="diagonalRainbowStripes6" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#FF0000" />
-      <stop offset="16.667%" stop-color="#FF0000" />
-      <stop offset="16.667%" stop-color="#FFA500" />
-      <stop offset="33.333%" stop-color="#FFA500" />
-      <stop offset="33.333%" stop-color="#FFFF00" />
-      <stop offset="50.000%" stop-color="#FFFF00" />
-      <stop offset="50.000%" stop-color="#00FF00" />
-      <stop offset="66.667%" stop-color="#00FF00" />
-      <stop offset="66.667%" stop-color="#0000FF" />
-      <stop offset="83.333%" stop-color="#0000FF" />
-      <stop offset="83.333%" stop-color="#FF69B4" />
-      <stop offset="100%" stop-color="#FF69B4" />
-    </linearGradient>
+    <!-- Correct path for exactly 30-degree segment with proper calculations -->
+    <path id="segment" d="M256,256 L512,256 A256,256 0 0,1 477.5825,384 Z"/>
   </defs>
-  <rect width="100" height="100" fill="url(#diagonalRainbowStripes6)" />
+  
+  <!-- 12 segments covering exactly 30 degrees each -->
+  <g transform="rotate(0,256,256)">
+    <use href="#segment" fill="hsl(0, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(30,256,256)">
+    <use href="#segment" fill="hsl(30, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(60,256,256)">
+    <use href="#segment" fill="hsl(60, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(90,256,256)">
+    <use href="#segment" fill="hsl(90, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(120,256,256)">
+    <use href="#segment" fill="hsl(120, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(150,256,256)">
+    <use href="#segment" fill="hsl(150, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(180,256,256)">
+    <use href="#segment" fill="hsl(180, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(210,256,256)">
+    <use href="#segment" fill="hsl(210, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(240,256,256)">
+    <use href="#segment" fill="hsl(240, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(270,256,256)">
+    <use href="#segment" fill="hsl(270, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(300,256,256)">
+    <use href="#segment" fill="hsl(300, 67%, 50%)"/>
+  </g>
+  <g transform="rotate(330,256,256)">
+    <use href="#segment" fill="hsl(330, 67%, 50%)"/>
+  </g>
 </svg>
