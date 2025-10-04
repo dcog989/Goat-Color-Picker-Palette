@@ -3,11 +3,6 @@ window.GPG = window.GPG || {};
 (function (GPG) {
     'use strict';
 
-    function findCusp(h) {
-        const cuspColor = GoatColor(`oklch(60% 0.5 ${h})`);
-        return cuspColor.toOklch();
-    }
-
     function generatePalette() {
         if (!GPG.state.currentGoatColor || !GPG.state.currentGoatColor.isValid()) {
             return;
@@ -38,16 +33,22 @@ window.GPG = window.GPG || {};
             numTotalSwatches = 1;
         }
 
-        const cusp = findCusp(stableOklchHue);
+        const baseChroma = baseOklch.c;
         let baseChromaPercent = 0;
-        if (cusp.c > 0) {
-            let max_c_at_base_L = baseOklch.l < cusp.l
-                ? (baseOklch.l / cusp.l) * cusp.c
-                : ((100 - baseOklch.l) / (100 - cusp.l)) * cusp.c;
-            if (max_c_at_base_L > 0) {
-                baseChromaPercent = (baseOklch.c / max_c_at_base_L) * 100;
-            }
+
+        // Use GoatColor library's accurate gamut boundary check for the current L/H
+        const max_c_at_base_L = GoatColor.getMaxSRGBChroma(
+            baseOklch.l,
+            stableOklchHue,
+            GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE
+        );
+
+        if (max_c_at_base_L > 0) {
+            baseChromaPercent = (baseChroma / max_c_at_base_L) * 100;
         }
+
+        // Clamp to 100 to prevent slight float calculation overshoots
+        baseChromaPercent = Math.min(100, Math.max(0, baseChromaPercent));
 
 
         for (let i = 0; i < numTotalSwatches; i++) {

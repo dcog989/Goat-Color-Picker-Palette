@@ -70,32 +70,39 @@ GPG.ui = GPG.ui || {};
             }
 
             // OKLCH Sliders
+            const masterOklch = masterColor.toOklch();
             const c_percent_oklch = parseFloat(GPG.elements.pickerInput2.value);
             const h_oklch = parseFloat(GPG.elements.pickerInput1.value);
-            if (!isNaN(c_percent_oklch) && !isNaN(h_oklch)) {
+            const l_oklch = parseFloat(GPG.elements.pickerInput3.value); // Use L from the input
+
+            if (!isNaN(c_percent_oklch) && !isNaN(h_oklch) && !isNaN(l_oklch)) {
                 const stable_h_oklch = GPG.state.lastOklchHue;
 
-                const cusp = GoatColor(`oklch(60% 0.5 ${stable_h_oklch})`).toOklch();
-                const target_abs_c_at_cusp = (c_percent_oklch / 100) * cusp.c;
+                // Absolute chroma of the current color (already gamut-clipped by color.js)
+                const current_abs_c = masterOklch.c;
 
-                // OKLCH L-Slider Background
-                const stop1 = `oklch(0% 0 ${stable_h_oklch})`;
-                const stop2 = `oklch(${cusp.l}% ${target_abs_c_at_cusp} ${stable_h_oklch})`;
-                const stop3 = `oklch(100% 0 ${stable_h_oklch})`;
-                const gradient = `linear-gradient(to right, ${stop1}, ${stop2} ${cusp.l}%, ${stop3})`;
+                // OKLCH L-Slider Background: Sweep L from 0 to 100, using current C and H.
+                // The gradient should go from black to current color at current L to white.
+                const stop0 = `oklch(0% 0 ${stable_h_oklch})`; // Black (actual oklch(0%...))
+                const stop1 = masterColor.toRgbString(); // Current color (at current L, C, H)
+                const stop2 = `oklch(100% 0 ${stable_h_oklch})`; // White (actual oklch(100%...))
+
+                const gradient = `linear-gradient(to right, ${stop0} 0%, ${stop1} ${l_oklch}%, ${stop2} 100%)`;
                 root.style.setProperty("--background-image-slider-track-oklch-l", gradient);
 
                 // OKLCH C-Slider Background
-                const l_oklch_for_c = parseFloat(GPG.elements.pickerInput3.value);
+                const l_oklch_for_c = l_oklch; // Use L from the input/state
+                const stable_h_for_c = stable_h_oklch;
                 if (!isNaN(l_oklch_for_c)) {
-                    const cTrackStart = `oklch(${l_oklch_for_c}% 0 ${stable_h_oklch})`;
-                    const max_c_for_c_track = GoatColor.getMaxSRGBChroma(l_oklch_for_c, stable_h_oklch, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
-                    const cTrackEnd = `oklch(${l_oklch_for_c}% ${max_c_for_c_track.toFixed(4)} ${stable_h_oklch})`;
+                    const cTrackStart = `oklch(${l_oklch_for_c}% 0 ${stable_h_for_c})`;
+                    const max_c_for_c_track = GoatColor.getMaxSRGBChroma(l_oklch_for_c, stable_h_for_c, GPG.OKLCH_C_SLIDER_STATIC_MAX_ABSOLUTE);
+                    const cTrackEnd = `oklch(${l_oklch_for_c}% ${max_c_for_c_track.toFixed(4)} ${stable_h_for_c})`;
                     root.style.setProperty("--background-image-slider-track-oklch-c", `linear-gradient(to right, ${cTrackStart}, ${cTrackEnd})`);
                 }
 
                 // OKLCH H-Slider Background
-                const hTrackGradientOklch = this.generateOklchHueTrackGradientString(l_oklch_for_c, target_abs_c_at_cusp);
+                // The H-slider should use the current L and C, and sweep the hue.
+                const hTrackGradientOklch = this.generateOklchHueTrackGradientString(l_oklch, current_abs_c);
                 root.style.setProperty("--background-image-slider-track-oklch-h", hTrackGradientOklch);
             }
 
