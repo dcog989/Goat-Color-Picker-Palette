@@ -43,6 +43,48 @@ GPG.ui = GPG.ui || {};
     };
     // --- End Diagnostics Logic ---
 
+    // --- Contrast Helper Function ---
+    function _getContrastingTextColor(bgColorInstance, targetContrast = 5) {
+        if (!bgColorInstance.isValid()) return GoatColor('black');
+
+        const baseHsl = bgColorInstance.toHsl();
+        const baseHue = baseHsl.h;
+        const baseSat = baseHsl.s;
+
+        // Candidates for contrast color
+        const textColorDark = GoatColor(`hsl(${baseHue}, ${baseSat}%, 30%)`);
+        const textColorLight = GoatColor(`hsl(${baseHue}, ${baseSat}%, 70%)`);
+
+        let finalTextColor;
+
+        if (textColorLight.isValid() && textColorDark.isValid()) {
+            const contrastWithLight = GoatColor.getContrastRatio(textColorLight, bgColorInstance);
+
+            if (contrastWithLight >= targetContrast) {
+                // Light color meets contrast minimum
+                finalTextColor = textColorLight;
+            } else {
+                const contrastWithDark = GoatColor.getContrastRatio(textColorDark, bgColorInstance);
+
+                if (contrastWithDark >= targetContrast) {
+                    // Dark color meets contrast minimum
+                    finalTextColor = textColorDark;
+                } else {
+                    // Neither meets minimum, pick the one with better contrast
+                    finalTextColor = contrastWithLight > contrastWithDark ? textColorLight : textColorDark;
+                }
+            }
+        } else {
+            // Fallback to absolute white/black contrast check
+            const contrastWithWhite = GoatColor.getContrastRatio(GoatColor('white'), bgColorInstance);
+            const contrastWithBlack = GoatColor.getContrastRatio(GoatColor('black'), bgColorInstance);
+            finalTextColor = contrastWithWhite >= contrastWithBlack ? GoatColor('white') : GoatColor('black');
+        }
+
+        return finalTextColor;
+    }
+    // --- End Contrast Helper Function ---
+
     function _updateCssVariables(opaqueBaseColor) {
         if (!opaqueBaseColor.isValid()) return;
 
@@ -69,28 +111,8 @@ GPG.ui = GPG.ui || {};
         if (accentColor.isValid()) {
             rootStyle.setProperty('--color-accent-main', accentColor.toRgbString());
 
-            const TARGET_CONTRAST = 5;
-            const textColorDark = GoatColor(`hsl(${accentHue}, ${accentSat}%, 30%)`);
-            const textColorLight = GoatColor(`hsl(${accentHue}, ${accentSat}%, 70%)`);
-            let accentTextColor;
+            const accentTextColor = _getContrastingTextColor(accentColor, 5);
 
-            if (textColorLight.isValid() && textColorDark.isValid()) {
-                const contrastWithLight = GoatColor.getContrastRatio(textColorLight, accentColor);
-                if (contrastWithLight >= TARGET_CONTRAST) {
-                    accentTextColor = textColorLight;
-                } else {
-                    const contrastWithDark = GoatColor.getContrastRatio(textColorDark, accentColor);
-                    if (contrastWithDark >= TARGET_CONTRAST) {
-                        accentTextColor = textColorDark;
-                    } else {
-                        accentTextColor = contrastWithLight > contrastWithDark ? textColorLight : textColorDark;
-                    }
-                }
-            } else {
-                const contrastWithWhite = GoatColor.getContrastRatio(GoatColor('white'), accentColor);
-                const contrastWithBlack = GoatColor.getContrastRatio(GoatColor('black'), accentColor);
-                accentTextColor = contrastWithWhite >= contrastWithBlack ? GoatColor('white') : GoatColor('black');
-            }
             rootStyle.setProperty('--color-text-on-accent', accentTextColor.toRgbString());
         }
     }
@@ -398,28 +420,7 @@ GPG.ui = GPG.ui || {};
             const blockBgColor = GoatColor(`hsl(${bgHue}, ${bgSat}%, ${bgLightness}%)`);
             if (!blockBgColor.isValid()) return;
 
-            const TARGET_CONTRAST = 4.5;
-            const textColorDark = GoatColor(`hsl(${bgHue}, ${bgSat}%, 30%)`);
-            const textColorLight = GoatColor(`hsl(${bgHue}, ${bgSat}%, 70%)`);
-            let finalTextColor;
-
-            if (textColorLight.isValid() && textColorDark.isValid()) {
-                const contrastWithLight = GoatColor.getContrastRatio(textColorLight, blockBgColor);
-                if (contrastWithLight >= TARGET_CONTRAST) {
-                    finalTextColor = textColorLight;
-                } else {
-                    const contrastWithDark = GoatColor.getContrastRatio(textColorDark, blockBgColor);
-                    if (contrastWithDark >= TARGET_CONTRAST) {
-                        finalTextColor = textColorDark;
-                    } else {
-                        finalTextColor = contrastWithLight > contrastWithDark ? textColorLight : textColorDark;
-                    }
-                }
-            } else {
-                const contrastWithWhite = GoatColor.getContrastRatio(GoatColor('white'), blockBgColor);
-                const contrastWithBlack = GoatColor.getContrastRatio(GoatColor('black'), blockBgColor);
-                finalTextColor = contrastWithWhite >= contrastWithBlack ? GoatColor('white') : GoatColor('black');
-            }
+            const finalTextColor = _getContrastingTextColor(blockBgColor, 5);
 
             const finalBgString = blockBgColor.toRgbString();
             const finalColorString = finalTextColor.toRgbString();
