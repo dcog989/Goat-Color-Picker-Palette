@@ -7,8 +7,8 @@
  * @license MIT
  * @author Chase McGoat
  * @createdAt 2025-04-20
- * @lastModified 2025-09-11
- * @version 1.3.5
+ * @lastModified 2025-11-07
+ * @version 1.3.7
  */
 
 (function (global, factory) {
@@ -48,6 +48,7 @@
 
     const ALPHA_STYLE_HINT_PERCENT = "percent";
     const ALPHA_STYLE_HINT_NUMBER = "number";
+    const SRGB_GAMUT_EPSILON = 0.00001;
 
     /**
      * Clamps a value between a minimum and maximum.
@@ -207,6 +208,9 @@
             this.valid = false;
             this.error = null; // Store parsing error message
             this._alphaInputStyleHint = null; // 'percent' or 'number'
+            this._hsl = null;
+            this._oklch = null;
+            this._cmyk = null;
             this._parse(colorInput);
         }
 
@@ -231,6 +235,9 @@
         _parse(rawInput) {
             this.valid = false; // Reset validity and error
             this.error = null;
+            this._hsl = null;
+            this._oklch = null;
+            this._cmyk = null;
 
             if (rawInput == null) {
                 this.error = "Input color is null or undefined.";
@@ -341,7 +348,7 @@
                     this.a = alphaInfo.value;
                     this._alphaInputStyleHint = alphaInfo.styleHint;
 
-                    const isLinearSrgbInGamut = ([r, g, b]) => r >= -0.00001 && r <= 1.00001 && g >= -0.00001 && g <= 1.00001 && b >= -0.00001 && b <= 1.00001;
+                    const isLinearSrgbInGamut = ([r, g, b]) => r >= -SRGB_GAMUT_EPSILON && r <= 1 + SRGB_GAMUT_EPSILON && g >= -SRGB_GAMUT_EPSILON && g <= 1 + SRGB_GAMUT_EPSILON && b >= -SRGB_GAMUT_EPSILON && b <= 1 + SRGB_GAMUT_EPSILON;
                     let [r_lin, g_lin, b_lin] = this._oklchToLinearSrgb(l_val, c_val, h_val);
 
                     if (!isLinearSrgbInGamut([r_lin, g_lin, b_lin])) {
@@ -465,31 +472,7 @@
          * @returns {string} The formatted alpha string.
          */
         _getAlphaString(legacy = false) {
-            const alpha = this.a;
-            const epsilon = 1e-9;
-
-            if (legacy) {
-                if (Math.abs(alpha - 1) < epsilon) return "1";
-
-                let legacyA = round(alpha, 2).toString();
-                if (legacyA === "0.00") return "0";
-                if (legacyA === "1.00") return "1";
-                if (legacyA.startsWith("0.")) return legacyA.substring(1);
-                return legacyA;
-            }
-
-            // Modern syntax
-            if (Math.abs(alpha - 1) < epsilon) return "1";
-            if (Math.abs(alpha - 0) < epsilon) return "0";
-
-            if (this._alphaInputStyleHint === ALPHA_STYLE_HINT_NUMBER) {
-                let numStr = round(alpha, 3).toString();
-                if (numStr.startsWith("0.")) {
-                    numStr = numStr.substring(1);
-                }
-                return numStr;
-            }
-            return `${round(alpha * 100, 0)}%`;
+            return GoatColorInternal._formatAlphaString(this.a, legacy, this._alphaInputStyleHint);
         }
 
         /**
@@ -590,6 +573,7 @@
          */
         toHsl() {
             if (!this.valid) return { h: 0, s: 0, l: 0 };
+            if (this._hsl) return this._hsl;
             const rN = this.r / 255, gN = this.g / 255, bN = this.b / 255;
             const max = Math.max(rN, gN, bN), min = Math.min(rN, gN, bN);
             let h = 0, s, l = (max + min) / 2;
@@ -608,7 +592,7 @@
             }
             let finalH = h * 360;
             finalH = Object.is(finalH, -0) ? 0 : finalH;
-            return { h: finalH, s: s * 100, l: l * 100 };
+            return (this._hsl = { h: finalH, s: s * 100, l: l * 100 });
         }
 
         /**
@@ -657,6 +641,7 @@
          */
         toOklch() {
             if (!this.valid) return { l: 0, c: 0, h: 0 };
+            if (this._oklch) return this._oklch;
             const rL = srgbToLinear(this.r), gL = srgbToLinear(this.g), bL = srgbToLinear(this.b);
             const [x, y, z] = multiplyMatrix(SRGB_TO_XYZ_MATRIX, [rL, gL, bL]);
             const [lC, mC, sC] = multiplyMatrix(OKLAB_XYZ_TO_LMS_MATRIX, [x, y, z]);
@@ -666,7 +651,7 @@
             let H = (Math.atan2(b_ok, a_ok) * 180) / Math.PI;
             if (H < 0) H += 360;
             let finalH = Object.is(H, -0) ? 0 : H;
-            return { l: L * 100, c: C, h: finalH };
+            return (this._oklch = { l: L * 100, c: C, h: finalH });
         }
 
         /**
@@ -709,25 +694,26 @@
          */
         toCmyk() {
             if (!this.valid) return { c: 0, m: 0, y: 0, k: 0 };
+            if (this._cmyk) return this._cmyk;
             const rP = this.r / 255;
             const gP = this.g / 255;
             const bP = this.b / 255;
 
             const k = 1 - Math.max(rP, gP, bP);
             if (Math.abs(k - 1) < 1e-9) { // Check for black
-                return { c: 0, m: 0, y: 0, k: 100 };
+                return (this._cmyk = { c: 0, m: 0, y: 0, k: 100 });
             }
 
             const c = (1 - rP - k) / (1 - k);
             const m = (1 - gP - k) / (1 - k);
             const y = (1 - bP - k) / (1 - k);
 
-            return {
+            return (this._cmyk = {
                 c: c * 100,
                 m: m * 100,
                 y: y * 100,
                 k: k * 100
-            };
+            });
         }
 
         /**
@@ -805,10 +791,7 @@
                 return `oklch(${lStr} ${cStr} ${hStr})`;
             }
 
-            const tempInstanceForAlpha = new GoatColorInternal(null);
-            tempInstanceForAlpha.a = this.a;
-            tempInstanceForAlpha._alphaInputStyleHint = ALPHA_STYLE_HINT_NUMBER;
-            const aStr = tempInstanceForAlpha._getAlphaString();
+            const aStr = GoatColorInternal._formatAlphaString(this.a, false, ALPHA_STYLE_HINT_NUMBER);
 
             return `oklch(${lStr} ${cStr} ${hStr} / ${aStr})`;
         }
@@ -831,6 +814,33 @@
             return h < 0 ? h + 360 : h;
         }
 
+        static _formatAlphaString(alpha, legacy, styleHint) {
+            const epsilon = 1e-9;
+
+            if (legacy) {
+                if (Math.abs(alpha - 1) < epsilon) return "1";
+
+                let legacyA = round(alpha, 2).toString();
+                if (legacyA === "0.00") return "0";
+                if (legacyA === "1.00") return "1";
+                if (legacyA.startsWith("0.")) return legacyA.substring(1);
+                return legacyA;
+            }
+
+            // Modern syntax
+            if (Math.abs(alpha - 1) < epsilon) return "1";
+            if (Math.abs(alpha - 0) < epsilon) return "0";
+
+            if (styleHint === ALPHA_STYLE_HINT_NUMBER) {
+                let numStr = round(alpha, 3).toString();
+                if (numStr.startsWith("0.")) {
+                    numStr = numStr.substring(1);
+                }
+                return numStr;
+            }
+            return `${round(alpha * 100, 0)}%`;
+        }
+
         static _fromRgba(r, g, b, a, alphaStyleHint = null) {
             const i = new GoatColorInternal(null);
             i.r = Math.round(clamp(r, 0, 255));
@@ -840,10 +850,7 @@
             i._alphaInputStyleHint = alphaStyleHint;
             i.valid = true;
 
-            const tempAlphaFormatter = new GoatColorInternal(null);
-            tempAlphaFormatter.a = i.a;
-            tempAlphaFormatter._alphaInputStyleHint = i._alphaInputStyleHint;
-            const alphaStrForInput = tempAlphaFormatter._getAlphaString();
+            const alphaStrForInput = GoatColorInternal._formatAlphaString(i.a, false, i._alphaInputStyleHint);
 
             if (i.a === 1) {
                 i.input = `rgb(${i.r} ${i.g} ${i.b})`;
