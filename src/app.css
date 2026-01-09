@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+@theme {
+    --color-brand: var(--current-color);
+
+    /* Consistent Border Radius System */
+    --radius-sm: 0.75rem; /* 12px - Small elements (tags, badges) */
+    --radius-md: 1rem; /* 16px - Buttons, inputs, small cards */
+    --radius-lg: 1.5rem; /* 24px - Swatches, medium cards */
+    --radius-xl: 2rem; /* 32px - Panels, large cards, canvas */
+    --radius-2xl: 2.5rem; /* 40px - Export buttons, contrast cards */
+    --radius-3xl: 3rem; /* 48px - Modal dialogs */
+
+    /* Default radius (rounded) maps to md */
+    --radius: var(--radius-md);
+}
+
+:root {
+    /* Enable native UI adaptation for light/dark modes (scrollbars, form controls) */
+    color-scheme: light dark;
+
+    /* CSS variables are set dynamically by App.svelte $effect */
+    /* Initial values removed to prevent conflicts and FOUC */
+    /* Fallback values if JS fails to load */
+    --current-color: oklch(0.6 0.15 250);
+    --current-hue: 250;
+
+    /* Light Mode: Higher luminance backgrounds with subtle hue tint */
+    --ui-card: oklch(0.96 0.02 var(--current-hue));
+    --ui-bg: oklch(0.92 0.025 var(--current-hue));
+    --ui-text: oklch(0.3 0.12 var(--current-hue));
+    --ui-text-muted: oklch(0.5 0.08 var(--current-hue));
+    --ui-border: oklch(0.85 0.03 var(--current-hue));
+
+    /* Contrast utilities for dynamic text on current-color backgrounds */
+    --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+}
+
+/* Dark mode overrides (Class-based for manual toggle support) */
+:root.dark {
+    /* Dark Mode: Richer, more saturated panels with better lift from black */
+    --ui-card: oklch(0.3 0.05 var(--current-hue));
+    --ui-bg: oklch(0.24 0.04 var(--current-hue));
+    --ui-text: oklch(0.85 0.1 var(--current-hue));
+    --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
+    --ui-border: oklch(0.38 0.07 var(--current-hue));
+
+    /* Contrast utilities for dynamic text on current-color backgrounds */
+    --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+}
+
+/* System preference fallback if no class is present (optional, but handled by JS init usually) */
+@media (prefers-color-scheme: dark) {
+    :root:not(.light) {
+        --ui-card: oklch(0.3 0.05 var(--current-hue));
+        --ui-bg: oklch(0.24 0.04 var(--current-hue));
+        --ui-text: oklch(0.85 0.1 var(--current-hue));
+        --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
+        --ui-border: oklch(0.38 0.07 var(--current-hue));
+        --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+    }
+}
+
+body {
+    min-height: 100vh;
+    /* Layer 1 (Top): The current color (as a gradient so it sits on top of the image) */
+    /* Layer 2 (Bottom): The checkerboard pattern */
+    background-image: linear-gradient(var(--current-color), var(--current-color)), linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+
+    background-size: 100% 100%, 12px 12px, 12px 12px, 12px 12px, 12px 12px;
+
+    background-position: 0 0, 0 0, 0 6px, 6px -6px, -6px 0px;
+
+    background-attachment: fixed; /* Ensures pattern doesn't scroll weirdly */
+
+    color: var(--ui-text);
+    @apply antialiased selection:bg-brand selection:text-white;
+    transition: background-color 500ms ease;
+}
+
+/* Dark mode body background */
+:root.dark body {
+    background-image: linear-gradient(var(--current-color), var(--current-color)), linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not(.light) body {
+        background-image: linear-gradient(var(--current-color), var(--current-color)), linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+    }
+}
+
+/* Custom range inputs */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+/* Track styling */
+input[type="range"]::-webkit-slider-track {
+    height: 16px;
+    border-radius: 9999px;
+    background: transparent;
+}
+
+input[type="range"]::-moz-range-track {
+    height: 16px;
+    border-radius: 9999px;
+    background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: 4px solid var(--ui-text);
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    margin-top: -4px;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: 4px solid var(--ui-text);
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+/* Number Input Styling - Ensure Spinners are Visible */
+input[type="number"] {
+    appearance: auto;
+    -moz-appearance: auto; /* Firefox specific */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: auto; /* WebKit specific */
+    opacity: 1; /* Force visibility */
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--ui-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--ui-border);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: oklch(from var(--current-color) l c h / 0.7);
+}
+
+:root.dark ::-webkit-scrollbar-thumb:hover {
+    background: oklch(from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not(.light) ::-webkit-scrollbar-thumb:hover {
+        background: oklch(from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9);
+    }
+}
+
+button,
+input,
+select {
+    transition: all 300ms ease;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--current-color);
+    outline-offset: 2px;
+}
+
+.checkerboard {
+    background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+}
+
+:root.dark .checkerboard {
+    background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not(.light) .checkerboard {
+        background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+    }
+}
+
+/* Animation System */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes scaleOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 300ms ease-out;
+}
+.animate-fade-out {
+    animation: fadeOut 300ms ease-out;
+}
+.animate-scale-in {
+    animation: scaleIn 300ms ease-out;
+}
+.animate-scale-out {
+    animation: scaleOut 300ms ease-out;
+}
+.animate-slide-up {
+    animation: slideUp 300ms ease-out;
+}
+
+/* Dynamic text color utility - switches between light and dark based on background luminance */
+/* Uses data-color-contrast attribute set by JavaScript based on L threshold of 0.55 */
+
+/* Default: Light text for dark backgrounds (L < 0.55) */
+.text-on-current {
+    color: oklch(0.95 0.03 var(--current-hue));
+}
+
+/* Dark text for light backgrounds (L > 0.55) */
+:root[data-color-contrast="dark"] .text-on-current {
+    color: oklch(0.2 0.08 var(--current-hue));
+}
+
+/* Group hover variant for better specificity */
+.group:hover .group-hover\:text-on-current {
+    color: oklch(0.95 0.03 var(--current-hue)) !important;
+}
+
+:root[data-color-contrast="dark"] .group:hover .group-hover\:text-on-current {
+    color: oklch(0.2 0.08 var(--current-hue)) !important;
+}

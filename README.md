@@ -1,7 +1,27 @@
-# Goat Color Picker | Palette Generator
+# Goat Color
 
-Probably the greatest color picker / palette generator / color toolbox of all time.
+A modern, perceptually uniform color workspace built for the post-sRGB era.
 
-A comprehensive color toolbox for picking colors and generating palettes, including color theory and export to CSS or XML in various formats.
+## Features
 
-![Goat Color Picker Palette](/assets/screenshot-1.png)
+- **OKLCH First:** Design with perceptual uniformity using the latest color space.
+- **Palette Engine:** Generate harmonies (split-complementary, triadic) and variable scales.
+- **Image Analysis:** Extract dominant and vibrant palettes using local K-Means clustering.
+- **Accessibility:** Real-time APCA (Lc) and WCAG 2.1 contrast checking.
+- **Smart Paintbox:** Persistent storage with multi-format export (Tailwind, CSS, SVG, PDF).
+- **Library:** Search 30,000+ named colors.
+
+![Goat Color Picker Palette](/assets/screens-1.png)
+
+## Tech Stack
+
+- **Framework:** Svelte 5 (Runes)
+- **Styling:** Tailwind CSS v4
+- **Build:** Vite
+- **Math:** Culori & APCA-W3
+
+## Development
+
+- Install dependencies: `npm install` + `npm update`
+- Start development server: `npm run dev`
+- Build for production: `npm run build`

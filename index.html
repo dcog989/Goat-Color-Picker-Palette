@@ -1,188 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goat Color Picker Palette</title>
-    <meta name="description" content="A complete toolbox for picking colors and creating palettes of colors. Work in HSL or OKLCH, output to CSS or XML in numerous color formats.">
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/panel.css">
-    <link rel="stylesheet" href="css/forms.css">
-    <link rel="stylesheet" href="css/button.css">
-    <link rel="stylesheet" href="css/picker.css">
-    <link rel="stylesheet" href="css/swatch.css">
-    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta charset="UTF-8" />
+  <title>Color Picker Palette Image Contrast</title>
+  <meta name="description" content="Complete color toolbox for color picking, palette generation and export, image color extract, contrast checker (WCAG / APCA)." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Critical CSS to prevent FOUC */
+    html,
+    body {
+      background-color: #444;
+    }
+  </style>
 </head>
 
 <body>
-
-    <h1>Goat Color Picker Palette</h1>
-
-    <div class="app-wrapper">
-        <div class="picker-column panel">
-            <div class="picker-header">
-                <h2>Color Picker</h2>
-                <span id="app-version"></span>
-                <select id="theme-select" aria-label="Select Theme">
-                    <option value="system">System</option>
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                </select>
-            </div>
-
-            <div class="compact-picker-wrapper">
-                <div class="compact-picker-controls">
-                    <div class="slider-group color-string-input-group">
-                        <label for="color-string-input">Color:</label>
-                        <input type="text" id="color-string-input" class="color-string-input" spellcheck="false" placeholder="Paste any color string...">
-                        <div id="picker-mode-selector" class="picker-mode-selector radio-group">
-                            <input type="radio" id="mode-hsl" name="picker-mode" value="hsl" checked=""><label for="mode-hsl">HSL</label>
-                            <input type="radio" id="mode-oklch" name="picker-mode" value="oklch"><label for="mode-oklch">OKLCH</label>
-                        </div>
-                    </div>
-                    <div id="picker-group-1" class="slider-group">
-                        <label id="picker-label-1" for="picker-slider-1">Hue:</label>
-                        <input type="range" id="picker-slider-1" min="0" max="359">
-                        <input type="number" id="picker-input-1" class="slider-value-input" min="0" max="359">
-                        <span id="picker-unit-1">°</span>
-                    </div>
-                    <div id="picker-group-2" class="slider-group">
-                        <label id="picker-label-2" for="picker-slider-2">Saturation:</label>
-                        <input type="range" id="picker-slider-2" min="0" max="100">
-                        <input type="number" id="picker-input-2" class="slider-value-input" min="0" max="100">
-                        <span id="picker-unit-2">%</span>
-                    </div>
-                    <div id="picker-group-3" class="slider-group">
-                        <label id="picker-label-3" for="picker-slider-3">Lightness:</label>
-                        <input type="range" id="picker-slider-3" min="0" max="100">
-                        <input type="number" id="picker-input-3" class="slider-value-input" min="0" max="100">
-                        <span id="picker-unit-3">%</span>
-                    </div>
-                    <div id="picker-opacity-group" class="slider-group opacity-slider-group">
-                        <label for="picker-opacity-slider">Alpha:</label>
-                        <input type="range" id="picker-opacity-slider" class="opacity-slider" min="0" max="100">
-                        <input type="number" id="picker-opacity-input" class="slider-value-input" min="0" max="100">
-                        <span>%</span>
-                    </div>
-                </div>
-                <div id="colorPreviewBox" class="color-preview-box">
-                    <div class="checkerboard-element"></div>
-                    <div class="color-overlay-element"></div>
-                </div>
-            </div>
-
-            <div id="colorOutput">
-                <div class="output-group"><span id="goatHexOutput"></span><button class="button copy-btn" data-target="goatHexOutput" title="Copy HEX"><span class="visually-hidden">Copy HEX Color</span></button></div>
-                <div class="output-separator">/</div>
-                <div class="output-group"><span id="goatHslOutput"></span><button class="button copy-btn" data-target="goatHslOutput" title="Copy HSL"><span class="visually-hidden">Copy HSL Color</span></button></div>
-                <div class="output-separator">/</div>
-                <div class="output-group"><span id="goatRgbOutput"></span><button class="button copy-btn" data-target="goatRgbOutput" title="Copy RGB"><span class="visually-hidden">Copy RGB Color</span></button></div>
-                <div class="output-separator">/</div>
-                <div class="output-group"><span id="goatOklchOutput"></span><button class="button copy-btn" data-target="goatOklchOutput" title="Copy OKLCH"><span class="visually-hidden">Copy OKLCH Color</span></button></div>
-                <div class="output-separator">/</div>
-                <div class="output-group"><span id="goatCmykOutput"></span><button class="button copy-btn" data-target="goatCmykOutput" title="Copy CMYK"><span class="visually-hidden">Copy CMYK Color</span></button></div>
-            </div>
-        </div>
-
-        <div class="main-controls-wrapper">
-            <div id="palette-generator-panel" class="panel">
-                <h2>Palette Generator</h2>
-                <div class="palette-controls">
-                    <span>Vary</span>
-                    <select id="vary-param-select"></select>
-                    <span>for</span>
-                    <input type="number" id="swatch-count-input" class="slider-value-input" min="2" max="33" value="6">
-                    <span>swatches</span>
-                </div>
-                <div id="palette-container"></div>
-                <button id="add-palette-to-paintbox-btn" class="button">Add Colors to Paintbox</button>
-            </div>
-            <div id="color-theory-panel" class="panel">
-                <h2>Color Theory</h2>
-                <div class="theory-controls">
-                    <label for="harmony-select" class="visually-hidden">Select Color Harmony</label>
-                    <select id="harmony-select">
-                        <option value="analogous" selected>Analogous</option>
-                        <option value="complementary">Complementary</option>
-                        <option value="monochromatic">Monochromatic</option>
-                        <option value="split-complementary">Split-Complementary</option>
-                        <option value="tetradic">Tetradic (Rectangular)</option>
-                        <option value="triadic">Triadic</option>
-                    </select>
-                </div>
-                <div id="theory-palette-swatches" aria-live="polite"></div>
-                <button id="copy-theory-to-paintbox-btn" class="button">Add Colors to Paintbox</button>
-            </div>
-            <div id="paintbox-panel" class="panel">
-                <h2>Paintbox</h2>
-                <div id="paintbox-grid">
-                    <div id="paintbox-bin" title="Drag here to remove color. Click to activate clear mode." role="button" tabindex="0" aria-label="Paintbox Bin: Drag color here to remove or click to activate clear mode">
-                        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12l1.41 1.41L13.41 14l2.12 2.12l-1.41 1.41L12 15.41l-2.12 2.12l-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
-                        </svg>
-                    </div>
-                </div>
-                <fieldset class="export-controls">
-                    <legend>Export</legend>
-                    <div class="radio-group justify-center">
-                        <input type="radio" id="format-hsl" name="export-format" value="hsl" checked><label for="format-hsl">HSL</label>
-                        <input type="radio" id="format-hex" name="export-format" value="hex"><label for="format-hex">Hex</label>
-                        <input type="radio" id="format-rgb" name="export-format" value="rgb"><label for="format-rgb">RGB</label>
-                        <input type="radio" id="format-oklch" name="export-format" value="oklch"><label for="format-oklch">OKLCH</label>
-                    </div>
-                    <div class="radio-group justify-center">
-                        <input type="radio" id="dest-clipboard" name="export-destination" value="clipboard" checked><label for="dest-clipboard">Clipboard</label>
-                        <input type="radio" id="dest-css" name="export-destination" value="css-file"><label for="dest-css">CSS</label>
-                        <input type="radio" id="dest-xml" name="export-destination" value="xml-file"><label for="dest-xml">XML</label>
-                    </div>
-                    <button id="export-action-button" class="button">Export</button>
-                </fieldset>
-            </div>
-        </div>
-
-        <div class="info-panel" id="oklchInfoPanel">
-            <button id="oklch-info-button" class="text-button">Understanding OKLCH Chroma...</button>
-        </div>
-
-        <div id="diagnostics-panel" class="panel">
-            <h2>Conversion Diagnostics (OKLCH only)</h2>
-            <pre id="diagnostics-output">No OKLCH color parsed yet.</pre>
-        </div>
-    </div>
-
-    <template id="oklch-popup-template">
-        <div class="popup-overlay">
-            <div class="popup-content">
-                <button class="popup-close-btn" aria-label="Close dialog">&times;</button>
-                <p><strong>Understanding OKLCH Chroma (C):</strong><br>
-                    Chroma (C) controls the color's intensity or 'vividness'.
-                <ul>
-                    <li><strong>Slider (0-100%):</strong> This adjusts Chroma. 100% targets a reference colorfulness (around 0.4 in absolute OKLCH, typical for sRGB's brightest colors).</li>
-                    <li><strong>Dynamic Range with L & H:</strong> The actual range of Chroma (vividness) you can achieve is not constant. It changes significantly depending on the current Lightness (L) and Hue (H) values you've selected.</li>
-                    <li><strong>Adaptive Slider Track:</strong> The gradient on the Chroma slider's track <strong>dynamically updates</strong>. This visual guide shows you the maximum Chroma available within the sRGB color space for your current L and H settings. If you set Chroma beyond this visible limit, the a will be clamped to the most vivid sRGB-displayable equivalent.</li>
-                </ul>
-                </p>
-            </div>
-        </div>
-    </template>
-
-    <script src="libs/GoatColorToolbox.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/state.js"></script>
-    <script src="js/dom.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/color.js"></script>
-    <script src="js/ui-picker.js"></script>
-    <script src="js/ui-swatch.js"></script>
-    <script src="js/ui-core.js"></script>
-    <script src="js/palette.js"></script>
-    <script src="js/handlers.js"></script>
-    <script src="js/exporter.js"></script>
-    <script src="js/theme.js"></script>
-    <script src="js/events.js"></script>
-    <script src="js/main.js"></script>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>
