@@ -11,7 +11,7 @@ A modern, perceptually uniform color workspace built for the post-sRGB era.
 - **Smart Paintbox:** Persistent storage with multi-format export (Tailwind, CSS, SVG, PDF).
 - **Library:** Search 30,000+ named colors.
 
-![Goat Color Picker Palette](/assets/screens-1.png)
+![Goat Color Picker Palette](/assets/screen-1.png)
 
 ## Tech Stack
 
