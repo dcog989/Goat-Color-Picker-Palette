@@ -37,24 +37,21 @@
 
     // Global CSS variable sync
     $effect(() => {
-        document.documentElement.style.setProperty("--current-color", color.cssVar);
-        document.documentElement.style.setProperty("--current-hue", color.h.toString());
-        document.body.style.backgroundColor = color.cssVar;
+        // Sync these reactively
+        const cssVar = color.cssVar;
+        const hStr = color.h.toString();
+        const l = color.l;
 
-        // Set data attribute for contrast-dependent styling
-        // Use threshold at L=0.55 for optimal readability
-        const needsDarkText = color.l > 0.55;
-        document.documentElement.setAttribute("data-color-contrast", needsDarkText ? "dark" : "light");
+        requestAnimationFrame(() => {
+            document.documentElement.style.setProperty("--current-color", cssVar);
+            document.documentElement.style.setProperty("--current-hue", hStr);
+            document.body.style.backgroundColor = cssVar;
+
+            // Set data attribute for contrast-dependent styling
+            const needsDarkText = l > 0.55;
+            document.documentElement.setAttribute("data-color-contrast", needsDarkText ? "dark" : "light");
+        });
     });
-
-    // Set initial CSS (prevents FOUC in SPA)
-    if (typeof document !== "undefined") {
-        document.documentElement.style.setProperty("--current-color", color.cssVar);
-        document.documentElement.style.setProperty("--current-hue", color.h.toString());
-        document.body.style.backgroundColor = color.cssVar;
-        const needsDarkText = color.l > 0.55;
-        document.documentElement.setAttribute("data-color-contrast", needsDarkText ? "dark" : "light");
-    }
 
     const handleKeyboard = (e: KeyboardEvent) => {
         if ((e.metaKey || e.ctrlKey) && e.key === "k") {
