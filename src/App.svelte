@@ -130,6 +130,8 @@
             <button onclick={() => showInfo("analysis")} class="hover:underline cursor-pointer">Image Analysis?</button>
             <span class="opacity-30 hidden sm:inline">|</span>
             <button onclick={() => showInfo("contrast")} class="hover:underline cursor-pointer">Good Contrast?</button>
+            <span class="opacity-30 hidden sm:inline">|</span>
+            <a href="https://github.com/dcog989/Goat-Color-Picker-Palette">Github</a>
         </div>
 
         <button onclick={() => showInfo("shortcuts")} class="p-2 rounded-lg hover:bg-black/10 transition-colors" aria-label="Keyboard Shortcuts">
