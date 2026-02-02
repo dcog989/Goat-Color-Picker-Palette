@@ -108,25 +108,41 @@
     };
 </script>
 
-<div class="flex flex-col gap-6 h-full">
+<div class="flex h-full flex-col gap-6">
     <!-- 1. Context Switcher Tabs -->
     <div
-        class="grid grid-cols-3 gap-2 p-1 bg-[var(--ui-bg)] rounded-xl border border-[var(--ui-border)]">
+        class="
+          grid grid-cols-3 gap-2 rounded-xl border border-(--ui-border)
+          bg-(--ui-bg) p-1
+        ">
         {#each ['white', 'black', 'custom'] as m (m)}
             <button
                 onclick={() => (mode = m as ContrastMode)}
-                class="relative py-3 px-2 rounded-lg transition-all flex flex-col items-center gap-1 {mode ===
-                m
-                    ? 'bg-[var(--ui-card)] shadow-sm text-[var(--ui-text)]'
-                    : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-60 hover:opacity-100'}">
-                <span class="text-[10px] font-black uppercase tracking-wider opacity-50">{m}</span>
+                class="
+                  relative flex flex-col items-center gap-1 rounded-lg px-2 py-3
+                  transition-all
+                  {mode === m
+                    ? 'bg-(--ui-card) text-(--ui-text) shadow-sm'
+                    : `
+                      opacity-60
+                      hover:bg-black/5 hover:opacity-100
+                      dark:hover:bg-white/5
+                    `}">
+                <span
+                    class="
+                      text-[10px] font-black tracking-wider uppercase opacity-50
+                    ">{m}</span>
                 <div class="flex items-baseline gap-1">
                     <span class="text-lg font-black">{stats[m as ContrastMode].apca}</span>
-                    <span class="text-[10px] font-mono opacity-50">Lc</span>
+                    <span class="font-mono text-[10px] opacity-50">Lc</span>
                 </div>
                 <!-- Active Indicator -->
                 {#if mode === m}
-                    <div class="absolute bottom-1 w-1 h-1 rounded-full bg-[var(--current-color)]">
+                    <div
+                        class="
+                          absolute bottom-1 size-1 rounded-full
+                          bg-(--current-color)
+                        ">
                     </div>
                 {/if}
             </button>
@@ -134,39 +150,69 @@
     </div>
 
     <!-- 2. Controls Row (Custom Input & Swap) -->
-    <div class="flex items-center gap-4 min-h-[42px]">
+    <div class="flex min-h-10.5 items-center gap-4">
         {#if mode === 'custom'}
-            <div class="flex-1 relative">
+            <div class="relative flex-1">
                 <input
                     type="text"
                     bind:value={customColor}
-                    class="w-full pl-9 pr-4 py-2 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-lg font-mono text-sm outline-none focus:ring-2 focus:ring-[var(--current-color)] transition-all uppercase" />
+                    class="
+                      w-full rounded-lg border border-(--ui-border) bg-(--ui-bg)
+                      py-2 pr-4 pl-9 font-mono text-sm uppercase transition-all
+                      outline-none
+                      focus:ring-2 focus:ring-(--current-color)
+                    " />
                 <div
-                    class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-[var(--ui-border)]"
+                    class="
+                      absolute top-1/2 left-3 size-4 -translate-y-1/2
+                      rounded-full border border-(--ui-border)
+                    "
                     style:background-color={customColor}>
                 </div>
             </div>
         {:else}
-            <div class="flex-1 text-base font-bold text-[var(--ui-text-muted)] italic pl-2">
+            <div
+                class="
+                  flex-1 pl-2 text-base font-bold text-(--ui-text-muted) italic
+                ">
                 Comparing {isFg ? color.hex : mode} vs {isFg ? mode : color.hex}...
             </div>
         {/if}
 
         <button
             onclick={() => (isFg = !isFg)}
-            class="p-2 hover:bg-[var(--ui-bg)] border border-transparent hover:border-[var(--ui-border)] rounded-lg transition-all text-[var(--ui-text-muted)] hover:text-[var(--current-color)] shrink-0"
+            class="
+              shrink-0 rounded-lg border border-transparent p-2
+              text-(--ui-text-muted) transition-all
+              hover:border-(--ui-border) hover:bg-(--ui-bg)
+              hover:text-(--current-color)
+            "
             title="Swap Foreground/Background">
-            <ArrowRightLeft class="w-4 h-4" />
+            <ArrowRightLeft class="size-4" />
         </button>
     </div>
 
     <!-- 3. Preview Area -->
     <div
-        class="w-full aspect-[2/1] rounded-xl border border-[var(--ui-border)] flex flex-col items-center justify-center text-center p-6 transition-colors duration-300 relative overflow-hidden group"
+        class="
+          group relative flex aspect-2/1 w-full flex-col items-center
+          justify-center overflow-hidden rounded-xl border border-(--ui-border)
+          p-6 text-center transition-colors duration-300
+        "
         style:background-color={bg}
         style:color={fg}>
-        <h3 class="text-3xl md:text-4xl font-black mb-2">Sample Contrast</h3>
-        <p class="text-sm md:text-base font-medium max-w-[80%] opacity-90">
+        <h3
+            class="
+              mb-2 text-3xl font-black
+              md:text-4xl
+            ">
+            Sample Contrast
+        </h3>
+        <p
+            class="
+              max-w-[80%] text-sm font-medium opacity-90
+              md:text-base
+            ">
             How quickly the cunning brown foxes vexed the daft jumping zebras. 1 2 3 4 5 6 7 8 9 0.
         </p>
     </div>
@@ -174,51 +220,67 @@
     <!-- 4. Detailed Metrics -->
     <div class="grid grid-cols-2 gap-4">
         <!-- APCA Details -->
-        <div class="p-4 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-xl space-y-2">
-            <div class="flex justify-between items-baseline">
+        <div
+            class="
+              space-y-2 rounded-xl border border-(--ui-border) bg-(--ui-bg) p-4
+            ">
+            <div class="flex items-baseline justify-between">
                 <span
-                    class="text-xs font-black uppercase tracking-wider text-[var(--ui-text-muted)]"
-                    >APCA</span>
+                    class="
+                      text-xs font-black tracking-wider text-(--ui-text-muted)
+                      uppercase
+                    ">APCA</span>
                 <span class="text-xl font-black">{currentApca}</span>
             </div>
             <div
-                class="text-xs font-medium opacity-70 border-t border-[var(--ui-border)] pt-2 mt-1">
+                class="
+                  mt-1 border-t border-(--ui-border) pt-2 text-xs font-medium
+                  opacity-70
+                ">
                 {getApcaRating(currentApca)}
             </div>
         </div>
 
         <!-- WCAG Ratio Details -->
-        <div class="p-4 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-xl space-y-2">
-            <div class="flex justify-between items-baseline">
+        <div
+            class="
+              space-y-2 rounded-xl border border-(--ui-border) bg-(--ui-bg) p-4
+            ">
+            <div class="flex items-baseline justify-between">
                 <span
-                    class="text-xs font-black uppercase tracking-wider text-[var(--ui-text-muted)]"
-                    >Ratio</span>
+                    class="
+                      text-xs font-black tracking-wider text-(--ui-text-muted)
+                      uppercase
+                    ">Ratio</span>
                 <span class="text-xl font-black">{currentWcag.toFixed(2)}:1</span>
             </div>
 
-            <div class="flex justify-between pt-2 mt-1 border-t border-[var(--ui-border)]">
+            <div
+                class="
+                  mt-1 flex justify-between border-t border-(--ui-border) pt-2
+                ">
                 <div class="flex flex-col items-center gap-1">
                     <span class="text-[10px] font-bold uppercase opacity-50">AA Lg</span>
                     {#if passes(currentWcag, 'AA Large')}
-                        <Check class="w-4 h-4 text-green-500" />
+                        <Check class="size-4 text-green-500" />
                     {:else}
-                        <X class="w-4 h-4 text-red-500 opacity-50" />
+                        <X class="size-4 text-red-500 opacity-50" />
                     {/if}
                 </div>
                 <div class="flex flex-col items-center gap-1">
                     <span class="text-[10px] font-bold uppercase opacity-50">AA</span>
                     {#if passes(currentWcag, 'AA')}
-                        <Check class="w-4 h-4 text-green-500" />
+                        <Check class="size-4 text-green-500" />
                     {:else}
-                        <X class="w-4 h-4 text-red-500 opacity-50" />
+                        <X class="size-4 text-red-500 opacity-50" />
                     {/if}
                 </div>
                 <div class="flex flex-col items-center gap-1">
                     <span class="text-[10px] font-bold uppercase opacity-50">AAA</span>
                     {#if passes(currentWcag, 'AAA')}
-                        <Check class="w-4 h-4 text-green-500" />
+                        <Check class="size-4 text-green-500" />
                     {:else}
-                        <X class="w-4 h-4 text-red-500 opacity-50" />
+                        <X class="size-4 text-red-500 opacity-50" />
                     {/if}
                 </div>
             </div>

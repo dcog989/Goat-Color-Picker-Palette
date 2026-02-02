@@ -27,7 +27,27 @@ export default ts.config(
         settings: {
             'better-tailwindcss': {
                 entryPoint: 'src/app.css',
+                detectComponentClasses: true,
             },
+        },
+        rules: {
+            'better-tailwindcss/no-unknown-classes': [
+                'error',
+                {
+                    ignore: [
+                        // Animation classes
+                        '^animate-(fade|scale)-(in|out)$',
+                        '^animate-slide-up$',
+                        // Custom utility classes
+                        '^text-on-current$',
+                        '^hover:text-on-current$',
+                        '^group-hover:text-on-current$',
+                        // Component classes
+                        '^checkerboard$',
+                        '^custom-scrollbar$',
+                    ],
+                },
+            ],
         },
     },
     {

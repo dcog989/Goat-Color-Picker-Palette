@@ -3,9 +3,15 @@
 </script>
 
 <section
-    class="p-8 rounded-xl bg-[var(--ui-card)] border border-[var(--ui-border)] shadow-xl h-full flex flex-col">
+    class="
+      flex h-full flex-col rounded-xl border border-(--ui-border) bg-(--ui-card)
+      p-8 shadow-xl
+    ">
     <div class="mb-6">
-        <h2 class="text-xs font-black uppercase tracking-widest text-[var(--ui-text-muted)]">
+        <h2
+            class="
+          text-xs font-black tracking-widest text-(--ui-text-muted) uppercase
+        ">
             Contrast Checker
         </h2>
     </div>

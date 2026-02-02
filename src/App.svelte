@@ -108,10 +108,18 @@
 
 <svelte:window onkeydown={handleKeyboard} />
 
-<div class="min-h-screen transition-colors duration-500 font-sans antialiased pb-20 flex flex-col">
+<div
+    class="
+  flex min-h-screen flex-col pb-20 font-sans antialiased transition-colors
+  duration-500
+">
     <Header onSearch={() => (showSearch = true)} />
 
-    <main class="max-w-7xl mx-auto p-8 grid grid-cols-1 lg:grid-cols-2 gap-8 w-full flex-1">
+    <main
+        class="
+      mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8
+      lg:grid-cols-2
+    ">
         <div class="lg:col-span-2">
             <PickerPanel />
         </div>
@@ -124,25 +132,59 @@
     </main>
 
     <footer
-        class="max-w-7xl mx-auto px-8 py-6 w-full flex flex-wrap justify-between items-center gap-4 text-on-current opacity-80 hover:opacity-100 transition-opacity">
-        <div class="flex flex-wrap gap-6 text-sm font-bold uppercase tracking-widest">
-            <button onclick={() => showInfo('oklch')} class="hover:underline cursor-pointer"
-                >Why OKLCH?</button>
-            <span class="opacity-30 hidden sm:inline">|</span>
-            <button onclick={() => showInfo('analysis')} class="hover:underline cursor-pointer"
-                >Image Analysis?</button>
-            <span class="opacity-30 hidden sm:inline">|</span>
-            <button onclick={() => showInfo('contrast')} class="hover:underline cursor-pointer"
-                >Good Contrast?</button>
-            <span class="opacity-30 hidden sm:inline">|</span>
+        class="
+          text-on-current mx-auto flex w-full max-w-7xl flex-wrap items-center
+          justify-between gap-4 px-8 py-6 opacity-80 transition-opacity
+          hover:opacity-100
+        ">
+        <div
+            class="
+          flex flex-wrap gap-6 text-sm font-bold tracking-widest uppercase
+        ">
+            <button
+                onclick={() => showInfo('oklch')}
+                class="
+              cursor-pointer
+              hover:underline
+            ">Why OKLCH?</button>
+            <span
+                class="
+              hidden opacity-30
+              sm:inline
+            ">|</span>
+            <button
+                onclick={() => showInfo('analysis')}
+                class="
+              cursor-pointer
+              hover:underline
+            ">Image Analysis?</button>
+            <span
+                class="
+              hidden opacity-30
+              sm:inline
+            ">|</span>
+            <button
+                onclick={() => showInfo('contrast')}
+                class="
+              cursor-pointer
+              hover:underline
+            ">Good Contrast?</button>
+            <span
+                class="
+              hidden opacity-30
+              sm:inline
+            ">|</span>
             <a href="https://github.com/dcog989/Goat-Color-Picker-Palette">Github</a>
         </div>
 
         <button
             onclick={() => showInfo('shortcuts')}
-            class="p-2 rounded-lg hover:bg-black/10 transition-colors"
+            class="
+              rounded-lg p-2 transition-colors
+              hover:bg-black/10
+            "
             aria-label="Keyboard Shortcuts">
-            <Keyboard class="w-5 h-5" />
+            <Keyboard class="size-5" />
         </button>
     </footer>
 

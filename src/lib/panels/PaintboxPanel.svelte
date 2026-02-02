@@ -23,18 +23,38 @@
 </script>
 
 <section
-    class="p-8 rounded-xl bg-[var(--ui-card)] border border-[var(--ui-border)] shadow-xl h-full flex flex-col justify-between">
+    class="
+      flex h-full flex-col justify-between rounded-xl border
+      border-(--ui-border) bg-(--ui-card) p-8 shadow-xl
+    ">
     <div class="space-y-6">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div
+            class="
+          flex flex-col items-start justify-between gap-4
+          sm:flex-row sm:items-center
+        ">
             <h2
-                class="text-xs font-black uppercase tracking-widest text-[var(--ui-text-muted)] shrink-0">
+                class="
+                  shrink-0 text-xs font-black tracking-widest
+                  text-(--ui-text-muted) uppercase
+                ">
                 Paintbox
             </h2>
 
-            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <div
+                class="
+              flex w-full flex-wrap items-center gap-2
+              sm:w-auto
+            ">
                 <select
                     bind:value={paintbox.sortMode}
-                    class="bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-lg px-2 py-1.5 text-xs font-bold uppercase outline-none cursor-pointer transition-all focus:border-[var(--current-color)] flex-1 sm:flex-none">
+                    class="
+                      flex-1 cursor-pointer rounded-lg border
+                      border-(--ui-border) bg-(--ui-bg) px-2 py-1.5 text-xs
+                      font-bold uppercase transition-all outline-none
+                      focus:border-(--current-color)
+                      sm:flex-none
+                    ">
                     {#each sortOptions as option (option.value)}
                         <option value={option.value}>{option.label}</option>
                     {/each}
@@ -43,12 +63,14 @@
                 <button
                     onclick={() => paintbox.clear()}
                     disabled={paintbox.items.length === 0}
-                    class="p-2 bg-[var(--ui-bg)] hover:bg-red-500 hover:text-white border border-[var(--ui-border)] rounded-lg transition-all shadow-sm shrink-0 text-[var(--ui-text-muted)] {paintbox
-                        .items.length > 0
-                        ? 'opacity-100'
-                        : 'opacity-0 pointer-events-none'}"
+                    class="
+                      shrink-0 rounded-lg border border-(--ui-border)
+                      bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm
+                      transition-all
+                      hover:bg-red-500 hover:text-white
+                      {paintbox.items.length > 0 ? 'opacity-100' : 'pointer-events-none opacity-0'}"
                     title="Clear Paintbox">
-                    <CircleX class="w-4 h-4" />
+                    <CircleX class="size-4" />
                 </button>
             </div>
         </div>
@@ -57,27 +79,50 @@
     </div>
 
     <!-- Export Options -->
-    <div class="space-y-3 mt-8">
-        <h3 class="text-xs font-black uppercase tracking-widest text-[var(--ui-text-muted)]">
+    <div class="mt-8 space-y-3">
+        <h3
+            class="
+          text-xs font-black tracking-widest text-(--ui-text-muted) uppercase
+        ">
             Export
         </h3>
         <div class="grid grid-cols-4 gap-3">
             <button
                 onclick={() => exportPng(app)}
-                class="p-4 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-2xl hover:bg-[var(--current-color)] transition-all shadow-sm font-black uppercase text-xs cursor-pointer hover:text-on-current"
-                >PNG</button>
+                class="
+                  hover:text-on-current
+                  cursor-pointer rounded-2xl border border-(--ui-border)
+                  bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
+                  transition-all
+                  hover:bg-(--current-color)
+                ">PNG</button>
             <button
                 onclick={() => exportSvg(app)}
-                class="p-4 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-2xl hover:bg-[var(--current-color)] transition-all shadow-sm font-black uppercase text-xs cursor-pointer hover:text-on-current"
-                >SVG</button>
+                class="
+                  hover:text-on-current
+                  cursor-pointer rounded-2xl border border-(--ui-border)
+                  bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
+                  transition-all
+                  hover:bg-(--current-color)
+                ">SVG</button>
             <button
                 onclick={() => exportPdf(app)}
-                class="p-4 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-2xl hover:bg-[var(--current-color)] transition-all shadow-sm font-black uppercase text-xs cursor-pointer hover:text-on-current"
-                >PDF</button>
+                class="
+                  hover:text-on-current
+                  cursor-pointer rounded-2xl border border-(--ui-border)
+                  bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
+                  transition-all
+                  hover:bg-(--current-color)
+                ">PDF</button>
             <button
                 onclick={onExport}
-                class="p-4 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-2xl hover:bg-[var(--current-color)] transition-all shadow-sm font-black uppercase text-xs cursor-pointer hover:text-on-current"
-                >Code</button>
+                class="
+                  hover:text-on-current
+                  cursor-pointer rounded-2xl border border-(--ui-border)
+                  bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
+                  transition-all
+                  hover:bg-(--current-color)
+                ">Code</button>
         </div>
     </div>
 </section>

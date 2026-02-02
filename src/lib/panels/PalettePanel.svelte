@@ -42,17 +42,37 @@
 </script>
 
 <section
-    class="p-8 rounded-xl bg-[var(--ui-card)] border border-[var(--ui-border)] shadow-xl h-full">
-    <div class="flex flex-col xl:flex-row items-center justify-between gap-4 mb-6">
+    class="
+      h-full rounded-xl border border-(--ui-border) bg-(--ui-card) p-8 shadow-xl
+    ">
+    <div
+        class="
+          mb-6 flex flex-col items-center justify-between gap-4
+          xl:flex-row
+        ">
         <h2
-            class="text-xs font-black uppercase tracking-widest text-[var(--ui-text-muted)] shrink-0 self-start xl:self-center">
+            class="
+              shrink-0 self-start text-xs font-black tracking-widest
+              text-(--ui-text-muted) uppercase
+              xl:self-center
+            ">
             Palette
         </h2>
 
-        <div class="flex flex-wrap gap-2 items-center justify-end w-full xl:w-auto">
+        <div
+            class="
+              flex w-full flex-wrap items-center justify-end gap-2
+              xl:w-auto
+            ">
             <select
                 bind:value={engine.genAxis}
-                class="bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-lg px-3 py-1.5 text-xs font-bold uppercase outline-none cursor-pointer transition-all focus:border-[var(--current-color)] flex-1 xl:flex-none min-w-[140px]">
+                class="
+                  min-w-35 flex-1 cursor-pointer rounded-lg border
+                  border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs
+                  font-bold uppercase transition-all outline-none
+                  focus:border-(--current-color)
+                  xl:flex-none
+                ">
                 <optgroup label="Variables">
                     <option value="l">Lightness</option>
                     <option value="c">Chroma</option>
@@ -71,29 +91,44 @@
 
             {#if !engine.isHarmonyMode}
                 <div
-                    class="flex items-center gap-1 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-lg p-1">
+                    class="
+                      flex items-center gap-1 rounded-lg border
+                      border-(--ui-border) bg-(--ui-bg) p-1
+                    ">
                     <button
                         onclick={removeRow}
-                        class="p-1.5 hover:bg-[var(--ui-card)] rounded-md transition-colors text-[var(--ui-text-muted)] hover:text-[var(--current-color)]"
+                        class="
+                          rounded-md p-1.5 text-(--ui-text-muted)
+                          transition-colors
+                          hover:bg-(--ui-card) hover:text-(--current-color)
+                        "
                         title="Remove Row"
                         aria-label="Decrease steps">
-                        <ListMinus class="w-4 h-4" />
+                        <ListMinus class="size-4" />
                     </button>
                     <button
                         onclick={addRow}
-                        class="p-1.5 hover:bg-[var(--ui-card)] rounded-md transition-colors text-[var(--ui-text-muted)] hover:text-[var(--current-color)]"
+                        class="
+                          rounded-md p-1.5 text-(--ui-text-muted)
+                          transition-colors
+                          hover:bg-(--ui-card) hover:text-(--current-color)
+                        "
                         title="Add Row"
                         aria-label="Increase steps">
-                        <ListPlus class="w-4 h-4" />
+                        <ListPlus class="size-4" />
                     </button>
                 </div>
             {/if}
 
             <button
                 onclick={(e) => addAll(e)}
-                class="p-2 bg-[var(--ui-bg)] hover:bg-[var(--current-color)] hover:text-white border border-[var(--ui-border)] rounded-lg transition-all shadow-sm shrink-0 text-[var(--ui-text-muted)]"
+                class="
+                  shrink-0 rounded-lg border border-(--ui-border) bg-(--ui-bg)
+                  p-2 text-(--ui-text-muted) shadow-sm transition-all
+                  hover:bg-(--current-color) hover:text-white
+                "
                 title="Add all to paintbox">
-                <LayersPlus class="w-4 h-4" />
+                <LayersPlus class="size-4" />
             </button>
         </div>
     </div>
@@ -104,34 +139,51 @@
             <div
                 role="button"
                 tabindex="0"
-                class="group relative aspect-square rounded-lg border border-white/10 shadow-md transition-all cursor-pointer overflow-hidden hover:scale-105 [background:var(--swatch-color)]"
+                class="
+                  group relative aspect-square cursor-pointer overflow-hidden
+                  rounded-lg border border-white/10 shadow-md transition-all
+                  [background:var(--swatch-color)]
+                  hover:scale-105
+                "
                 style:--swatch-color={swatch}
                 title={color.formatColor(swatch)}
                 onclick={() => color.set(swatch)}
                 onkeydown={(e) => handleKeyDown(e, swatch)}
                 aria-label="Select swatch {i + 1}">
                 <div
-                    class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-2">
+                    class="
+                      absolute inset-0 flex items-center justify-center gap-2
+                      opacity-0 transition-opacity
+                      group-hover:opacity-100
+                    ">
                     <button
                         onclick={(e) => {
                             e.stopPropagation();
                             paintbox.add(swatch);
                             toast.show('Added', e);
                         }}
-                        class="{btnClass} p-3 rounded-full shadow-sm transition-transform hover:scale-110 cursor-pointer"
+                        class="{btnClass}
+                          cursor-pointer rounded-full p-3 shadow-sm
+                          transition-transform
+                          hover:scale-110
+                        "
                         title="Add to paintbox"
                         type="button">
-                        <Plus class="w-4 h-4 pointer-events-none" />
+                        <Plus class="pointer-events-none size-4" />
                     </button>
                     <button
                         onclick={(e) => {
                             e.stopPropagation();
                             copy(swatch, e);
                         }}
-                        class="{btnClass} p-3 rounded-full shadow-sm transition-transform hover:scale-110 cursor-pointer"
+                        class="{btnClass}
+                          cursor-pointer rounded-full p-3 shadow-sm
+                          transition-transform
+                          hover:scale-110
+                        "
                         title="Copy"
                         type="button">
-                        <Copy class="w-4 h-4 pointer-events-none" />
+                        <Copy class="pointer-events-none size-4" />
                     </button>
                 </div>
             </div>

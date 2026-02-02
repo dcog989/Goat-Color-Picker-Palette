@@ -64,15 +64,28 @@
 
 {#if useTicker()}
     <!-- Ticker display for very long names -->
-    <div class="overflow-hidden w-full max-w-[60vw]">
+    <div class="w-full max-w-[60vw] overflow-hidden">
         <div class="flex animate-bounce whitespace-nowrap" style="gap: 0.5rem;">
             {#each name.toUpperCase().split('') as letter, i (i)}
                 {#if letter === ' '}
-                    <div class="w-3 md:w-5 transition-all duration-1000"></div>
+                    <div
+                        class="
+                      w-3 transition-all duration-1000
+                      md:w-5
+                    ">
+                    </div>
                 {:else}
                     {@const style = getBlockStyle(i)}
                     <span
-                        class="inline-flex items-center justify-center {blockSize} font-black rounded-sm shadow-md transition-all duration-1000 hover:scale-110 hover:rotate-2 cursor-default select-none [background:var(--letter-bg)] [color:var(--letter-text)]"
+                        class="
+                          inline-flex items-center justify-center
+                          {blockSize}
+                          cursor-default rounded-sm font-black
+                          text-(--letter-text) shadow-md transition-all
+                          duration-1000 select-none
+                          [background:var(--letter-bg)]
+                          hover:scale-110 hover:rotate-2
+                        "
                         style:--letter-bg={style.bgColor}
                         style:--letter-text={style.textColor}>
                         {letter}
@@ -83,14 +96,30 @@
     </div>
 {:else}
     <!-- Normal display for regular length names -->
-    <div class="flex flex-wrap justify-center {gapSize}" style="gap: 0.5rem;">
+    <div
+        class="
+      flex flex-wrap justify-center
+      {gapSize}"
+        style="gap: 0.5rem;">
         {#each name.toUpperCase().split('') as letter, i (i)}
             {#if letter === ' '}
-                <div class="w-3 md:w-5 transition-all duration-1000"></div>
+                <div
+                    class="
+                  w-3 transition-all duration-1000
+                  md:w-5
+                ">
+                </div>
             {:else}
                 {@const style = getBlockStyle(i)}
                 <span
-                    class="inline-flex items-center justify-center {blockSize} font-black rounded-sm shadow-md transition-all duration-1000 hover:scale-110 hover:rotate-2 cursor-default select-none [background:var(--letter-bg)] [color:var(--letter-text)]"
+                    class="
+                      inline-flex items-center justify-center
+                      {blockSize}
+                      cursor-default rounded-sm font-black text-(--letter-text)
+                      shadow-md transition-all duration-1000 select-none
+                      [background:var(--letter-bg)]
+                      hover:scale-110 hover:rotate-2
+                    "
                     style:--letter-bg={style.bgColor}
                     style:--letter-text={style.textColor}>
                     {letter}

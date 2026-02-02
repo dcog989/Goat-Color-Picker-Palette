@@ -78,16 +78,23 @@
 </script>
 
 <section
-    class="p-8 rounded-xl bg-[var(--ui-card)] border border-[var(--ui-border)] shadow-xl h-full flex flex-col">
-    <div class="flex items-center justify-between mb-6 shrink-0">
-        <h2 class="text-xs font-black uppercase tracking-widest text-[var(--ui-text-muted)]">
+    class="
+      flex h-full flex-col rounded-xl border border-(--ui-border) bg-(--ui-card)
+      p-8 shadow-xl
+    ">
+    <div class="mb-6 flex shrink-0 items-center justify-between">
+        <h2
+            class="
+              text-xs font-black tracking-widest text-(--ui-text-muted)
+              uppercase
+            ">
             Image Analyser
         </h2>
     </div>
 
-    <div class="space-y-6 flex-1">
+    <div class="flex-1 space-y-6">
         {#if !imageAnalyzer.mosaicData.length}
-            <div class="relative h-full flex flex-col justify-center">
+            <div class="relative flex h-full flex-col justify-center">
                 <input
                     type="file"
                     id="img-upload"
@@ -96,65 +103,109 @@
                     onchange={handleInput} />
                 <label
                     for="img-upload"
-                    class="flex flex-col items-center justify-center p-12 rounded-2xl bg-[var(--ui-bg)] border-2 border-dashed transition-all cursor-pointer min-h-[260px] h-full"
+                    class="
+                      flex h-full min-h-65 cursor-pointer flex-col items-center
+                      justify-center rounded-2xl border-2 border-dashed
+                      bg-(--ui-bg) p-12 transition-all
+                    "
                     class:border-brand={isDragging}
-                    class:border-[var(--ui-border)]={!isDragging}
-                    class:bg-[var(--current-color)]={isDragging}
-                    class:bg-opacity-10={isDragging}
+                    class:border-(--ui-border)={!isDragging}
+                    style:background-color={isDragging
+                        ? 'color-mix(in oklch, var(--current-color) 10%, transparent)'
+                        : undefined}
                     ondragover={onDragOver}
                     ondragleave={onDragLeave}
                     ondrop={onDrop}>
-                    <Image class="w-12 h-12 mb-4 opacity-40 pointer-events-none" />
-                    <span class="text-sm font-bold uppercase tracking-wider pointer-events-none">
+                    <Image class="pointer-events-none mb-4 size-12 opacity-40" />
+                    <span
+                        class="
+                          pointer-events-none text-sm font-bold tracking-wider
+                          uppercase
+                        ">
                         {imageAnalyzer.isProcessing
                             ? 'Processing...'
                             : 'Drop Image or Click to Upload'}
                     </span>
-                    <span class="text-xs opacity-40 mt-2 pointer-events-none"
+                    <span class="pointer-events-none mt-2 text-xs opacity-40"
                         >JPEG, PNG, WEBP, AVIF, GIF, BMP, SVG</span>
                 </label>
             </div>
         {:else}
             <!-- Controls & Thumbnail -->
             <div
-                class="flex flex-col md:flex-row gap-6 p-4 bg-[var(--ui-bg)] rounded-xl border border-[var(--ui-border)]">
+                class="
+                  flex flex-col gap-6 rounded-xl border border-(--ui-border)
+                  bg-(--ui-bg) p-4
+                  md:flex-row
+                ">
                 <!-- Thumbnail -->
-                <div class="relative group shrink-0 mx-auto md:mx-0">
+                <div
+                    class="
+                      group relative mx-auto shrink-0
+                      md:mx-0
+                    ">
                     <img
                         src={imageAnalyzer.previewUrl}
                         alt="Analyzed"
-                        class="w-64 h-64 object-cover rounded-lg border border-[var(--ui-border)] shadow-sm bg-[var(--ui-card)]" />
+                        class="
+                          size-64 rounded-lg border border-(--ui-border)
+                          bg-(--ui-card) object-cover shadow-sm
+                        " />
 
                     <button
                         onclick={() => imageAnalyzer.clear()}
-                        class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-all rounded-lg cursor-pointer"
+                        class="
+                          absolute inset-0 flex cursor-pointer items-center
+                          justify-center rounded-lg bg-black/40 opacity-0
+                          transition-all
+                          group-hover:opacity-100
+                        "
                         title="Clear Image">
                         <div
-                            class="p-4 bg-white/20 hover:bg-red-500 text-white rounded-full transition-colors backdrop-blur-md">
-                            <X class="w-8 h-8" />
+                            class="
+                              rounded-full bg-white/20 p-4 text-white
+                              backdrop-blur-md transition-colors
+                              hover:bg-red-500
+                            ">
+                            <X class="size-8" />
                         </div>
                     </button>
                 </div>
 
                 <!-- Controls -->
-                <div class="flex-1 min-w-0 flex flex-col gap-4">
+                <div class="flex min-w-0 flex-1 flex-col gap-4">
                     <label
                         for="sort-mode"
-                        class="text-xs font-bold uppercase text-[var(--ui-text-muted)] block"
-                        >Ordered By:</label>
+                        class="
+                          block text-xs font-bold text-(--ui-text-muted)
+                          uppercase
+                        ">Ordered By:</label>
                     <div class="flex flex-col gap-2" role="radiogroup" aria-label="Sort Mode">
                         {#each sortOptions as option (option.value)}
                             <button
-                                class="px-4 py-3 text-xs font-bold uppercase rounded-md border transition-all text-left flex justify-between items-center {imageAnalyzer.sortMode ===
-                                option.value
-                                    ? 'bg-[var(--current-color)] text-on-current border-transparent shadow-md'
-                                    : 'bg-[var(--ui-card)] border-[var(--ui-border)] hover:border-[var(--current-color)]'}"
+                                class="
+                                  flex items-center justify-between rounded-md
+                                  border px-4 py-3 text-left text-xs font-bold
+                                  uppercase transition-all
+                                  {imageAnalyzer.sortMode === option.value
+                                    ? `
+                                      text-on-current border-transparent
+                                      bg-(--current-color) shadow-md
+                                    `
+                                    : `
+                                      border-(--ui-border) bg-(--ui-card)
+                                      hover:border-(--current-color)
+                                    `}"
                                 onclick={() => (imageAnalyzer.sortMode = option.value)}
                                 aria-checked={imageAnalyzer.sortMode === option.value}
                                 role="radio">
                                 {option.label}
                                 {#if imageAnalyzer.sortMode === option.value}
-                                    <div class="w-2 h-2 rounded-full bg-white/50"></div>
+                                    <div
+                                        class="
+                                      size-2 rounded-full bg-white/50
+                                    ">
+                                    </div>
                                 {/if}
                             </button>
                         {/each}
@@ -166,16 +217,24 @@
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
                     <h3
-                        class="text-xs font-bold uppercase tracking-wider text-[var(--ui-text-muted)]">
+                        class="
+                          text-xs font-bold tracking-wider
+                          text-(--ui-text-muted) uppercase
+                        ">
                         Palette
                     </h3>
                     <div class="flex items-center gap-3">
-                        <span class="text-xs font-mono text-[var(--ui-text-muted)]">Top 24</span>
+                        <span class="font-mono text-xs text-(--ui-text-muted)">Top 24</span>
                         <button
                             onclick={(e) => addAll(e)}
-                            class="p-2 bg-[var(--ui-bg)] hover:bg-[var(--current-color)] hover:text-white border border-[var(--ui-border)] rounded-lg transition-all shadow-sm shrink-0 text-[var(--ui-text-muted)]"
+                            class="
+                              shrink-0 rounded-lg border border-(--ui-border)
+                              bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm
+                              transition-all
+                              hover:bg-(--current-color) hover:text-white
+                            "
                             title="Add All to Paintbox">
-                            <LayersPlus class="w-4 h-4" />
+                            <LayersPlus class="size-4" />
                         </button>
                     </div>
                 </div>
@@ -186,40 +245,70 @@
                             <div
                                 role="button"
                                 tabindex="0"
-                                class="group relative aspect-square rounded-lg border border-white/10 shadow-md transition-all cursor-pointer overflow-hidden hover:scale-105 [background:var(--swatch-color)]"
+                                class="
+                                  group relative aspect-square cursor-pointer
+                                  overflow-hidden rounded-lg border
+                                  border-white/10 shadow-md transition-all
+                                  [background:var(--swatch-color)]
+                                  hover:scale-105
+                                "
                                 style:--swatch-color={swatch}
                                 title={color.formatColor(swatch)}
                                 onclick={() => color.set(swatch)}
                                 onkeydown={(e) => handleKeyDown(e, swatch)}
                                 aria-label="Select extracted color {i + 1}">
                                 <div
-                                    class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    class="
+                                      absolute inset-0 flex items-center
+                                      justify-center opacity-0
+                                      transition-opacity
+                                      group-hover:opacity-100
+                                    ">
                                     <button
                                         onclick={(e) => {
                                             e.stopPropagation();
                                             paintbox.add(swatch);
                                             toast.show('Added', e);
                                         }}
-                                        class="bg-white/30 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/50 transition-all hover:scale-115 shadow-lg cursor-pointer"
+                                        class="
+                                          cursor-pointer rounded-full
+                                          bg-white/30 p-3 text-white shadow-lg
+                                          backdrop-blur-md transition-all
+                                          hover:scale-115 hover:bg-white/50
+                                        "
                                         title="Add to paintbox"
                                         type="button">
-                                        <Plus class="w-3 h-3 pointer-events-none" />
+                                        <Plus
+                                            class="
+                                          pointer-events-none size-3
+                                        " />
                                     </button>
                                     <button
                                         onclick={(e) => {
                                             e.stopPropagation();
                                             copy(swatch, e);
                                         }}
-                                        class="bg-white/30 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/50 transition-all hover:scale-115 shadow-lg cursor-pointer"
+                                        class="
+                                          cursor-pointer rounded-full
+                                          bg-white/30 p-3 text-white shadow-lg
+                                          backdrop-blur-md transition-all
+                                          hover:scale-115 hover:bg-white/50
+                                        "
                                         title="Copy"
                                         type="button">
-                                        <Copy class="w-3 h-3 pointer-events-none" />
+                                        <Copy
+                                            class="
+                                          pointer-events-none size-3
+                                        " />
                                     </button>
                                 </div>
                             </div>
                         {:else}
                             <div
-                                class="aspect-square rounded-lg border border-[var(--ui-border)] bg-[var(--ui-bg)] opacity-30">
+                                class="
+                                  aspect-square rounded-lg border
+                                  border-(--ui-border) bg-(--ui-bg) opacity-30
+                                ">
                             </div>
                         {/if}
                     {/each}

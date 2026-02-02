@@ -90,28 +90,54 @@
 </script>
 
 <section
-    class="p-8 rounded-xl bg-[var(--ui-card)] border border-[var(--ui-border)] shadow-xl space-y-8">
+    class="
+      space-y-8 rounded-xl border border-(--ui-border) bg-(--ui-card) p-8
+      shadow-xl
+    ">
     <!-- Top Row: Input and Mode Switch -->
-    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div class="flex items-center gap-4 w-full md:w-auto flex-1">
+    <div
+        class="
+          flex flex-col items-center justify-between gap-4
+          md:flex-row
+        ">
+        <div
+            class="
+              flex w-full flex-1 items-center gap-4
+              md:w-auto
+            ">
             <h2
-                class="text-xs font-black uppercase tracking-widest text-[var(--ui-text-muted)] whitespace-nowrap">
+                class="
+                  text-xs font-black tracking-widest whitespace-nowrap
+                  text-(--ui-text-muted) uppercase
+                ">
                 Color Picker
             </h2>
-            <div class="relative w-full z-50">
+            <div class="relative z-50 w-full">
                 <input
                     type="text"
                     value={inputVal}
                     onchange={handleInput}
-                    class="w-full bg-[var(--ui-bg)] border rounded-md pl-3 pr-8 py-2 font-mono text-base focus:ring-2 focus:ring-[var(--current-color)] outline-none transition-all uppercase {hasError
+                    class="
+                      w-full rounded-md border bg-(--ui-bg) py-2 pr-8 pl-3
+                      font-mono text-base uppercase transition-all outline-none
+                      focus:ring-2 focus:ring-(--current-color)
+                      {hasError
                         ? 'border-red-500 ring-2 ring-red-500/20'
-                        : 'border-[var(--ui-border)]'}"
+                        : `
+                        border-(--ui-border)
+                      `}"
                     placeholder="Paste color..." />
                 {#if color.isOutOfGamut}
-                    <div class="group absolute right-2 top-1/2 -translate-y-1/2">
-                        <AlertTriangle class="w-4 h-4 text-amber-500 cursor-help" />
+                    <div class="group absolute top-1/2 right-2 -translate-y-1/2">
+                        <AlertTriangle class="size-4 cursor-help text-amber-500" />
                         <div
-                            class="absolute right-0 top-full mt-2 w-48 p-2 bg-[var(--ui-card)] border border-amber-500/20 text-amber-500 text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
+                            class="
+                              pointer-events-none absolute top-full right-0 mt-2
+                              w-48 rounded-md border border-amber-500/20
+                              bg-(--ui-card) p-2 text-sm text-amber-500
+                              opacity-0 shadow-xl transition-opacity
+                              group-hover:opacity-100
+                            ">
                             Color is outside sRGB gamut. Converted color values are approximate.
                         </div>
                     </div>
@@ -119,30 +145,51 @@
             </div>
             <button
                 onclick={togglePrecision}
-                class="group relative shrink-0 p-2 bg-[var(--ui-bg)] hover:bg-[var(--current-color)] border border-[var(--ui-border)] rounded-md transition-all">
+                class="
+                  group relative shrink-0 rounded-md border border-(--ui-border)
+                  bg-(--ui-bg) p-2 transition-all
+                  hover:bg-(--current-color)
+                ">
                 {#if app.precision === 'precise'}
                     <DecimalsArrowRight
-                        class="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        class="
+                          size-5 opacity-60 transition-opacity
+                          group-hover:opacity-100
+                        " />
                 {:else}
                     <DecimalsArrowLeft
-                        class="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        class="
+                          size-5 opacity-60 transition-opacity
+                          group-hover:opacity-100
+                        " />
                 {/if}
                 <div
-                    class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-[var(--ui-card)] border border-[var(--ui-border)] text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl whitespace-nowrap z-50">
+                    class="
+                      pointer-events-none absolute bottom-full left-1/2 z-50
+                      mb-2 -translate-x-1/2 rounded-md border
+                      border-(--ui-border) bg-(--ui-card) px-3 py-2 text-xs
+                      whitespace-nowrap opacity-0 shadow-xl transition-opacity
+                      group-hover:opacity-100
+                    ">
                     {app.precision === 'precise' ? 'Precise ↔ Practical' : 'Practical ↔ Precise'}
                 </div>
             </button>
         </div>
 
         <div
-            class="flex gap-1 bg-[var(--ui-bg)] border border-[var(--ui-border)] rounded-md p-1 shrink-0">
+            class="
+              flex shrink-0 gap-1 rounded-md border border-(--ui-border)
+              bg-(--ui-bg) p-1
+            ">
             {#each ['oklch', 'rgb', 'hsl'] as m (m)}
                 <button
                     onclick={() => (color.mode = m as 'oklch' | 'rgb' | 'hsl')}
-                    class="px-4 py-2 text-xs font-black uppercase rounded-sm transition-all {color.mode ===
-                    m
-                        ? 'bg-[var(--current-color)] text-on-current'
-                        : 'hover:bg-[var(--ui-card)]'}">
+                    class="
+                      rounded-sm px-4 py-2 text-xs font-black uppercase
+                      transition-all
+                      {color.mode === m
+                        ? 'text-on-current bg-(--current-color)'
+                        : 'hover:bg-(--ui-card)'}">
                     {m}
                 </button>
             {/each}
@@ -150,18 +197,28 @@
     </div>
 
     <!-- Main Grid: Sliders & Swatch -->
-    <div class="grid grid-cols-1 md:grid-cols-[1fr_160px] gap-8">
+    <div
+        class="
+          grid grid-cols-1 gap-8
+          md:grid-cols-[1fr_160px]
+        ">
         <!-- Sliders -->
         <div class="space-y-6">
             {#if color.mode === 'oklch'}
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Lightness</span> <span>{(color.l * 100).toFixed(0)}%</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('l')}>
                         </div>
                         <input
@@ -170,17 +227,26 @@
                             max="1"
                             step="0.01"
                             bind:value={color.l}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Chroma</span> <span>{color.c.toFixed(3)}</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('c')}>
                         </div>
                         <input
@@ -189,17 +255,26 @@
                             max="0.37"
                             step="0.001"
                             bind:value={color.c}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Hue</span> <span>{color.h.toFixed(0)}°</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('h')}>
                         </div>
                         <input
@@ -208,19 +283,28 @@
                             max="360"
                             step="0.1"
                             bind:value={color.h}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
             {:else if color.mode === 'rgb'}
                 {@const rgb = color.rgbComp}
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Red</span> <span>{rgb.r}</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('r')}>
                         </div>
                         <input
@@ -229,17 +313,26 @@
                             max="255"
                             value={rgb.r}
                             oninput={(e) => color.setRgb('r', +e.currentTarget.value)}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Green</span> <span>{rgb.g}</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('g')}>
                         </div>
                         <input
@@ -248,17 +341,26 @@
                             max="255"
                             value={rgb.g}
                             oninput={(e) => color.setRgb('g', +e.currentTarget.value)}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Blue</span> <span>{rgb.b}</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('b')}>
                         </div>
                         <input
@@ -267,19 +369,28 @@
                             max="255"
                             value={rgb.b}
                             oninput={(e) => color.setRgb('b', +e.currentTarget.value)}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
             {:else if color.mode === 'hsl'}
                 {@const hsl = color.hslComp}
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Hue</span> <span>{hsl.h.toFixed(0)}°</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('hsl-h')}>
                         </div>
                         <input
@@ -288,17 +399,26 @@
                             max="360"
                             value={hsl.h}
                             oninput={(e) => color.setHsl('h', +e.currentTarget.value)}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Saturation</span> <span>{hsl.s.toFixed(0)}%</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('hsl-s')}>
                         </div>
                         <input
@@ -307,17 +427,26 @@
                             max="100"
                             value={hsl.s}
                             oninput={(e) => color.setHsl('s', +e.currentTarget.value)}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div
-                        class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                        class="
+                          flex justify-between text-xs font-bold
+                          text-(--ui-text-muted) uppercase
+                        ">
                         <span>Lightness</span> <span>{hsl.l.toFixed(0)}%</span>
                     </div>
-                    <div class="h-4 rounded-full relative">
+                    <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
+                            class="
+                              absolute inset-0 rounded-full
+                              [background:var(--slider-grad)]
+                            "
                             style:--slider-grad={getGradient('hsl-l')}>
                         </div>
                         <input
@@ -326,7 +455,10 @@
                             max="100"
                             value={hsl.l}
                             oninput={(e) => color.setHsl('l', +e.currentTarget.value)}
-                            class="w-full h-full rounded-full absolute inset-0 bg-transparent z-10" />
+                            class="
+                              absolute inset-0 z-10 size-full rounded-full
+                              bg-transparent
+                            " />
                     </div>
                 </div>
             {/if}
@@ -334,14 +466,20 @@
             <!-- Alpha (Shared) -->
             <div class="space-y-1">
                 <div
-                    class="flex justify-between text-xs font-bold uppercase text-[var(--ui-text-muted)]">
+                    class="
+                      flex justify-between text-xs font-bold
+                      text-(--ui-text-muted) uppercase
+                    ">
                     <span>Alpha</span> <span>{(color.alpha * 100).toFixed(0)}%</span>
                 </div>
                 <div class="relative h-4">
                     <div
-                        class="absolute inset-0 rounded-full overflow-hidden checkerboard pointer-events-none">
+                        class="
+                          checkerboard pointer-events-none absolute inset-0
+                          overflow-hidden rounded-full
+                        ">
                         <div
-                            class="w-full h-full [background:var(--alpha-grad)]"
+                            class="size-full [background:var(--alpha-grad)]"
                             style:--alpha-grad={getGradient('alpha')}>
                         </div>
                     </div>
@@ -351,50 +489,86 @@
                         max="1"
                         step="0.01"
                         bind:value={color.alpha}
-                        class="w-full h-full rounded-full cursor-ew-resize absolute inset-0 z-10 bg-transparent" />
+                        class="
+                          absolute inset-0 z-10 size-full cursor-ew-resize
+                          rounded-full bg-transparent
+                        " />
                 </div>
             </div>
         </div>
 
         <!-- Large Swatch -->
         <div
-            class="w-full h-32 md:h-auto rounded-xl shadow-xl border border-white/10 relative checkerboard overflow-hidden group min-h-[200px]">
+            class="
+              checkerboard group relative h-32 min-h-50 w-full overflow-hidden
+              rounded-xl border border-white/10 shadow-xl
+              md:h-auto
+            ">
             <div
-                class="absolute inset-0 transition-colors [background:var(--swatch-bg)]"
+                class="
+                  absolute inset-0 transition-colors
+                  [background:var(--swatch-bg)]
+                "
                 style:--swatch-bg={color.cssVar}>
             </div>
             <div
-                class="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 backdrop-blur-[2px]">
+                class="
+                  absolute inset-0 flex flex-col items-center justify-center
+                  gap-2 bg-black/10 opacity-0 backdrop-blur-[2px]
+                  transition-opacity
+                  group-hover:opacity-100
+                ">
                 <button
                     onclick={(e) => copy(inputVal, e)}
-                    class="bg-white/30 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/40 transition-all hover:scale-115 shadow-lg cursor-pointer"
+                    class="
+                      cursor-pointer rounded-full bg-white/30 p-3 text-white
+                      shadow-lg backdrop-blur-md transition-all
+                      hover:scale-115 hover:bg-white/40
+                    "
                     title="Copy {color.mode.toUpperCase()}">
-                    <Copy class="w-4 h-4" />
+                    <Copy class="size-4" />
                 </button>
                 <button
                     onclick={(e) => addToPaintbox(e)}
-                    class="bg-white/30 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/40 transition-all hover:scale-115 shadow-lg cursor-pointer"
+                    class="
+                      cursor-pointer rounded-full bg-white/30 p-3 text-white
+                      shadow-lg backdrop-blur-md transition-all
+                      hover:scale-115 hover:bg-white/40
+                    "
                     title="Add to Paintbox">
-                    <Plus class="w-4 h-4" />
+                    <Plus class="size-4" />
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Output Formats -->
-    <div class="flex flex-wrap gap-2 pt-4 border-t border-[var(--ui-border)]">
+    <div class="flex flex-wrap gap-2 border-t border-(--ui-border) pt-4">
         {#each [{ label: 'OKLCH', value: color.display }, { label: 'HEX', value: color.hex }, { label: 'RGB', value: color.rgb }, { label: 'HSL', value: color.hsl }, { label: 'OKLAB', value: color.oklab }, { label: 'LAB', value: color.lab }, { label: 'CMYK', value: color.cmyk }] as format (format.label)}
             <button
                 onclick={(e) => copy(format.value, e)}
-                class="group flex items-center bg-[var(--ui-bg)] hover:bg-[var(--current-color)] border border-[var(--ui-border)] rounded-full px-4 py-2 text-xs transition-colors overflow-hidden max-w-[100px] hover:max-w-[300px] cursor-pointer">
+                class="
+                  group flex max-w-25 cursor-pointer items-center
+                  overflow-hidden rounded-full border border-(--ui-border)
+                  bg-(--ui-bg) px-4 py-2 text-xs transition-colors
+                  hover:max-w-75 hover:bg-(--current-color)
+                ">
                 <span
-                    class="font-bold text-[var(--ui-text-muted)] group-hover:text-on-current transition-colors mr-2"
-                    >{format.label}</span>
+                    class="
+                      group-hover:text-on-current
+                      mr-2 font-bold text-(--ui-text-muted) transition-colors
+                    ">{format.label}</span>
                 <span
-                    class="whitespace-nowrap opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto transition-all duration-300 font-mono text-on-current"
-                    >{format.value}</span>
+                    class="
+                      text-on-current w-0 font-mono whitespace-nowrap opacity-0
+                      transition-all duration-300
+                      group-hover:w-auto group-hover:opacity-100
+                    ">{format.value}</span>
                 <Copy
-                    class="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-on-current" />
+                    class="
+                      text-on-current ml-2 size-3 opacity-0 transition-opacity
+                      group-hover:opacity-100
+                    " />
             </button>
         {/each}
     </div>

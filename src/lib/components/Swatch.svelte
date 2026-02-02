@@ -27,12 +27,14 @@
     };
 </script>
 
-<div class="relative group">
+<div class="group relative">
     <button
         onclick={handleClick}
-        class="{sizeClasses[
-            size
-        ]} border border-white/10 shadow-lg hover:scale-105 transition-transform cursor-pointer rounded-lg [background:var(--swatch-color)]"
+        class="{sizeClasses[size]}
+          cursor-pointer rounded-lg border border-white/10 shadow-lg
+          transition-transform [background:var(--swatch-color)]
+          hover:scale-105
+        "
         style:--swatch-color={color}
         aria-label="Color swatch"></button>
 
@@ -42,7 +44,13 @@
                 e.stopPropagation();
                 paintbox.add(color);
             }}
-            class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 bg-[var(--current-color)] text-white rounded-full text-lg font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg"
+            class="
+              absolute -bottom-2 left-1/2 flex size-8 -translate-x-1/2
+              items-center justify-center rounded-full bg-(--current-color)
+              text-lg font-bold text-white opacity-0 shadow-lg
+              transition-opacity
+              group-hover:opacity-100
+            "
             title="Add to paintbox">
             +
         </button>
