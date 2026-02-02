@@ -68,7 +68,11 @@
                       bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm
                       transition-all
                       hover:bg-red-500 hover:text-white
-                      {paintbox.items.length > 0 ? 'opacity-100' : `pointer-events-none opacity-0`}"
+                      {paintbox.items.length > 0
+                        ? 'opacity-100'
+                        : `
+                        pointer-events-none opacity-0
+                      `}"
                     title="Clear Paintbox">
                     <CircleX class="size-4" />
                 </button>

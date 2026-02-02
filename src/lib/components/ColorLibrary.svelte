@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { ColorName } from 'color-name-list';
     import { AlertCircle } from 'lucide-svelte';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { getApp } from '../context';
     import { loadColorNames } from '../data/colors';
 
@@ -12,11 +12,29 @@
 
     // Store as plain array to avoid Proxy overhead on 30k items
     let colorNameList: ColorName[] = [];
+    // Worker-filtered results (limited to first 100 matches)
+    let workerFilteredColors: Array<{ name: string; hex: string }> = $state([]);
 
     let isLoading = $state(true);
+    let isFiltering = $state(false);
     let loadError = $state<string | null>(null);
 
+    // Web Worker for offloading color filtering
+    let filterWorker: Worker | null = null;
+
     onMount(async () => {
+        // Initialize worker for filtering
+        filterWorker = new Worker(new URL('../workers/color-name-search.ts', import.meta.url), {
+            type: 'module',
+        });
+
+        filterWorker.onmessage = (e) => {
+            if (e.data.type === 'filterResult') {
+                workerFilteredColors = e.data.colors || [];
+                isFiltering = false;
+            }
+        };
+
         try {
             colorNameList = await loadColorNames();
         } catch (error) {
@@ -27,16 +45,33 @@
         }
     });
 
-    let filteredColors = $derived.by(() => {
-        // Track isLoading to ensure we update when data arrives
+    onDestroy(() => {
+        filterWorker?.terminate();
+    });
+
+    // Send filter requests to worker when query changes
+    $effect(() => {
+        if (filterWorker && searchQuery.trim()) {
+            isFiltering = true;
+            filterWorker.postMessage({
+                type: 'filter',
+                query: searchQuery,
+                limit: 100,
+            });
+        }
+    });
+
+    // Use worker results when searching, full list when empty
+    let filteredColors = $derived.by((): Array<{ name: string; hex: string }> => {
         if (isLoading) return [];
 
-        if (!colorNameList || colorNameList.length === 0) return [];
-        if (!searchQuery.trim()) return colorNameList;
+        if (!searchQuery.trim()) {
+            // Show all colors when no search query
+            return colorNameList;
+        }
 
-        const q = searchQuery.toLowerCase();
-        // Fast native filter on non-proxied array
-        return colorNameList.filter((c) => c.name.toLowerCase().includes(q));
+        // Show worker-filtered results (limited to 100)
+        return workerFilteredColors;
     });
 
     let _scrollTop = $state(0);
@@ -136,6 +171,19 @@
                         </div>
                         <div class="text-sm opacity-60">Loading color library...</div>
                         <div class="mt-1 text-xs opacity-40">30,000+ colors</div>
+                    </div>
+                </div>
+            {:else if isFiltering}
+                <div class="flex flex-1 items-center justify-center">
+                    <div class="text-center">
+                        <div
+                            class="
+                              mx-auto mb-4 size-12 animate-spin rounded-full
+                              border-4 border-(--ui-border)
+                              border-t-(--current-color)
+                            ">
+                        </div>
+                        <div class="text-sm opacity-60">Searching...</div>
                     </div>
                 </div>
             {:else if loadError}

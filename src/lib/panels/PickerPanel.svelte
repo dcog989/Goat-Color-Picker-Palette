@@ -1,10 +1,10 @@
 <script lang="ts">
     import {
-        AlertTriangle,
         Copy,
         DecimalsArrowLeft,
         DecimalsArrowRight,
         Plus,
+        TriangleAlert,
     } from 'lucide-svelte';
     import { getApp } from '../context';
 
@@ -164,7 +164,7 @@
                     placeholder="Paste color..." />
                 {#if color.isOutOfGamut}
                     <div class="group absolute top-1/2 right-2 -translate-y-1/2">
-                        <AlertTriangle class="size-4 cursor-help text-amber-500" />
+                        <TriangleAlert class="size-4 cursor-help text-amber-500" />
                         <div
                             class="
                               pointer-events-none absolute top-full right-0 mt-2

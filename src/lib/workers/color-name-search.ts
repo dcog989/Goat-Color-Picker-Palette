@@ -20,13 +20,16 @@ useMode(modeOklch);
 useMode(modeOklab);
 
 interface WorkerMessage {
-    type: 'search';
-    color: Oklch;
+    type: 'search' | 'filter';
+    color?: Oklch;
+    query?: string;
+    limit?: number;
 }
 
 interface WorkerResponse {
-    type: 'result';
-    name: string;
+    type: 'result' | 'filterResult';
+    name?: string;
+    colors?: Array<{ name: string; hex: string }>;
 }
 
 // Explicitly type the converter so TypeScript knows it returns Oklab
@@ -35,6 +38,7 @@ const toOklab = converter<Oklab>('oklab');
 // Flattened data for high-performance scanning
 let coordinates: Float32Array | null = null;
 let names: string[] = [];
+let hexValues: string[] = [];
 
 let isLoading = false;
 let loadError: Error | null = null;
@@ -53,12 +57,14 @@ async function prepareData(): Promise<void> {
         const count = list.length;
         coordinates = new Float32Array(count * 3);
         names = new Array(count);
+        hexValues = new Array(count);
 
         for (let i = 0; i < count; i++) {
             const entry = list[i];
             if (!entry) continue;
 
             names[i] = entry.name;
+            hexValues[i] = entry.hex;
 
             // Hex string parses to { mode: 'rgb', ... }
             const color = parse(entry.hex);
@@ -95,7 +101,7 @@ async function prepareData(): Promise<void> {
 }
 
 self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
-    if (e.data.type === 'search') {
+    if (e.data.type === 'search' && e.data.color) {
         if (coordinates === null) {
             messageQueue.push(e.data.color);
             if (!isLoading) {
@@ -106,6 +112,19 @@ self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
 
         const result = findClosestName(e.data.color);
         self.postMessage({ type: 'result', name: result } as WorkerResponse);
+    } else if (e.data.type === 'filter') {
+        if (coordinates === null) {
+            if (!isLoading) {
+                await prepareData();
+            }
+            // After loading, perform the filter
+            const results = filterColors(e.data.query || '', e.data.limit || 100);
+            self.postMessage({ type: 'filterResult', colors: results } as WorkerResponse);
+            return;
+        }
+
+        const results = filterColors(e.data.query || '', e.data.limit || 100);
+        self.postMessage({ type: 'filterResult', colors: results } as WorkerResponse);
     }
 };
 
@@ -150,4 +169,29 @@ function findClosestName(current: Oklch): string {
     }
 
     return 'Custom Color';
+}
+
+function filterColors(query: string, limit: number): Array<{ name: string; hex: string }> {
+    if (loadError || !names.length || !hexValues.length) {
+        return [];
+    }
+
+    // Empty query - return empty array (component will show all via different path)
+    if (!query.trim()) {
+        return [];
+    }
+
+    const q = query.toLowerCase();
+    const results: Array<{ name: string; hex: string }> = [];
+    const len = names.length;
+
+    // Fast scan - stop at limit
+    for (let i = 0; i < len && results.length < limit; i++) {
+        const name = names[i];
+        if (name && name.toLowerCase().includes(q)) {
+            results.push({ name, hex: hexValues[i]! });
+        }
+    }
+
+    return results;
 }
