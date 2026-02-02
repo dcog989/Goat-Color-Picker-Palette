@@ -1,5 +1,4 @@
-import type { Oklch } from 'culori';
-import { formatCss, modeOklch, useMode } from 'culori/fn';
+import { formatCss, modeOklch, useMode, type Oklch } from 'culori/fn';
 
 // Ensure Oklch is available for formatCss
 useMode(modeOklch);

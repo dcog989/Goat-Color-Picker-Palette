@@ -1,5 +1,4 @@
-import type { Oklch } from 'culori';
-import { converter, formatHex, formatHsl, formatRgb, parse } from 'culori/fn';
+import { converter, formatHex, formatHsl, formatRgb, parse, type Oklch } from 'culori/fn';
 import { jsPDF } from 'jspdf';
 import { EXPORT } from '../constants';
 import type { RootStore } from '../stores/root.svelte';

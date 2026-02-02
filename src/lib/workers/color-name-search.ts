@@ -1,4 +1,3 @@
-import type { Oklab, Oklch } from 'culori';
 import {
     converter,
     modeLrgb,
@@ -8,6 +7,8 @@ import {
     modeXyz65,
     parse,
     useMode,
+    type Oklab,
+    type Oklch,
 } from 'culori/fn';
 
 // Register color spaces in worker scope

@@ -1,5 +1,5 @@
 import { calcAPCA } from 'apca-w3';
-import type { Oklch } from 'culori';
+import type { Oklch } from 'culori/fn';
 import { PRECISION } from '../constants';
 import {
     generateColors,
