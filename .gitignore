@@ -6,7 +6,7 @@
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-.ai/
+.context/
 .cache
 .docs/
 .docusaurus
