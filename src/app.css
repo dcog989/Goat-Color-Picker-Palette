@@ -321,3 +321,55 @@ select {
 :root[data-color-contrast='dark'] .group:hover .group-hover\:text-on-current {
     color: oklch(0.2 0.08 var(--current-hue)) !important;
 }
+
+/* OKLCH Slider Gradients - Using CSS Custom Properties for Performance */
+/* These gradients update automatically when CSS variables change, avoiding JS re-calculation */
+
+/* Hue gradient: Shows full spectrum at current L and C values */
+.gradient-oklch-h {
+    background: linear-gradient(
+        to right,
+        oklch(var(--picker-l) var(--picker-c) 0),
+        oklch(var(--picker-l) var(--picker-c) 90),
+        oklch(var(--picker-l) var(--picker-c) 180),
+        oklch(var(--picker-l) var(--picker-c) 270),
+        oklch(var(--picker-l) var(--picker-c) 360)
+    );
+}
+
+/* Lightness gradient: From black to white at current C and H values */
+.gradient-oklch-l {
+    background: linear-gradient(
+        to right,
+        oklch(0 var(--picker-c) var(--picker-h)),
+        oklch(1 var(--picker-c) var(--picker-h))
+    );
+}
+
+/* Chroma gradient: From gray to max chroma at current L and H values */
+.gradient-oklch-c {
+    background: linear-gradient(
+        to right,
+        oklch(var(--picker-l) 0 var(--picker-h)),
+        oklch(var(--picker-l) 0.4 var(--picker-h))
+    );
+}
+
+/* HSL Saturation gradient: At current H and L values */
+.gradient-hsl-s {
+    background: linear-gradient(
+        to right,
+        hsl(var(--picker-hsl-h) 0% var(--picker-hsl-l)),
+        hsl(var(--picker-hsl-h) 100% var(--picker-hsl-l))
+    );
+}
+
+/* HSL Lightness gradient: At current H and S values */
+.gradient-hsl-l {
+    background: linear-gradient(
+        to right,
+        hsl(var(--picker-hsl-h) var(--picker-hsl-s) 0%),
+        hsl(var(--picker-hsl-h) var(--picker-hsl-s) 50%),
+        hsl(var(--picker-hsl-h) var(--picker-hsl-s) 100%)
+    );
+}

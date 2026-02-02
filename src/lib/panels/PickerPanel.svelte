@@ -83,12 +83,30 @@
         }
     };
 
-    const getGradient = (type: string) => {
+    // Get CSS class for gradient backgrounds
+    // RGB gradients use inline styles (dynamic per-component)
+    // OKLCH/HSL gradients use CSS classes with custom properties (browser-optimized)
+    const getGradientClass = (type: string) => {
+        switch (type) {
+            case 'h':
+                return 'gradient-oklch-h';
+            case 'l':
+                return 'gradient-oklch-l';
+            case 'c':
+                return 'gradient-oklch-c';
+            case 'hsl-s':
+                return 'gradient-hsl-s';
+            case 'hsl-l':
+                return 'gradient-hsl-l';
+            default:
+                return '';
+        }
+    };
+
+    // Get inline gradient style for RGB and alpha gradients
+    const getGradientStyle = (type: string) => {
         const { r, g, b } = color.rgbComp;
         const hex = color.hex;
-        const l = color.l;
-        const c = color.c;
-        const h = color.h;
 
         switch (type) {
             case 'r':
@@ -97,38 +115,37 @@
                 return `linear-gradient(to right, rgb(${r},0,${b}), rgb(${r},255,${b}))`;
             case 'b':
                 return `linear-gradient(to right, rgb(${r},${g},0), rgb(${r},${g},255))`;
-
-            case 'h':
-                return `linear-gradient(to right, oklch(${l} ${c} 0), oklch(${l} ${c} 90), oklch(${l} ${c} 180), oklch(${l} ${c} 270), oklch(${l} ${c} 360))`;
-            case 'l':
-                return `linear-gradient(to right, oklch(0 ${c} ${h}), oklch(1 ${c} ${h}))`;
-            case 'c':
-                return `linear-gradient(to right, oklch(${l} 0 ${h}), oklch(${l} 0.4 ${h}))`;
-
             case 'hsl-h':
                 return `linear-gradient(to right, hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%), hsl(360, 100%, 50%))`;
-            case 'hsl-s': {
-                const hsl = color.hslComp;
-                return `linear-gradient(to right, hsl(${hsl.h}, 0%, ${hsl.l}%), hsl(${hsl.h}, 100%, ${hsl.l}%))`;
-            }
-            case 'hsl-l': {
-                const hsl = color.hslComp;
-                return `linear-gradient(to right, hsl(${hsl.h}, ${hsl.s}%, 0%), hsl(${hsl.h}, ${hsl.s}%, 50%), hsl(${hsl.h}, ${hsl.s}%, 100%))`;
-            }
-
             case 'alpha':
                 return `linear-gradient(to right, transparent, ${hex})`;
             default:
                 return 'transparent';
         }
     };
+
+    // Compute HSL values once for CSS custom properties
+    const hslValues = $derived.by(() => {
+        const hsl = color.hslComp;
+        return {
+            h: Math.round(hsl.h),
+            s: Math.round(hsl.s),
+            l: Math.round(hsl.l),
+        };
+    });
 </script>
 
 <section
     class="
       space-y-8 rounded-xl border border-(--ui-border) bg-(--ui-card) p-8
       shadow-xl
-    ">
+    "
+    style:--picker-l={color.l}
+    style:--picker-c={color.c}
+    style:--picker-h={color.h}
+    style:--picker-hsl-h={hslValues.h}
+    style:--picker-hsl-s={hslValues.s + '%'}
+    style:--picker-hsl-l={hslValues.l + '%'}>
     <!-- Top Row: Input and Mode Switch -->
     <div
         class="
@@ -251,13 +268,7 @@
                         <span>Lightness</span> <span>{(color.l * 100).toFixed(0)}%</span>
                     </div>
                     <div class="relative h-4 rounded-full">
-                        <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('l')}>
-                        </div>
+                        <div class="absolute inset-0 rounded-full {getGradientClass('l')}"></div>
                         <input
                             type="range"
                             min="0"
@@ -279,13 +290,7 @@
                         <span>Chroma</span> <span>{color.c.toFixed(3)}</span>
                     </div>
                     <div class="relative h-4 rounded-full">
-                        <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('c')}>
-                        </div>
+                        <div class="absolute inset-0 rounded-full {getGradientClass('c')}"></div>
                         <input
                             type="range"
                             min="0"
@@ -307,13 +312,7 @@
                         <span>Hue</span> <span>{color.h.toFixed(0)}°</span>
                     </div>
                     <div class="relative h-4 rounded-full">
-                        <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('h')}>
-                        </div>
+                        <div class="absolute inset-0 rounded-full {getGradientClass('h')}"></div>
                         <input
                             type="range"
                             min="0"
@@ -337,11 +336,8 @@
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('r')}>
+                            class="absolute inset-0 rounded-full"
+                            style:--slider-grad={getGradientStyle('r')}>
                         </div>
                         <input
                             type="range"
@@ -365,11 +361,8 @@
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('g')}>
+                            class="absolute inset-0 rounded-full"
+                            style:--slider-grad={getGradientStyle('g')}>
                         </div>
                         <input
                             type="range"
@@ -393,11 +386,8 @@
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('b')}>
+                            class="absolute inset-0 rounded-full"
+                            style:--slider-grad={getGradientStyle('b')}>
                         </div>
                         <input
                             type="range"
@@ -422,11 +412,8 @@
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('hsl-h')}>
+                            class="absolute inset-0 rounded-full"
+                            style:--slider-grad={getGradientStyle('hsl-h')}>
                         </div>
                         <input
                             type="range"
@@ -449,12 +436,7 @@
                         <span>Saturation</span> <span>{localHsl.s.toFixed(0)}%</span>
                     </div>
                     <div class="relative h-4 rounded-full">
-                        <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('hsl-s')}>
+                        <div class="absolute inset-0 rounded-full {getGradientClass('hsl-s')}">
                         </div>
                         <input
                             type="range"
@@ -477,12 +459,7 @@
                         <span>Lightness</span> <span>{localHsl.l.toFixed(0)}%</span>
                     </div>
                     <div class="relative h-4 rounded-full">
-                        <div
-                            class="
-                              absolute inset-0 rounded-full
-                              [background:var(--slider-grad)]
-                            "
-                            style:--slider-grad={getGradient('hsl-l')}>
+                        <div class="absolute inset-0 rounded-full {getGradientClass('hsl-l')}">
                         </div>
                         <input
                             type="range"
@@ -515,7 +492,7 @@
                         ">
                         <div
                             class="size-full [background:var(--alpha-grad)]"
-                            style:--alpha-grad={getGradient('alpha')}>
+                            style:--alpha-grad={getGradientStyle('alpha')}>
                         </div>
                     </div>
                     <input
