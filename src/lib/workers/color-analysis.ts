@@ -58,7 +58,7 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
         count: number;
     }
 
-    let colorList: ColorBin[] = [];
+    const colorList: ColorBin[] = [];
 
     for (let i = 0; i < BIN_SIZE; i++) {
         const count = countBin[i];
@@ -68,7 +68,7 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
                 r: Math.round((rBin[i] ?? 0) / count),
                 g: Math.round((gBin[i] ?? 0) / count),
                 b: Math.round((bBin[i] ?? 0) / count),
-                count: count
+                count: count,
             });
         }
     }
@@ -102,7 +102,10 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
             const other = colorList[j];
             if (!other) continue;
 
-            const dist = Math.abs(current.r - other.r) + Math.abs(current.g - other.g) + Math.abs(current.b - other.b);
+            const dist =
+                Math.abs(current.r - other.r) +
+                Math.abs(current.g - other.g) +
+                Math.abs(current.b - other.b);
 
             if (dist < threshold) {
                 mergedCount += other.count;
@@ -121,10 +124,10 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
     const finalColors = mergedList.slice(0, 64);
 
     self.postMessage({
-        colors: finalColors.map(c => rgbToHex(c.r, c.g, c.b)),
-        clusters: finalColors.map(c => ({
+        colors: finalColors.map((c) => rgbToHex(c.r, c.g, c.b)),
+        clusters: finalColors.map((c) => ({
             color: rgbToHex(c.r, c.g, c.b),
-            pixels: c.count
-        }))
+            pixels: c.count,
+        })),
     });
 };

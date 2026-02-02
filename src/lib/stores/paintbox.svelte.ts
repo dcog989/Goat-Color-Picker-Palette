@@ -33,12 +33,13 @@ export class PaintboxStore {
             if (stored) {
                 const parsed = JSON.parse(stored);
                 if (Array.isArray(parsed)) {
-                    this.#colors = parsed.filter(item =>
-                        item &&
-                        typeof item === 'object' &&
-                        typeof item.id === 'string' &&
-                        typeof item.css === 'string' &&
-                        typeof item.timestamp === 'number'
+                    this.#colors = parsed.filter(
+                        (item) =>
+                            item &&
+                            typeof item === 'object' &&
+                            typeof item.id === 'string' &&
+                            typeof item.css === 'string' &&
+                            typeof item.timestamp === 'number',
                     );
                 } else {
                     this.#colors = [];
@@ -47,7 +48,11 @@ export class PaintboxStore {
         } catch (e) {
             console.error('Failed to load paintbox data:', e);
             this.#colors = [];
-            try { localStorage.removeItem(PAINTBOX.STORAGE_KEY); } catch { }
+            try {
+                localStorage.removeItem(PAINTBOX.STORAGE_KEY);
+            } catch {
+                /* Storage removal failed, continue */
+            }
         }
     }
 
@@ -60,7 +65,9 @@ export class PaintboxStore {
                 this.#colors = this.#colors.slice(0, Math.floor(this.#colors.length / 2));
                 try {
                     localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(this.#colors));
-                } catch { }
+                } catch {
+                    /* Storage write failed, already logged */
+                }
             }
         }
     }
@@ -76,7 +83,9 @@ export class PaintboxStore {
 
         switch (this.sortMode) {
             case 'hue':
-                return list.sort((a, b) => (this.#getOklch(a.css).h || 0) - (this.#getOklch(b.css).h || 0));
+                return list.sort(
+                    (a, b) => (this.#getOklch(a.css).h || 0) - (this.#getOklch(b.css).h || 0),
+                );
             case 'lightness':
                 return list.sort((a, b) => this.#getOklch(b.css).l - this.#getOklch(a.css).l); // Brightest first
             case 'chroma':
@@ -92,7 +101,7 @@ export class PaintboxStore {
         if (!this.#initialized) this.init();
 
         // Remove if exists (to bump to top/update)
-        const existingIndex = this.#colors.findIndex(c => c.css === css);
+        const existingIndex = this.#colors.findIndex((c) => c.css === css);
         if (existingIndex !== -1) {
             this.#colors.splice(existingIndex, 1);
         }
@@ -100,7 +109,7 @@ export class PaintboxStore {
         this.#colors.push({
             id: crypto.randomUUID(),
             css,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         });
 
         if (this.#colors.length > PAINTBOX.MAX_COLORS) {
@@ -110,7 +119,7 @@ export class PaintboxStore {
 
     remove(id: string) {
         if (!this.#initialized) this.init();
-        this.#colors = this.#colors.filter(c => c.id !== id);
+        this.#colors = this.#colors.filter((c) => c.id !== id);
     }
 
     clear() {
@@ -125,16 +134,17 @@ export class PaintboxStore {
     import(colors: SavedColor[]) {
         if (!this.#initialized) this.init();
 
-        const validColors = colors.filter(item =>
-            item && typeof item === 'object' && typeof item.css === 'string'
-        ).map(item => ({
-            id: item.id || crypto.randomUUID(),
-            css: item.css,
-            timestamp: item.timestamp || Date.now()
-        }));
+        const validColors = colors
+            .filter((item) => item && typeof item === 'object' && typeof item.css === 'string')
+            .map((item) => ({
+                id: item.id || crypto.randomUUID(),
+                css: item.css,
+                timestamp: item.timestamp || Date.now(),
+            }));
 
-        const cssSet = new Set(this.#colors.map(c => c.css));
-        const newColors = validColors.filter(c => !cssSet.has(c.css));
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Used for deduplication check only
+        const cssSet = new Set(this.#colors.map((c) => c.css));
+        const newColors = validColors.filter((c) => !cssSet.has(c.css));
 
         this.#colors = [...newColors, ...this.#colors].slice(0, PAINTBOX.MAX_COLORS);
     }

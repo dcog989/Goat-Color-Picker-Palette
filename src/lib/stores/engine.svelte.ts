@@ -6,7 +6,7 @@ import {
     getAllHarmonies,
     isHarmonyMode,
     type GenerationMode,
-    type HarmonyType
+    type HarmonyType,
 } from '../utils/harmonies';
 import type { ColorStore } from './color.svelte';
 
@@ -34,12 +34,16 @@ export class EngineStore {
         // Initialize derived properties in constructor to ensure #colorStore is available
         this.contrastWhite = $derived.by(() => {
             const raw = calcAPCA('#ffffff', this.#colorStore.hex);
-            return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(PRECISION.CONTRAST_DISPLAY);
+            return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(
+                PRECISION.CONTRAST_DISPLAY,
+            );
         });
 
         this.contrastBlack = $derived.by(() => {
             const raw = calcAPCA('#000000', this.#colorStore.hex);
-            return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(PRECISION.CONTRAST_DISPLAY);
+            return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(
+                PRECISION.CONTRAST_DISPLAY,
+            );
         });
 
         this.isHarmonyMode = $derived(isHarmonyMode(this.genAxis));
@@ -47,11 +51,7 @@ export class EngineStore {
         this.harmonies = $derived(getAllHarmonies(this.#getBaseColor()));
 
         this.generated = $derived.by(() => {
-            return generateColors(
-                this.#getBaseColor(),
-                this.genAxis,
-                this.genSteps
-            );
+            return generateColors(this.#getBaseColor(), this.genAxis, this.genSteps);
         });
     }
 
@@ -69,7 +69,7 @@ export class EngineStore {
                 mode: 'oklch' as const,
                 l: this.#colorStore.l,
                 c: this.#colorStore.c,
-                h: this.#colorStore.h
+                h: this.#colorStore.h,
             } as Oklch;
 
             // Debounce rapid color changes
@@ -87,8 +87,9 @@ export class EngineStore {
     #initWorker() {
         try {
             this.#searchWorker = new Worker(
+                // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Worker URLs are static
                 new URL('../workers/color-name-search.ts', import.meta.url),
-                { type: 'module' }
+                { type: 'module' },
             );
 
             this.#searchWorker.onmessage = (e: MessageEvent<{ type: string; name: string }>) => {
@@ -118,7 +119,7 @@ export class EngineStore {
         try {
             this.#searchWorker.postMessage({
                 type: 'search',
-                color: color
+                color: color,
             });
         } catch (error) {
             console.error('Failed to send message to worker:', error);
@@ -148,7 +149,7 @@ export class EngineStore {
             l: this.#colorStore.l,
             c: this.#colorStore.c,
             h: this.#colorStore.h,
-            alpha: this.#colorStore.alpha
+            alpha: this.#colorStore.alpha,
         };
     }
 }

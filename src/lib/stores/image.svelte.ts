@@ -20,6 +20,7 @@ export class ImageStore {
 
         const candidates = [...this.mosaicData];
         const getOklch = (() => {
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Internal computation cache, not reactive state
             const cache = new Map<string, Oklch>();
             return (hex: string) => {
                 if (!cache.has(hex)) {
@@ -48,13 +49,20 @@ export class ImageStore {
                 break;
         }
 
-        return candidates.slice(0, 24).map(c => c.color);
+        return candidates.slice(0, 24).map((c) => c.color);
     });
 
     async analyze(file: File) {
         // Validation
-        if (!IMAGE_ANALYSIS.ALLOWED_TYPES.includes(file.type as any)) {
-            throw new Error(`Unsupported format. Please use JPEG, PNG, WEBP, AVIF, GIF, BMP, or SVG.`);
+        // File type validation from external source - file.type is validated against known MIME types
+        if (
+            !IMAGE_ANALYSIS.ALLOWED_TYPES.includes(
+                file.type as (typeof IMAGE_ANALYSIS.ALLOWED_TYPES)[number],
+            )
+        ) {
+            throw new Error(
+                `Unsupported format. Please use JPEG, PNG, WEBP, AVIF, GIF, BMP, or SVG.`,
+            );
         }
         if (file.size > IMAGE_ANALYSIS.MAX_FILE_SIZE) {
             const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
@@ -98,15 +106,21 @@ export class ImageStore {
             // Cleanup bitmap immediately
             bitmap.close();
 
-            this.#activeWorker = new Worker(new URL('../workers/color-analysis.ts', import.meta.url), { type: 'module' });
-
-            // 5. Zero-Copy Transfer
-            this.#activeWorker.postMessage(
-                { imageData, distance: 0.05 },
-                [imageData.data.buffer]
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Worker URLs are static
+            this.#activeWorker = new Worker(
+                new URL('../workers/color-analysis.ts', import.meta.url),
+                { type: 'module' },
             );
 
-            this.#activeWorker.onmessage = (e: MessageEvent<{ colors: string[]; clusters: { color: string; pixels: number }[] }>) => {
+            // 5. Zero-Copy Transfer
+            this.#activeWorker.postMessage({ imageData, distance: 0.05 }, [imageData.data.buffer]);
+
+            this.#activeWorker.onmessage = (
+                e: MessageEvent<{
+                    colors: string[];
+                    clusters: { color: string; pixels: number }[];
+                }>,
+            ) => {
                 this.mosaicData = e.data.clusters;
                 this.isProcessing = false;
                 this.#terminateWorker();
