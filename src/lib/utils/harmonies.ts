@@ -127,14 +127,7 @@ export function generatePalette(baseColor: Oklch, axis: PaletteAxis, steps: numb
         const l = axis === 'l' ? 0.08 + fraction * 0.89 : baseColor.l;
 
         // Calculate chroma
-        const c =
-            axis === 'c'
-                ? baseColor.c * (0.15 + fraction * 0.85)
-                : axis === 'l'
-                  ? baseColor.c * 0.6
-                  : axis === 'h'
-                    ? baseColor.c * (0.4 + 0.6 * Math.sin(fraction * Math.PI))
-                    : baseColor.c;
+        const c = axis === 'c' ? 0.04 + fraction * Math.min(0.2, baseColor.c * 1.5) : baseColor.c;
 
         // Calculate hue
         const h = axis === 'h' ? i * (360 / steps) : (baseColor.h ?? 0);
