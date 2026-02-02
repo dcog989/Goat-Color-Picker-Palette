@@ -156,17 +156,15 @@
                       w-full rounded-md border bg-(--ui-bg) py-2 pr-8 pl-3
                       font-mono text-base uppercase transition-all outline-none
                       focus:ring-2 focus:ring-(--current-color)
-                      {hasError ? 'border-red-500 ring-2 ring-red-500/20' : `border-(--ui-border)`}"
+                      {hasError
+                        ? 'border-red-500 ring-2 ring-red-500/20'
+                        : `
+                        border-(--ui-border)
+                      `}"
                     placeholder="Paste color..." />
                 {#if color.isOutOfGamut}
-                    <div
-                        class="
-                      group absolute top-1/2 right-2 -translate-y-1/2
-                    ">
-                        <AlertTriangle
-                            class="
-                          size-4 cursor-help text-amber-500
-                        " />
+                    <div class="group absolute top-1/2 right-2 -translate-y-1/2">
+                        <AlertTriangle class="size-4 cursor-help text-amber-500" />
                         <div
                             class="
                               pointer-events-none absolute top-full right-0 mt-2

@@ -37,6 +37,7 @@
 }
 
 /* Dark mode overrides (Class-based for manual toggle support) */
+/* Theme class is applied by blocking script in index.html before render */
 :root.dark {
     /* Dark Mode: Richer, more saturated panels with better lift from black */
     --ui-card: oklch(0.3 0.05 var(--current-hue));
@@ -47,18 +48,6 @@
 
     /* Contrast utilities for dynamic text on current-color backgrounds */
     --ui-on-current: oklch(0.98 0.02 var(--current-hue));
-}
-
-/* System preference fallback if no class is present (optional, but handled by JS init usually) */
-@media (prefers-color-scheme: dark) {
-    :root:not(.light) {
-        --ui-card: oklch(0.3 0.05 var(--current-hue));
-        --ui-bg: oklch(0.24 0.04 var(--current-hue));
-        --ui-text: oklch(0.85 0.1 var(--current-hue));
-        --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
-        --ui-border: oklch(0.38 0.07 var(--current-hue));
-        --ui-on-current: oklch(0.98 0.02 var(--current-hue));
-    }
 }
 
 body {

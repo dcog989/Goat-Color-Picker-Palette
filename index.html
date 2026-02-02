@@ -8,6 +8,42 @@
             content="Complete color toolbox for color picking, palette generation and export, image color extract, contrast checker (WCAG / APCA)." />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script>
+            // Block rendering to apply theme class before any content appears
+            (function () {
+                try {
+                    // Check localStorage for saved theme preference
+                    const savedTheme = localStorage.getItem('theme');
+
+                    if (savedTheme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    } else if (savedTheme === 'light') {
+                        document.documentElement.classList.add('light');
+                    } else {
+                        // No saved preference - use system preference
+                        const prefersDark = window.matchMedia(
+                            '(prefers-color-scheme: dark)',
+                        ).matches;
+                        if (prefersDark) {
+                            document.documentElement.classList.add('dark');
+                        }
+                        // Light mode is default (no class needed)
+                    }
+                } catch (e) {
+                    // localStorage not available - fall back to system preference
+                    try {
+                        const prefersDark = window.matchMedia(
+                            '(prefers-color-scheme: dark)',
+                        ).matches;
+                        if (prefersDark) {
+                            document.documentElement.classList.add('dark');
+                        }
+                    } catch (e2) {
+                        // Ignore - light mode will be default
+                    }
+                }
+            })();
+        </script>
         <style>
             /* Critical CSS to prevent FOUC */
             html,
