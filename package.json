@@ -5,11 +5,19 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "vite build",
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
     "clean": "[this needs adding]",
     "dev": "vite",
-    "build": "vite build",
+    "format": "prettier . --write",
+    "lint": "[this needs adding]",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+    "repo:back": "repomix -c .repomix/repomix.src.back.json",
+    "repo:front": "repomix -c .repomix/repomix.src.front.json",
+    "repo:full": "repomix -c .repomix/repomix.full.json",
+    "repo:skel": "repomix -c .repomix/repomix.skel.json",
+    "repo:src": "repomix -c .repomix/repomix.src.json",
+    "repo:tool": "repomix -c .repomix/repomix.tool.json"
   },
   "dependencies": {
     "apca-w3": "^0.1.9",
@@ -29,5 +37,8 @@
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
-  }
+  },
+  "trustedDependencies": [
+    "core-js"
+  ]
 }

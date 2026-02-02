@@ -127,6 +127,30 @@ src/
 - **lucide-svelte** - Icon library with Svelte components
 - **jspdf** - PDF generation for color palette exports
 
+## Coding Principles
+
+- Use current coding standards and patterns (Svelte 5 runes, modern TS)
+- KISS, Occam's razor, DRY, YAGNI
+- Optimize for actual and perceived performance
+- Self-documenting code via clear naming
+- Comments only for workarounds/complex logic - do NOT add comments as running dev commentary.
+- No magic numbers
+- Split files of 400+ lines in to separate distinct functions
+- **Do NOT create docs files** (summary, reference, testing, etc.) unless explicitly requested
+
+## File System Access
+
+### Allowed Directories
+
+- `.agents/`, `.github/`, `.husky/`, `.svelte-kit/`, `.vscode/`
+- `scripts/`, `src/`, `static/`
+- Root config files: `.editorconfig`, `.gitignore`, `*.config.*`, `package.json`, `tsconfig.json`, etc.
+
+### Disallowed
+
+- `.context/`, `.assets/`, `.docs/`, `.git/`, `node_modules/`, `.repomix/`
+- `repomix.config.json`, `bun.lock`, `.repomixignore`
+
 ## Development Notes
 
 This project leverages modern web APIs and the latest Svelte features. Key considerations:
