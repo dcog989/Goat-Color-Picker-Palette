@@ -123,19 +123,29 @@ export function generatePalette(baseColor: Oklch, axis: PaletteAxis, steps: numb
     return Array.from({ length: steps }, (_, i) => {
         const fraction = i / (steps - 1);
 
+        // Calculate lightness
+        const l = axis === 'l' ? 0.08 + fraction * 0.89 : baseColor.l;
+
+        // Calculate chroma
+        const c =
+            axis === 'c'
+                ? baseColor.c * (0.15 + fraction * 0.85)
+                : axis === 'l'
+                  ? baseColor.c * 0.6
+                  : axis === 'h'
+                    ? baseColor.c * (0.4 + 0.6 * Math.sin(fraction * Math.PI))
+                    : baseColor.c;
+
+        // Calculate hue
+        const h = axis === 'h' ? i * (360 / steps) : (baseColor.h ?? 0);
+
         // Base structure
         const color: Oklch = {
             mode: 'oklch',
-            l: axis === 'l' ? fraction : baseColor.l,
-            c: axis === 'c' ? fraction * 0.37 : baseColor.c,
+            l,
+            c,
+            h,
         };
-
-        // Handle Hue
-        if (axis === 'h') {
-            color.h = fraction * 360;
-        } else if (baseColor.h !== undefined) {
-            color.h = baseColor.h;
-        }
 
         // Handle Alpha
         if (axis === 'a') {
