@@ -56,9 +56,9 @@
             title="Search color library">
             <Search
                 class="
-              size-5
-              sm:size-6
-            " />
+                  size-5
+                  sm:size-6
+                " />
         </button>
 
         <div class="grid grid-cols-1 place-items-center overflow-hidden">
@@ -84,9 +84,9 @@
             title="Generate random color">
             <RefreshCw
                 class="
-              size-5
-              sm:size-6
-            " />
+                  size-5
+                  sm:size-6
+                " />
         </button>
     </div>
 </header>

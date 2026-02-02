@@ -32,9 +32,9 @@
         <header class="z-10 mb-4 flex shrink-0 items-center justify-between">
             <h2
                 class="
-              text-xl font-black tracking-widest uppercase
-              md:text-2xl
-            ">
+                  text-xl font-black tracking-widest uppercase
+                  md:text-2xl
+                ">
                 Color Library
             </h2>
             <button

@@ -70,9 +70,9 @@
                 {#if letter === ' '}
                     <div
                         class="
-                      w-3 transition-all duration-1000
-                      md:w-5
-                    ">
+                          w-3 transition-all duration-1000
+                          md:w-5
+                        ">
                     </div>
                 {:else}
                     {@const style = getBlockStyle(i)}
@@ -98,16 +98,16 @@
     <!-- Normal display for regular length names -->
     <div
         class="
-      flex flex-wrap justify-center
-      {gapSize}"
+          flex flex-wrap justify-center
+          {gapSize}"
         style="gap: 0.5rem;">
         {#each name.toUpperCase().split('') as letter, i (i)}
             {#if letter === ' '}
                 <div
                     class="
-                  w-3 transition-all duration-1000
-                  md:w-5
-                ">
+                      w-3 transition-all duration-1000
+                      md:w-5
+                    ">
                 </div>
             {:else}
                 {@const style = getBlockStyle(i)}

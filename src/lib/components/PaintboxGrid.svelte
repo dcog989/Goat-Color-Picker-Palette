@@ -20,9 +20,9 @@
 
 <div
     class="
-  grid grid-cols-4 gap-3
-  md:grid-cols-6
-">
+      grid grid-cols-4 gap-3
+      md:grid-cols-6
+    ">
     {#each items as item (item.id)}
         <div class="group relative aspect-square">
             <button
@@ -55,12 +55,12 @@
     {#each Array(emptySlotsCount) as _, i (i)}
         <div
             class="
-          relative aspect-square
-          {i >= mobileEmptyLimit
+              relative aspect-square
+              {i >= mobileEmptyLimit
                 ? `
-            hidden
-            md:block
-          `
+                  hidden
+                  md:block
+                `
                 : `block`}">
             <div
                 class="

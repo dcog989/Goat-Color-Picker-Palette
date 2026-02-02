@@ -110,16 +110,16 @@
 
 <div
     class="
-  flex min-h-screen flex-col pb-20 font-sans antialiased transition-colors
-  duration-500
-">
+      flex min-h-screen flex-col pb-20 font-sans antialiased transition-colors
+      duration-500
+    ">
     <Header onSearch={() => (showSearch = true)} />
 
     <main
         class="
-      mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8
-      lg:grid-cols-2
-    ">
+          mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8
+          lg:grid-cols-2
+        ">
         <div class="lg:col-span-2">
             <PickerPanel />
         </div>
@@ -139,41 +139,41 @@
         ">
         <div
             class="
-          flex flex-wrap gap-6 text-sm font-bold tracking-widest uppercase
-        ">
+              flex flex-wrap gap-6 text-sm font-bold tracking-widest uppercase
+            ">
             <button
                 onclick={() => showInfo('oklch')}
                 class="
-              cursor-pointer
-              hover:underline
-            ">Why OKLCH?</button>
+                  cursor-pointer
+                  hover:underline
+                ">Why OKLCH?</button>
             <span
                 class="
-              hidden opacity-30
-              sm:inline
-            ">|</span>
+                  hidden opacity-30
+                  sm:inline
+                ">|</span>
             <button
                 onclick={() => showInfo('analysis')}
                 class="
-              cursor-pointer
-              hover:underline
-            ">Image Analysis?</button>
+                  cursor-pointer
+                  hover:underline
+                ">Image Analysis?</button>
             <span
                 class="
-              hidden opacity-30
-              sm:inline
-            ">|</span>
+                  hidden opacity-30
+                  sm:inline
+                ">|</span>
             <button
                 onclick={() => showInfo('contrast')}
                 class="
-              cursor-pointer
-              hover:underline
-            ">Good Contrast?</button>
+                  cursor-pointer
+                  hover:underline
+                ">Good Contrast?</button>
             <span
                 class="
-              hidden opacity-30
-              sm:inline
-            ">|</span>
+                  hidden opacity-30
+                  sm:inline
+                ">|</span>
             <a href="https://github.com/dcog989/Goat-Color-Picker-Palette">Github</a>
         </div>
 

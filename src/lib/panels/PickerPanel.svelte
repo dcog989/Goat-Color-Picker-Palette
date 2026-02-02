@@ -13,6 +13,41 @@
 
     let hasError = $state(false);
 
+    // Local state for RGB sliders to prevent jitter from round-trip conversion
+    let localRgb = $state({ r: 0, g: 0, b: 0 });
+    // Local state for HSL sliders to prevent jitter from round-trip conversion
+    let localHsl = $state({ h: 0, s: 0, l: 0 });
+
+    // Sync local RGB state from store when RGB mode is active or values change externally
+    $effect(() => {
+        if (color.mode === 'rgb') {
+            const rgb = color.rgbComp;
+            localRgb = { r: rgb.r, g: rgb.g, b: rgb.b };
+        }
+    });
+
+    // Sync local HSL state from store when HSL mode is active or values change externally
+    $effect(() => {
+        if (color.mode === 'hsl') {
+            const hsl = color.hslComp;
+            localHsl = { h: hsl.h, s: hsl.s, l: hsl.l };
+        }
+    });
+
+    // Update store from local RGB state (called on change event)
+    const updateRgbFromLocal = () => {
+        color.setRgb('r', localRgb.r);
+        color.setRgb('g', localRgb.g);
+        color.setRgb('b', localRgb.b);
+    };
+
+    // Update store from local HSL state (called on change event)
+    const updateHslFromLocal = () => {
+        color.setHsl('h', localHsl.h);
+        color.setHsl('s', localHsl.s);
+        color.setHsl('l', localHsl.l);
+    };
+
     let inputVal = $derived.by(() => {
         switch (color.mode) {
             case 'oklch':
@@ -290,14 +325,13 @@
                     </div>
                 </div>
             {:else if color.mode === 'rgb'}
-                {@const rgb = color.rgbComp}
                 <div class="space-y-1">
                     <div
                         class="
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Red</span> <span>{rgb.r}</span>
+                        <span>Red</span> <span>{localRgb.r}</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
@@ -311,8 +345,8 @@
                             type="range"
                             min="0"
                             max="255"
-                            value={rgb.r}
-                            oninput={(e) => color.setRgb('r', +e.currentTarget.value)}
+                            bind:value={localRgb.r}
+                            onchange={updateRgbFromLocal}
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -325,7 +359,7 @@
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Green</span> <span>{rgb.g}</span>
+                        <span>Green</span> <span>{localRgb.g}</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
@@ -339,8 +373,8 @@
                             type="range"
                             min="0"
                             max="255"
-                            value={rgb.g}
-                            oninput={(e) => color.setRgb('g', +e.currentTarget.value)}
+                            bind:value={localRgb.g}
+                            onchange={updateRgbFromLocal}
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -353,7 +387,7 @@
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Blue</span> <span>{rgb.b}</span>
+                        <span>Blue</span> <span>{localRgb.b}</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
@@ -367,8 +401,8 @@
                             type="range"
                             min="0"
                             max="255"
-                            value={rgb.b}
-                            oninput={(e) => color.setRgb('b', +e.currentTarget.value)}
+                            bind:value={localRgb.b}
+                            onchange={updateRgbFromLocal}
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -376,14 +410,13 @@
                     </div>
                 </div>
             {:else if color.mode === 'hsl'}
-                {@const hsl = color.hslComp}
                 <div class="space-y-1">
                     <div
                         class="
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Hue</span> <span>{hsl.h.toFixed(0)}°</span>
+                        <span>Hue</span> <span>{localHsl.h.toFixed(0)}°</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
@@ -397,8 +430,8 @@
                             type="range"
                             min="0"
                             max="360"
-                            value={hsl.h}
-                            oninput={(e) => color.setHsl('h', +e.currentTarget.value)}
+                            bind:value={localHsl.h}
+                            onchange={updateHslFromLocal}
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -411,7 +444,7 @@
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Saturation</span> <span>{hsl.s.toFixed(0)}%</span>
+                        <span>Saturation</span> <span>{localHsl.s.toFixed(0)}%</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
@@ -425,8 +458,8 @@
                             type="range"
                             min="0"
                             max="100"
-                            value={hsl.s}
-                            oninput={(e) => color.setHsl('s', +e.currentTarget.value)}
+                            bind:value={localHsl.s}
+                            onchange={updateHslFromLocal}
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -439,7 +472,7 @@
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Lightness</span> <span>{hsl.l.toFixed(0)}%</span>
+                        <span>Lightness</span> <span>{localHsl.l.toFixed(0)}%</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
@@ -453,8 +486,8 @@
                             type="range"
                             min="0"
                             max="100"
-                            value={hsl.l}
-                            oninput={(e) => color.setHsl('l', +e.currentTarget.value)}
+                            bind:value={localHsl.l}
+                            onchange={updateHslFromLocal}
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent

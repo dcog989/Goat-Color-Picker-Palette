@@ -10,8 +10,9 @@
     <div class="mb-6">
         <h2
             class="
-          text-xs font-black tracking-widest text-(--ui-text-muted) uppercase
-        ">
+              text-xs font-black tracking-widest text-(--ui-text-muted)
+              uppercase
+            ">
             Contrast Checker
         </h2>
     </div>

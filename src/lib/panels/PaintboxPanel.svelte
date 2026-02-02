@@ -30,9 +30,9 @@
     <div class="space-y-6">
         <div
             class="
-          flex flex-col items-start justify-between gap-4
-          sm:flex-row sm:items-center
-        ">
+              flex flex-col items-start justify-between gap-4
+              sm:flex-row sm:items-center
+            ">
             <h2
                 class="
                   shrink-0 text-xs font-black tracking-widest
@@ -43,9 +43,9 @@
 
             <div
                 class="
-              flex w-full flex-wrap items-center gap-2
-              sm:w-auto
-            ">
+                  flex w-full flex-wrap items-center gap-2
+                  sm:w-auto
+                ">
                 <select
                     bind:value={paintbox.sortMode}
                     class="
@@ -68,7 +68,7 @@
                       bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm
                       transition-all
                       hover:bg-red-500 hover:text-white
-                      {paintbox.items.length > 0 ? 'opacity-100' : 'pointer-events-none opacity-0'}"
+                      {paintbox.items.length > 0 ? 'opacity-100' : `pointer-events-none opacity-0`}"
                     title="Clear Paintbox">
                     <CircleX class="size-4" />
                 </button>
@@ -82,8 +82,9 @@
     <div class="mt-8 space-y-3">
         <h3
             class="
-          text-xs font-black tracking-widest text-(--ui-text-muted) uppercase
-        ">
+              text-xs font-black tracking-widest text-(--ui-text-muted)
+              uppercase
+            ">
             Export
         </h3>
         <div class="grid grid-cols-4 gap-3">
