@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import tailwindcss from 'eslint-plugin-better-tailwindcss';
 import prettier from 'eslint-config-prettier';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
@@ -21,6 +22,14 @@ export default ts.config(
     ...svelte.configs['flat/recommended'],
     prettier,
     ...svelte.configs['flat/prettier'],
+    tailwindcss.configs['recommended-error'],
+    {
+        settings: {
+            'better-tailwindcss': {
+                entryPoint: 'src/app.css',
+            },
+        },
+    },
     {
         languageOptions: {
             globals: {
