@@ -84,13 +84,12 @@ declare module 'culori' {
     export function formatCss(color: AnyColor): string;
 
     // Converter function with generic type support
-    export function converter<T extends Color = AnyColor>(mode: string): (color: AnyColor) => T | undefined;
+    export function converter<T extends Color = AnyColor>(
+        mode: string,
+    ): (color: AnyColor) => T | undefined;
 
     // Gamut mapping
-    export function toGamut(
-        mode: string,
-        method?: 'clip' | 'css'
-    ): (color: AnyColor) => AnyColor;
+    export function toGamut(mode: string, method?: 'clip' | 'css'): (color: AnyColor) => AnyColor;
 
     // Color difference functions
     export function differenceEuclidean(mode?: string): (a: AnyColor, b: AnyColor) => number;
@@ -104,28 +103,29 @@ declare module 'culori/fn' {
     // Re-export types from main module for convenience
     export type { AnyColor, Cmyk, Color, Hsl, Lab, Lrgb, Oklab, Oklch, Rgb, Xyz65 } from 'culori';
 
-    // Core functions
-    export function useMode(modeDefinition: any): void;
-    export function parse(color: string): import('culori').AnyColor | undefined;
-    export function formatHex(color: import('culori').AnyColor): string | undefined;
-    export function formatRgb(color: import('culori').AnyColor): string;
-    export function formatHsl(color: import('culori').AnyColor): string;
-    export function formatCss(color: import('culori').AnyColor): string;
-    export function converter<T extends import('culori').Color = import('culori').AnyColor>(mode: string): (color: import('culori').AnyColor) => T | undefined;
-    export function differenceEuclidean(mode?: string): (a: import('culori').AnyColor, b: import('culori').AnyColor) => number;
-    export function toGamut(mode: string, method?: 'clip' | 'css'): (color: import('culori').AnyColor) => import('culori').AnyColor;
+    export function useMode(modeDefinition: unknown): void;
+    export function parse(color: string): AnyColor | undefined;
+    export function formatHex(color: AnyColor): string | undefined;
+    export function formatRgb(color: AnyColor): string;
+    export function formatHsl(color: AnyColor): string;
+    export function formatCss(color: AnyColor): string;
+    export function converter<T extends Color = AnyColor>(
+        mode: string,
+    ): (color: AnyColor) => T | undefined;
+    export function differenceEuclidean(mode?: string): (a: AnyColor, b: AnyColor) => number;
+    export function toGamut(mode: string, method?: 'clip' | 'css'): (color: AnyColor) => AnyColor;
 
-    // Mode Definitions
-    export const modeOklch: any;
-    export const modeRgb: any;
-    export const modeHsl: any;
-    export const modeCmyk: any;
-    export const modeLab: any;
-    export const modeOklab: any;
+    // Mode Definitions - External library types
+    export const modeOklch: unknown;
+    export const modeRgb: unknown;
+    export const modeHsl: unknown;
+    export const modeCmyk: unknown;
+    export const modeLab: unknown;
+    export const modeOklab: unknown;
 
-    // Critical for accurate P3/sRGB conversions
-    export const modeLrgb: any;
-    export const modeXyz65: any;
+    // Critical for accurate P3/sRGB conversions - External library types
+    export const modeLrgb: unknown;
+    export const modeXyz65: unknown;
 }
 
 // Side-effect import for additional color spaces
