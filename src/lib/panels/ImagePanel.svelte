@@ -201,11 +201,7 @@
                                 role="radio">
                                 {option.label}
                                 {#if imageAnalyzer.sortMode === option.value}
-                                    <div
-                                        class="
-                                      size-2 rounded-full bg-white/50
-                                    ">
-                                    </div>
+                                    <div class="size-2 rounded-full bg-white/50"></div>
                                 {/if}
                             </button>
                         {/each}
@@ -278,10 +274,7 @@
                                         "
                                         title="Add to paintbox"
                                         type="button">
-                                        <Plus
-                                            class="
-                                          pointer-events-none size-3
-                                        " />
+                                        <Plus class="pointer-events-none size-3" />
                                     </button>
                                     <button
                                         onclick={(e) => {
@@ -296,10 +289,7 @@
                                         "
                                         title="Copy"
                                         type="button">
-                                        <Copy
-                                            class="
-                                          pointer-events-none size-3
-                                        " />
+                                        <Copy class="pointer-events-none size-3" />
                                     </button>
                                 </div>
                             </div>

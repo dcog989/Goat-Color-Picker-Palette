@@ -41,6 +41,7 @@ const toHsl = converter<Hsl>('hsl');
 const toOklab = converter<Oklab>('oklab');
 const toLab = converter<Lab>('lab');
 const toRgbGamut = toGamut('rgb');
+const toRgbClipped = toGamut('rgb', 'clip');
 
 export class ColorStore {
     #current = $state<Oklch>(ColorStore.#getRandomColor());
@@ -153,6 +154,23 @@ export class ColorStore {
         return toRgbGamut(this.#current) as Rgb;
     });
 
+    // Get a force-clipped sRGB version for export (ensures valid CSS colors)
+    #clippedRgb = $derived.by((): Rgb => {
+        const rgb = toRgb(this.#current);
+        if (!rgb) return { mode: 'rgb', r: 0, g: 0, b: 0 };
+
+        // Check if color is within sRGB bounds
+        const inBounds =
+            rgb.r >= 0 && rgb.r <= 1 && rgb.g >= 0 && rgb.g <= 1 && rgb.b >= 0 && rgb.b <= 1;
+
+        if (inBounds) {
+            return rgb;
+        }
+
+        // Force clip to sRGB gamut for export
+        return toRgbClipped(this.#current) as Rgb;
+    });
+
     // RGB Helpers
     get rgbComp() {
         const rgb = this.#mappedRgb;
@@ -256,11 +274,11 @@ export class ColorStore {
         return formatOklch(this.l, this.c, this.h, this.alpha, this.#precisionMode());
     });
 
-    // Hex uses mapped color
-    hex = $derived(formatHex(this.#mappedRgb) ?? '#000000');
+    // Hex uses clipped color for valid CSS output
+    hex = $derived(formatHex(this.#clippedRgb) ?? '#000000');
 
     hexa = $derived.by(() => {
-        const base = formatHex(this.#mappedRgb) ?? '#000000';
+        const base = formatHex(this.#clippedRgb) ?? '#000000';
         if (this.alpha < 1) {
             const alphaHex = Math.round(this.alpha * 255)
                 .toString(16)
@@ -270,15 +288,15 @@ export class ColorStore {
         return base;
     });
 
-    // RGB uses mapped color
+    // RGB uses clipped color for valid CSS output
     rgb = $derived.by(() => {
-        const rgb = this.#mappedRgb;
+        const rgb = this.#clippedRgb;
         return formatRgb(rgb.r * 255, rgb.g * 255, rgb.b * 255, this.alpha, this.#precisionMode());
     });
 
-    // HSL uses mapped color
+    // HSL uses clipped color for valid CSS output
     hsl = $derived.by(() => {
-        const hsl = toHsl(this.#mappedRgb) ?? { h: 0, s: 0, l: 0 };
+        const hsl = toHsl(this.#clippedRgb) ?? { h: 0, s: 0, l: 0 };
         return formatHsl(hsl.h || 0, hsl.s || 0, hsl.l || 0, this.alpha, this.#precisionMode());
     });
 
@@ -306,8 +324,9 @@ export class ColorStore {
         );
     });
 
+    // CMYK uses clipped color for valid output
     cmyk = $derived.by(() => {
-        const rgb = this.#mappedRgb;
+        const rgb = this.#clippedRgb;
         const r = rgb.r,
             g = rgb.g,
             b = rgb.b;
