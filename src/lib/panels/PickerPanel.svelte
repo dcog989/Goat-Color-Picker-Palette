@@ -35,7 +35,7 @@
     };
 
     const togglePrecision = () => {
-        app.precision = app.precision === 'scientific' ? 'sensible' : 'scientific';
+        app.precision = app.precision === 'precise' ? 'practical' : 'precise';
     };
 
     const handleInput = (e: Event) => {
@@ -120,7 +120,7 @@
             <button
                 onclick={togglePrecision}
                 class="group relative shrink-0 p-2 bg-[var(--ui-bg)] hover:bg-[var(--current-color)] border border-[var(--ui-border)] rounded-md transition-all">
-                {#if app.precision === 'scientific'}
+                {#if app.precision === 'precise'}
                     <DecimalsArrowRight
                         class="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
                 {:else}
@@ -129,9 +129,7 @@
                 {/if}
                 <div
                     class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-[var(--ui-card)] border border-[var(--ui-border)] text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl whitespace-nowrap z-50">
-                    {app.precision === 'scientific'
-                        ? 'Scientific ↔ Sensible'
-                        : 'Sensible ↔ Scientific'}
+                    {app.precision === 'precise' ? 'Precise ↔ Practical' : 'Practical ↔ Precise'}
                 </div>
             </button>
         </div>

@@ -45,9 +45,9 @@ const toRgbGamut = toGamut('rgb');
 export class ColorStore {
     #current = $state<Oklch>(ColorStore.#getRandomColor());
     mode = $state<'oklch' | 'rgb' | 'hsl'>('oklch');
-    #precisionMode: () => 'scientific' | 'sensible';
+    #precisionMode: () => 'precise' | 'practical';
 
-    constructor(precisionGetter: () => 'scientific' | 'sensible' = () => 'sensible') {
+    constructor(precisionGetter: () => 'precise' | 'practical' = () => 'practical') {
         this.#precisionMode = precisionGetter;
     }
 

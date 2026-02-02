@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getApp } from "../context";
+    import { getApp } from '../context';
 
     const { color, paintbox } = getApp();
 
@@ -21,21 +21,27 @@
 <div class="grid grid-cols-4 md:grid-cols-6 gap-3">
     {#each items as item (item.id)}
         <div class="aspect-square relative group">
-            <button class="w-full h-full rounded-full cursor-pointer transition-transform hover:scale-105 border border-white/10 shadow-lg block p-0 [background:var(--paintbox-item)]" style:--paintbox-item={item.css} onclick={() => color.set(item.css)} title={color.formatColor(item.css)} aria-label="Select saved color"></button>
+            <button
+                class="w-full h-full rounded-full cursor-pointer transition-transform hover:scale-105 border border-white/10 shadow-lg block p-0 [background:var(--paintbox-item)]"
+                style:--paintbox-item={item.css}
+                onclick={() => color.set(item.css)}
+                title={color.formatColor(item.css)}
+                aria-label="Select saved color"></button>
             <button
                 onclick={(e) => {
                     e.stopPropagation();
                     paintbox.remove(item.id);
                 }}
                 class="absolute -top-2 -right-2 w-6 h-6 bg-black/50 hover:bg-red-500 text-white rounded-full text-sm font-bold opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center shadow-lg z-10"
-                aria-label="Remove color">×</button
-            >
+                aria-label="Remove color">×</button>
         </div>
     {/each}
 
     {#each Array(emptySlotsCount) as _, i (i)}
         <div class="aspect-square relative {i >= mobileEmptyLimit ? 'hidden md:block' : 'block'}">
-            <div class="w-full h-full rounded-full bg-[var(--ui-bg)] border border-[var(--ui-border)] opacity-40 block"></div>
+            <div
+                class="w-full h-full rounded-full bg-[var(--ui-bg)] border border-[var(--ui-border)] opacity-40 block">
+            </div>
         </div>
     {/each}
 </div>

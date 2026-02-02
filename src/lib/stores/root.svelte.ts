@@ -6,7 +6,7 @@ import { ThemeStore } from './theme.svelte';
 import { ToastStore } from './toast.svelte';
 
 export class RootStore {
-    precision = $state<'scientific' | 'sensible'>('sensible');
+    precision = $state<'precise' | 'practical'>('practical');
     color: ColorStore;
     toast = new ToastStore();
     paintbox = new PaintboxStore();

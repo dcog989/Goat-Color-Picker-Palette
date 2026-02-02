@@ -11,11 +11,13 @@ let loadPromise: Promise<ColorName[]> | null = null;
  * Type guard to check if value is an array of ColorName objects
  */
 function isColorNameArray(value: unknown): value is ColorName[] {
-    return Array.isArray(value) && 
-           value.length > 0 && 
-           typeof value[0] === 'object' &&
-           'name' in value[0] && 
-           'hex' in value[0];
+    return (
+        Array.isArray(value) &&
+        value.length > 0 &&
+        typeof value[0] === 'object' &&
+        'name' in value[0] &&
+        'hex' in value[0]
+    );
 }
 
 /**
@@ -26,7 +28,7 @@ function extractColorList(source: unknown): ColorName[] {
     if (isColorNameArray(source)) {
         return source;
     }
-    
+
     // Default export (CJS/ESM interop)
     if (source && typeof source === 'object' && 'default' in source) {
         const defaultExport = (source as { default: unknown }).default;
@@ -34,16 +36,16 @@ function extractColorList(source: unknown): ColorName[] {
             return defaultExport;
         }
     }
-    
+
     // Module object with array values
     if (source && typeof source === 'object') {
         const values = Object.values(source);
-        const candidate = values.find(v => isColorNameArray(v) && v.length > 1000);
+        const candidate = values.find((v) => isColorNameArray(v) && v.length > 1000);
         if (candidate && isColorNameArray(candidate)) {
             return candidate;
         }
     }
-    
+
     // Fallback to empty array if no valid data found
     console.warn('Could not extract color name list from source');
     return [];
@@ -58,22 +60,22 @@ export async function loadColorNames(): Promise<ColorName[]> {
     if (cachedList !== null) {
         return cachedList;
     }
-    
+
     // Return existing promise if already loading
     if (loadPromise !== null) {
         return loadPromise;
     }
-    
+
     // Start loading
     loadPromise = (async () => {
         try {
             const source = await import('color-name-list');
             const list = extractColorList(source);
-            
+
             if (list.length === 0) {
                 throw new Error('No color data found in imported module');
             }
-            
+
             cachedList = list;
             return list;
         } catch (error) {
@@ -82,7 +84,7 @@ export async function loadColorNames(): Promise<ColorName[]> {
             throw error;
         }
     })();
-    
+
     return loadPromise;
 }
 

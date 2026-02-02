@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
     --color-brand: var(--current-color);
@@ -65,11 +65,26 @@ body {
     min-height: 100vh;
     /* Layer 1 (Top): The current color (as a gradient so it sits on top of the image) */
     /* Layer 2 (Bottom): The checkerboard pattern */
-    background-image: linear-gradient(var(--current-color), var(--current-color)), linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-image:
+        linear-gradient(var(--current-color), var(--current-color)),
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
 
-    background-size: 100% 100%, 12px 12px, 12px 12px, 12px 12px, 12px 12px;
+    background-size:
+        100% 100%,
+        12px 12px,
+        12px 12px,
+        12px 12px,
+        12px 12px;
 
-    background-position: 0 0, 0 0, 0 6px, 6px -6px, -6px 0px;
+    background-position:
+        0 0,
+        0 0,
+        0 6px,
+        6px -6px,
+        -6px 0px;
 
     background-attachment: fixed; /* Ensures pattern doesn't scroll weirdly */
 
@@ -80,17 +95,27 @@ body {
 
 /* Dark mode body background */
 :root.dark body {
-    background-image: linear-gradient(var(--current-color), var(--current-color)), linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+    background-image:
+        linear-gradient(var(--current-color), var(--current-color)),
+        linear-gradient(45deg, #333 25%, transparent 25%),
+        linear-gradient(-45deg, #333 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #333 75%),
+        linear-gradient(-45deg, transparent 75%, #333 75%);
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not(.light) body {
-        background-image: linear-gradient(var(--current-color), var(--current-color)), linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+        background-image:
+            linear-gradient(var(--current-color), var(--current-color)),
+            linear-gradient(45deg, #333 25%, transparent 25%),
+            linear-gradient(-45deg, #333 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #333 75%),
+            linear-gradient(-45deg, transparent 75%, #333 75%);
     }
 }
 
 /* Custom range inputs */
-input[type="range"] {
+input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
@@ -98,19 +123,19 @@ input[type="range"] {
 }
 
 /* Track styling */
-input[type="range"]::-webkit-slider-track {
+input[type='range']::-webkit-slider-track {
     height: 16px;
     border-radius: 9999px;
     background: transparent;
 }
 
-input[type="range"]::-moz-range-track {
+input[type='range']::-moz-range-track {
     height: 16px;
     border-radius: 9999px;
     background: transparent;
 }
 
-input[type="range"]::-webkit-slider-thumb {
+input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 24px;
@@ -122,7 +147,7 @@ input[type="range"]::-webkit-slider-thumb {
     margin-top: -4px;
 }
 
-input[type="range"]::-moz-range-thumb {
+input[type='range']::-moz-range-thumb {
     width: 24px;
     height: 24px;
     background: transparent;
@@ -131,18 +156,18 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-input[type="range"]:focus {
+input[type='range']:focus {
     outline: none;
 }
 
 /* Number Input Styling - Ensure Spinners are Visible */
-input[type="number"] {
+input[type='number'] {
     appearance: auto;
     -moz-appearance: auto; /* Firefox specific */
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: auto; /* WebKit specific */
     opacity: 1; /* Force visibility */
 }
@@ -187,18 +212,34 @@ select {
 }
 
 .checkerboard {
-    background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
     background-size: 12px 12px;
-    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+    background-position:
+        0 0,
+        0 6px,
+        6px -6px,
+        -6px 0px;
 }
 
 :root.dark .checkerboard {
-    background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+    background-image:
+        linear-gradient(45deg, #333 25%, transparent 25%),
+        linear-gradient(-45deg, #333 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #333 75%),
+        linear-gradient(-45deg, transparent 75%, #333 75%);
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not(.light) .checkerboard {
-        background-image: linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%);
+        background-image:
+            linear-gradient(45deg, #333 25%, transparent 25%),
+            linear-gradient(-45deg, #333 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #333 75%),
+            linear-gradient(-45deg, transparent 75%, #333 75%);
     }
 }
 
@@ -279,7 +320,7 @@ select {
 }
 
 /* Dark text for light backgrounds (L > 0.55) */
-:root[data-color-contrast="dark"] .text-on-current {
+:root[data-color-contrast='dark'] .text-on-current {
     color: oklch(0.2 0.08 var(--current-hue));
 }
 
@@ -288,6 +329,6 @@ select {
     color: oklch(0.95 0.03 var(--current-hue)) !important;
 }
 
-:root[data-color-contrast="dark"] .group:hover .group-hover\:text-on-current {
+:root[data-color-contrast='dark'] .group:hover .group-hover\:text-on-current {
     color: oklch(0.2 0.08 var(--current-hue)) !important;
 }

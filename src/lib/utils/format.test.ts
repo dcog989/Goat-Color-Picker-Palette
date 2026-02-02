@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
+    formatCmyk,
     formatFloat,
-    formatPercent,
-    formatOklch,
-    formatRgb,
     formatHsl,
     formatLab,
     formatOklab,
-    formatCmyk,
+    formatOklch,
+    formatPercent,
+    formatRgb,
 } from './format';
 
 describe('format utilities', () => {
@@ -28,12 +28,12 @@ describe('format utilities', () => {
     });
 
     describe('formatOklch', () => {
-        it('should format OKLCH color string in sensible mode', () => {
+        it('should format OKLCH color string in practical mode', () => {
             expect(formatOklch(0.5, 0.2, 180)).toBe('oklch(50% 0.2 180)');
         });
 
         it('should format OKLCH color string with full opacity', () => {
-            expect(formatOklch(1, 0.4, 360, 1, 'sensible')).toBe('oklch(100% 0.4 360)');
+            expect(formatOklch(1, 0.4, 360, 1, 'practical')).toBe('oklch(100% 0.4 360)');
         });
 
         it('should include alpha channel when less than 1', () => {

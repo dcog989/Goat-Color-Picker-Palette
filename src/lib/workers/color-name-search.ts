@@ -1,5 +1,14 @@
 import type { Oklab, Oklch } from 'culori';
-import { converter, modeLrgb, modeOklab, modeOklch, modeRgb, modeXyz65, parse, useMode } from 'culori/fn';
+import {
+    converter,
+    modeLrgb,
+    modeOklab,
+    modeOklch,
+    modeRgb,
+    modeXyz65,
+    parse,
+    useMode,
+} from 'culori/fn';
 
 // Register color spaces in worker scope
 // CRITICAL: Registering intermediate spaces (Linear RGB, XYZ) is mandatory

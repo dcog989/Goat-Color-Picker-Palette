@@ -1,4 +1,5 @@
 import { converter, parse, type Oklch } from 'culori/fn';
+import { SvelteURL } from 'svelte/reactivity';
 import { IMAGE_ANALYSIS } from '../constants';
 
 const toOklch = converter<Oklch>('oklch');
@@ -106,9 +107,8 @@ export class ImageStore {
             // Cleanup bitmap immediately
             bitmap.close();
 
-            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Worker URLs are static
             this.#activeWorker = new Worker(
-                new URL('../workers/color-analysis.ts', import.meta.url),
+                new SvelteURL('../workers/color-analysis.ts', import.meta.url),
                 { type: 'module' },
             );
 

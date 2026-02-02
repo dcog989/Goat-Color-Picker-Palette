@@ -1,5 +1,10 @@
 export class ToastStore {
-    active = $state<{ message: string; id: number; x?: number | undefined; y?: number | undefined } | null>(null);
+    active = $state<{
+        message: string;
+        id: number;
+        x?: number | undefined;
+        y?: number | undefined;
+    } | null>(null);
     #counter = 0;
 
     show(message: string, arg2?: number | MouseEvent | null, arg3: number = 3000) {

@@ -18,14 +18,18 @@ export function formatColor(color: string, format: ExportFormat): string {
     if (!parsed) return color;
 
     switch (format) {
-        case 'hex': return formatHex(parsed) ?? color;
-        case 'rgb': return formatRgb(parsed) ?? color;
-        case 'hsl': return formatHsl(parsed) ?? color;
+        case 'hex':
+            return formatHex(parsed) ?? color;
+        case 'rgb':
+            return formatRgb(parsed) ?? color;
+        case 'hsl':
+            return formatHsl(parsed) ?? color;
         case 'oklch': {
             const oklch = toOklch(parsed);
             return oklch ? formatOklch(oklch.l, oklch.c, oklch.h || 0, oklch.alpha) : color;
         }
-        default: return color;
+        default:
+            return color;
     }
 }
 
@@ -45,13 +49,16 @@ function getColorSource(root: RootStore): ColorSource {
     return {
         colors: hasColors ? root.paintbox.items : [{ css: root.color.hex }],
         isSingle: !hasColors,
-        name: root.engine.closestName
+        name: root.engine.closestName,
     };
 }
 
 function generateColorName(index: number, source: ColorSource): string {
     if (source.isSingle) {
-        return source.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        return source.name
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '');
     }
     return `color-${index + 1}`;
 }
@@ -90,7 +97,9 @@ class AndroidXmlExportStrategy implements ExportStrategy {
         source.colors.forEach((item, i) => {
             const name = generateColorName(i, source).replace(/-/g, '_');
             const useFormat = exportFormat === 'rgb' ? 'hex' : exportFormat;
-            lines.push(`  <color name="${name}">${formatColor(item.css, useFormat).toUpperCase()}</color>`);
+            lines.push(
+                `  <color name="${name}">${formatColor(item.css, useFormat).toUpperCase()}</color>`,
+            );
         });
         lines.push('</resources>');
         return lines.join('\n');
@@ -122,10 +131,14 @@ const strategies: Record<string, ExportStrategy> = {
     tailwind: new TailwindExportStrategy(),
     xml: new AndroidXmlExportStrategy(),
     json: new JsonExportStrategy(),
-    scss: new ScssExportStrategy()
+    scss: new ScssExportStrategy(),
 };
 
-export function exportCode(root: RootStore, strategyName: string, format: ExportFormat = 'oklch'): string {
+export function exportCode(
+    root: RootStore,
+    strategyName: string,
+    format: ExportFormat = 'oklch',
+): string {
     const strategy = strategies[strategyName];
     if (!strategy) throw new Error(`Unknown export strategy: ${strategyName}`);
     return strategy.format(getColorSource(root), format);
@@ -141,7 +154,10 @@ function generateFilename(root: RootStore, extension: string): string {
 }
 
 function downloadFile(content: string | Blob, filename: string, mimeType?: string): void {
-    const blob = typeof content === 'string' ? new Blob([content], { type: mimeType || 'text/plain' }) : content;
+    const blob =
+        typeof content === 'string'
+            ? new Blob([content], { type: mimeType || 'text/plain' })
+            : content;
     const link = document.createElement('a');
     link.download = filename;
     link.href = URL.createObjectURL(blob);
@@ -204,7 +220,11 @@ export function exportPng(root: RootStore): void {
                         ctx.fillStyle = textColor;
                         ctx.font = `bold ${Math.min(swatchHeight / 4, 32)}px ui-monospace, monospace`;
                         ctx.textAlign = 'center';
-                        ctx.fillText(formatHex(parsed)?.toUpperCase() ?? '', x + swatchWidth / 2, y + swatchHeight / 2 + 8);
+                        ctx.fillText(
+                            formatHex(parsed)?.toUpperCase() ?? '',
+                            x + swatchWidth / 2,
+                            y + swatchHeight / 2 + 8,
+                        );
                     }
                 }
             }
@@ -217,7 +237,11 @@ export function exportPng(root: RootStore): void {
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 28px system-ui, -apple-system, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('GOAT COLOR PALETTE', EXPORT.PNG_WIDTH / 2, EXPORT.PNG_HEIGHT - titleHeight / 2 + 10);
+        ctx.fillText(
+            'GOAT COLOR PALETTE',
+            EXPORT.PNG_WIDTH / 2,
+            EXPORT.PNG_HEIGHT - titleHeight / 2 + 10,
+        );
         ctx.textAlign = 'left';
     }
 
@@ -293,7 +317,7 @@ export function exportPdf(root: RootStore): void {
     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
     const pageWidth = 210;
     const margin = 20;
-    const contentWidth = pageWidth - (margin * 2);
+    const contentWidth = pageWidth - margin * 2;
 
     // Title
     doc.setFontSize(24);
@@ -303,7 +327,7 @@ export function exportPdf(root: RootStore): void {
     // Grid Layout
     const cols = 4;
     const gap = 5;
-    const swatchWidth = (contentWidth - ((cols - 1) * gap)) / cols;
+    const swatchWidth = (contentWidth - (cols - 1) * gap) / cols;
     const swatchHeight = swatchWidth; // Square swatches
 
     let x = margin;
@@ -335,7 +359,11 @@ export function exportPdf(root: RootStore): void {
                 doc.setFontSize(9);
                 doc.setFont('helvetica', 'normal');
                 doc.setTextColor(100);
-                doc.text(formatOklch(oklch.l, oklch.c, oklch.h || 0, oklch.alpha), x, y + swatchHeight + 10);
+                doc.text(
+                    formatOklch(oklch.l, oklch.c, oklch.h || 0, oklch.alpha),
+                    x,
+                    y + swatchHeight + 10,
+                );
             }
         }
 
@@ -359,9 +387,34 @@ export interface ExportStrategyInfo {
 }
 
 export const availableStrategies: ExportStrategyInfo[] = [
-    { name: 'CSS Variables', key: 'css', description: 'CSS custom properties (--var-name)', defaultFormat: 'oklch' },
-    { name: 'Tailwind Config', key: 'tailwind', description: 'Tailwind CSS theme configuration', defaultFormat: 'hex' },
-    { name: 'Android XML', key: 'xml', description: 'Android colors.xml resource file', defaultFormat: 'hex' },
-    { name: 'JSON', key: 'json', description: 'JSON object with color values', defaultFormat: 'oklch' },
-    { name: 'SCSS Variables', key: 'scss', description: 'Sass/SCSS variable declarations', defaultFormat: 'hex' }
+    {
+        name: 'CSS Variables',
+        key: 'css',
+        description: 'CSS custom properties (--var-name)',
+        defaultFormat: 'oklch',
+    },
+    {
+        name: 'Tailwind Config',
+        key: 'tailwind',
+        description: 'Tailwind CSS theme configuration',
+        defaultFormat: 'hex',
+    },
+    {
+        name: 'Android XML',
+        key: 'xml',
+        description: 'Android colors.xml resource file',
+        defaultFormat: 'hex',
+    },
+    {
+        name: 'JSON',
+        key: 'json',
+        description: 'JSON object with color values',
+        defaultFormat: 'oklch',
+    },
+    {
+        name: 'SCSS Variables',
+        key: 'scss',
+        description: 'Sass/SCSS variable declarations',
+        defaultFormat: 'hex',
+    },
 ];

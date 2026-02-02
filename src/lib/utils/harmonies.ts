@@ -38,36 +38,36 @@ interface HarmonyDefinition {
  * All supported color harmonies with their angle definitions
  */
 export const HARMONY_DEFINITIONS: Record<HarmonyType, HarmonyDefinition> = {
-    'complementary': {
+    complementary: {
         name: 'Complementary',
         angles: [180],
-        description: 'Colors opposite on the color wheel'
+        description: 'Colors opposite on the color wheel',
     },
     'split-complementary': {
         name: 'Split Complementary',
         angles: [150, 210],
-        description: 'Base color plus two colors adjacent to its complement'
+        description: 'Base color plus two colors adjacent to its complement',
     },
-    'analogous': {
+    analogous: {
         name: 'Analogous',
         angles: [-30, 30],
-        description: 'Colors adjacent to each other on the color wheel'
+        description: 'Colors adjacent to each other on the color wheel',
     },
-    'triadic': {
+    triadic: {
         name: 'Triadic',
         angles: [120, 240],
-        description: 'Three colors equally spaced around the color wheel'
+        description: 'Three colors equally spaced around the color wheel',
     },
-    'tetradic': {
+    tetradic: {
         name: 'Tetradic',
         angles: [60, 180, 240],
-        description: 'Rectangular pattern with two complementary pairs'
+        description: 'Rectangular pattern with two complementary pairs',
     },
-    'square': {
+    square: {
         name: 'Square',
         angles: [90, 180, 270],
-        description: 'Four colors equally spaced around the color wheel'
-    }
+        description: 'Four colors equally spaced around the color wheel',
+    },
 } as const;
 
 /**
@@ -96,7 +96,7 @@ export function rotateHue(color: Oklch, angle: number): string {
         mode: 'oklch',
         l: color.l,
         c: color.c,
-        h: newHue
+        h: newHue,
     };
 
     if (color.alpha !== undefined) {
@@ -111,17 +111,13 @@ export function rotateHue(color: Oklch, angle: number): string {
  */
 export function generateHarmony(baseColor: Oklch, harmonyType: HarmonyType): string[] {
     const definition = HARMONY_DEFINITIONS[harmonyType];
-    return definition.angles.map(angle => rotateHue(baseColor, angle));
+    return definition.angles.map((angle) => rotateHue(baseColor, angle));
 }
 
 /**
  * Generate a palette by interpolating along a specific axis
  */
-export function generatePalette(
-    baseColor: Oklch,
-    axis: PaletteAxis,
-    steps: number
-): string[] {
+export function generatePalette(baseColor: Oklch, axis: PaletteAxis, steps: number): string[] {
     if (steps < 2) steps = 2;
     if (steps > 20) steps = 20;
 
@@ -132,7 +128,7 @@ export function generatePalette(
         const color: Oklch = {
             mode: 'oklch',
             l: axis === 'l' ? fraction : baseColor.l,
-            c: axis === 'c' ? fraction * 0.37 : baseColor.c
+            c: axis === 'c' ? fraction * 0.37 : baseColor.c,
         };
 
         // Handle Hue
@@ -159,7 +155,7 @@ export function generatePalette(
 export function generateColors(
     baseColor: Oklch,
     mode: GenerationMode,
-    steps: number = 8
+    steps: number = 8,
 ): string[] {
     if (isHarmonyMode(mode)) {
         return generateHarmony(baseColor, mode);
@@ -178,12 +174,12 @@ export function generateColors(
  */
 export function getAllHarmonies(baseColor: Oklch): Record<HarmonyType, string[]> {
     return {
-        'complementary': generateHarmony(baseColor, 'complementary'),
+        complementary: generateHarmony(baseColor, 'complementary'),
         'split-complementary': generateHarmony(baseColor, 'split-complementary'),
-        'analogous': generateHarmony(baseColor, 'analogous'),
-        'triadic': generateHarmony(baseColor, 'triadic'),
-        'tetradic': generateHarmony(baseColor, 'tetradic'),
-        'square': generateHarmony(baseColor, 'square')
+        analogous: generateHarmony(baseColor, 'analogous'),
+        triadic: generateHarmony(baseColor, 'triadic'),
+        tetradic: generateHarmony(baseColor, 'tetradic'),
+        square: generateHarmony(baseColor, 'square'),
     };
 }
 
@@ -231,11 +227,7 @@ export class PaletteGenerator {
      * Generate the color palette
      */
     generate(): string[] {
-        return generateColors(
-            this.config.baseColor,
-            this.config.mode,
-            this.config.steps
-        );
+        return generateColors(this.config.baseColor, this.config.mode, this.config.steps);
     }
 
     /**
@@ -269,10 +261,10 @@ export function getModeLabel(mode: GenerationMode): string {
     }
 
     const labels: Record<PaletteAxis, string> = {
-        'l': 'Lightness',
-        'c': 'Chroma',
-        'h': 'Hue',
-        'a': 'Alpha'
+        l: 'Lightness',
+        c: 'Chroma',
+        h: 'Hue',
+        a: 'Alpha',
     };
 
     return labels[mode as PaletteAxis] || mode;
@@ -287,10 +279,10 @@ export function getModeDescription(mode: GenerationMode): string {
     }
 
     const descriptions: Record<PaletteAxis, string> = {
-        'l': 'Vary the lightness from dark to light',
-        'c': 'Vary the chroma from gray to vivid',
-        'h': 'Vary the hue across the color wheel',
-        'a': 'Vary the alpha from transparent to opaque'
+        l: 'Vary the lightness from dark to light',
+        c: 'Vary the chroma from gray to vivid',
+        h: 'Vary the hue across the color wheel',
+        a: 'Vary the alpha from transparent to opaque',
     };
 
     return descriptions[mode as PaletteAxis] || '';
