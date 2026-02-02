@@ -83,6 +83,46 @@
         }
     };
 
+    import { converter } from 'culori/fn';
+    import type { Oklch, Rgb } from 'culori/fn';
+
+    // Converter to check if colors are in gamut
+    const toRgb = converter<Rgb>('rgb');
+
+    // Calculate max chroma for current L/H within sRGB gamut
+    // This gives us the practical limit for the gradient display
+    const maxChromaForCurrentLH = $derived.by((): number => {
+        const l = color.l;
+        const h = color.h;
+
+        // Binary search for max chroma within sRGB gamut
+        let min = 0;
+        let max = 0.4;
+        const epsilon = 0.001;
+
+        while (max - min > epsilon) {
+            const mid = (min + max) / 2;
+            const testColor: Oklch = { mode: 'oklch', l, c: mid, h, alpha: 1 };
+            const rgb = toRgb(testColor);
+
+            if (
+                rgb &&
+                rgb.r >= 0 &&
+                rgb.r <= 1 &&
+                rgb.g >= 0 &&
+                rgb.g <= 1 &&
+                rgb.b >= 0 &&
+                rgb.b <= 1
+            ) {
+                min = mid;
+            } else {
+                max = mid;
+            }
+        }
+
+        return min;
+    });
+
     // Get CSS class for gradient backgrounds
     // RGB gradients use inline styles (dynamic per-component)
     // OKLCH/HSL gradients use CSS classes with custom properties (browser-optimized)
@@ -143,6 +183,7 @@
     style:--picker-l={color.l}
     style:--picker-c={color.c}
     style:--picker-h={color.h}
+    style:--picker-max-c={maxChromaForCurrentLH}
     style:--picker-hsl-h={hslValues.h}
     style:--picker-hsl-s={hslValues.s + '%'}
     style:--picker-hsl-l={hslValues.l + '%'}>

@@ -346,12 +346,13 @@ select {
     );
 }
 
-/* Chroma gradient: From gray to max chroma at current L and H values */
+/* Chroma gradient: From gray to max achievable chroma for current L/H */
+/* --picker-max-c is dynamically calculated based on sRGB gamut boundary */
 .gradient-oklch-c {
     background: linear-gradient(
         to right,
         oklch(var(--picker-l) 0 var(--picker-h)),
-        oklch(var(--picker-l) 0.4 var(--picker-h))
+        oklch(var(--picker-l) var(--picker-max-c) var(--picker-h))
     );
 }
 
