@@ -48,6 +48,9 @@ export default ts.config(
                     ],
                 },
             ],
+            // Disable line wrapping rules that fight with Prettier
+            'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+            'better-tailwindcss/enforce-consistent-class-order': 'off',
         },
     },
     {

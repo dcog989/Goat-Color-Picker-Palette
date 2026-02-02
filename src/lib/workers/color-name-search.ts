@@ -102,31 +102,32 @@ async function prepareData(): Promise<void> {
 
 self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
     if (e.data.type === 'search' && e.data.color) {
-        if (coordinates === null) {
+        if (coordinates === null || isLoading) {
+            // Buffer message until data is ready
             messageQueue.push(e.data.color);
-            if (!isLoading) {
-                await prepareData();
-            }
             return;
         }
 
         const result = findClosestName(e.data.color);
         self.postMessage({ type: 'result', name: result } as WorkerResponse);
     } else if (e.data.type === 'filter') {
-        if (coordinates === null) {
-            if (!isLoading) {
-                await prepareData();
-            }
-            // After loading, perform the filter
-            const results = filterColors(e.data.query || '', e.data.limit || 100);
-            self.postMessage({ type: 'filterResult', colors: results } as WorkerResponse);
-            return;
+        if (coordinates === null || isLoading) {
+            // Buffer message until data is ready
+            // We still need to process this after loading, so we'll handle it differently
+            await waitForData();
         }
 
         const results = filterColors(e.data.query || '', e.data.limit || 100);
         self.postMessage({ type: 'filterResult', colors: results } as WorkerResponse);
     }
 };
+
+// Helper to wait for data to be ready
+async function waitForData(): Promise<void> {
+    while (coordinates === null || isLoading) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+}
 
 function findClosestName(current: Oklch): string {
     if (loadError || !coordinates || !names.length) {
@@ -195,3 +196,7 @@ function filterColors(query: string, limit: number): Array<{ name: string; hex: 
 
     return results;
 }
+
+// Initialize data immediately on worker startup
+// This ensures the data is loaded once and kept in memory
+prepareData();
