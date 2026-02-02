@@ -1,0 +1,8 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Force LF for source files
+*.{js,ts,svelte,css,html,json,md} text eol=lf
+*.{yml,yaml} text eol=lf
+.editorconfig text eol=lf
+.prettierrc text eol=lf
