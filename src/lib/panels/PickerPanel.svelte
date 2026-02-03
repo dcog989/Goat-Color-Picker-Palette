@@ -345,7 +345,7 @@
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Hue</span> <span>{color.h.toFixed(0)}?</span>
+                        <span>Hue</span> <span>{color.h.toFixed(0)}°</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div class="absolute inset-0 rounded-full {getGradientClass('h')}"></div>
@@ -444,7 +444,7 @@
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Hue</span> <span>{localHsl.h.toFixed(0)}?</span>
+                        <span>Hue</span> <span>{localHsl.h.toFixed(0)}°</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div class="absolute inset-0 rounded-full {getGradientClass('hsl-h')}">
