@@ -17,6 +17,9 @@ export class EngineStore {
     #debounceHandle: number | null = null;
     #initialized = false;
     #colorStore: ColorStore;
+    #workerRetryCount = 0;
+    #maxWorkerRetries = 3;
+    #workerRetryDelay = 1000;
 
     // Palette generation configuration
     genSteps = $state(8);
@@ -92,6 +95,7 @@ export class EngineStore {
             this.#searchWorker.onmessage = (e: MessageEvent<{ type: string; name: string }>) => {
                 if (e.data.type === 'result') {
                     this.closestName = e.data.name;
+                    this.#workerRetryCount = 0;
                 }
             };
 
@@ -99,11 +103,30 @@ export class EngineStore {
                 console.error('Color name search worker error:', error);
                 this.closestName = 'Custom Color';
                 this.#terminateWorker();
-                this.#initWorker();
+
+                if (this.#workerRetryCount < this.#maxWorkerRetries) {
+                    this.#workerRetryCount++;
+                    const delay = this.#workerRetryDelay * this.#workerRetryCount;
+                    setTimeout(() => {
+                        this.#initWorker();
+                    }, delay);
+                } else {
+                    console.error('Max worker retry attempts reached. Giving up.');
+                }
             };
         } catch (error) {
             console.error('Failed to initialize color name search worker:', error);
             this.closestName = 'Custom Color';
+
+            if (this.#workerRetryCount < this.#maxWorkerRetries) {
+                this.#workerRetryCount++;
+                const delay = this.#workerRetryDelay * this.#workerRetryCount;
+                setTimeout(() => {
+                    this.#initWorker();
+                }, delay);
+            } else {
+                console.error('Max worker initialization attempts reached. Giving up.');
+            }
         }
     }
 
@@ -137,6 +160,7 @@ export class EngineStore {
             this.#debounceHandle = null;
         }
         this.#terminateWorker();
+        this.#workerRetryCount = 0;
     }
 
     // Get current base color as Oklch
