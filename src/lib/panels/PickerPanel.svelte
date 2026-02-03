@@ -134,6 +134,8 @@
                 return 'gradient-oklch-l';
             case 'c':
                 return 'gradient-oklch-c';
+            case 'hsl-h':
+                return 'gradient-hsl-h';
             case 'hsl-s':
                 return 'gradient-hsl-s';
             case 'hsl-l':
@@ -155,8 +157,6 @@
                 return `linear-gradient(to right, rgb(${r},0,${b}), rgb(${r},255,${b}))`;
             case 'b':
                 return `linear-gradient(to right, rgb(${r},${g},0), rgb(${r},${g},255))`;
-            case 'hsl-h':
-                return `linear-gradient(to right, hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%), hsl(360, 100%, 50%))`;
             case 'alpha':
                 return `linear-gradient(to right, transparent, ${hex})`;
             default:
@@ -266,7 +266,7 @@
                       whitespace-nowrap opacity-0 shadow-xl transition-opacity
                       group-hover:opacity-100
                     ">
-                    {app.precision === 'precise' ? 'Precise ↔ Practical' : 'Practical ↔ Precise'}
+                    {app.precision === 'precise' ? 'Precise ? Practical' : 'Practical ? Precise'}
                 </div>
             </button>
         </div>
@@ -350,7 +350,7 @@
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Hue</span> <span>{color.h.toFixed(0)}°</span>
+                        <span>Hue</span> <span>{color.h.toFixed(0)}?</span>
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div class="absolute inset-0 rounded-full {getGradientClass('h')}"></div>
@@ -377,7 +377,7 @@
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full"
+                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
                             style:--slider-grad={getGradientStyle('r')}>
                         </div>
                         <input
@@ -402,7 +402,7 @@
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full"
+                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
                             style:--slider-grad={getGradientStyle('g')}>
                         </div>
                         <input
@@ -427,7 +427,7 @@
                     </div>
                     <div class="relative h-4 rounded-full">
                         <div
-                            class="absolute inset-0 rounded-full"
+                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
                             style:--slider-grad={getGradientStyle('b')}>
                         </div>
                         <input
@@ -449,12 +449,10 @@
                           flex justify-between text-xs font-bold
                           text-(--ui-text-muted) uppercase
                         ">
-                        <span>Hue</span> <span>{localHsl.h.toFixed(0)}°</span>
+                        <span>Hue</span> <span>{localHsl.h.toFixed(0)}?</span>
                     </div>
                     <div class="relative h-4 rounded-full">
-                        <div
-                            class="absolute inset-0 rounded-full"
-                            style:--slider-grad={getGradientStyle('hsl-h')}>
+                        <div class="absolute inset-0 rounded-full {getGradientClass('hsl-h')}">
                         </div>
                         <input
                             type="range"

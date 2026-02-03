@@ -72,7 +72,7 @@ export class PaintboxStore {
         }
     }
 
-    // Helper to get cached OKLCH for sorting
+    // Convert a CSS color string to Oklch for sorting
     #getOklch(css: string): Oklch {
         const parsed = parse(css);
         return (parsed ? toOklch(parsed) : undefined) || { mode: 'oklch', l: 0, c: 0, h: 0 };
@@ -125,27 +125,5 @@ export class PaintboxStore {
     clear() {
         if (!this.#initialized) this.init();
         this.#colors = [];
-    }
-
-    export() {
-        return [...this.items];
-    }
-
-    import(colors: SavedColor[]) {
-        if (!this.#initialized) this.init();
-
-        const validColors = colors
-            .filter((item) => item && typeof item === 'object' && typeof item.css === 'string')
-            .map((item) => ({
-                id: item.id || crypto.randomUUID(),
-                css: item.css,
-                timestamp: item.timestamp || Date.now(),
-            }));
-
-        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Used for deduplication check only
-        const cssSet = new Set(this.#colors.map((c) => c.css));
-        const newColors = validColors.filter((c) => !cssSet.has(c.css));
-
-        this.#colors = [...newColors, ...this.#colors].slice(0, PAINTBOX.MAX_COLORS);
     }
 }

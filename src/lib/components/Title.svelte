@@ -10,7 +10,7 @@
     let { name }: Props = $props();
 
     // Calculate dynamic size based on name length to prevent wrapping
-    let blockSize = $derived(() => {
+    let blockSize = $derived.by(() => {
         const letterCount = name.replace(/\s/g, '').length;
 
         // Use consistent readable size when in ticker mode
@@ -28,7 +28,7 @@
         return 'w-5 h-5 md:w-7 md:h-7 lg:w-9 lg:h-9 text-xs md:text-sm lg:text-base';
     });
 
-    let gapSize = $derived(() => {
+    let gapSize = $derived.by(() => {
         const length = name.replace(/\s/g, '').length;
         if (length <= 8) return 'gap-1 md:gap-2';
         if (length <= 12) return 'gap-1.5 md:gap-2.5';
@@ -36,7 +36,7 @@
     });
 
     // Determine if we should use ticker display for very long names
-    let useTicker = $derived(() => {
+    let useTicker = $derived.by(() => {
         const letterCount = name.replace(/\s/g, '').length;
         return letterCount > 18; // Use ticker for very long names (>18 letters)
     });
@@ -62,10 +62,10 @@
     };
 </script>
 
-{#if useTicker()}
+{#if useTicker}
     <!-- Ticker display for very long names -->
     <div class="w-full max-w-[60vw] overflow-hidden">
-        <div class="flex animate-bounce whitespace-nowrap" style="gap: 0.5rem;">
+        <div class="flex animate-bounce whitespace-nowrap {gapSize}">
             {#each name.toUpperCase().split('') as letter, i (i)}
                 {#if letter === ' '}
                     <div
@@ -99,8 +99,7 @@
     <div
         class="
           flex flex-wrap justify-center
-          {gapSize}"
-        style="gap: 0.5rem;">
+          {gapSize}">
         {#each name.toUpperCase().split('') as letter, i (i)}
             {#if letter === ' '}
                 <div

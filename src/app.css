@@ -356,6 +356,19 @@ select {
     );
 }
 
+/* HSL Hue gradient: Shows full hue spectrum at current S and L values */
+.gradient-hsl-h {
+    background: linear-gradient(
+        to right,
+        hsl(0 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(60 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(120 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(180 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(240 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(300 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(360 var(--picker-hsl-s) var(--picker-hsl-l))
+    );
+}
 /* HSL Saturation gradient: At current H and L values */
 .gradient-hsl-s {
     background: linear-gradient(
@@ -374,3 +387,4 @@ select {
         hsl(var(--picker-hsl-h) var(--picker-hsl-s) 100%)
     );
 }
+

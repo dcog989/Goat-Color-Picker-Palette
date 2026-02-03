@@ -77,13 +77,6 @@ export function isHarmonyMode(mode: GenerationMode): mode is HarmonyType {
 }
 
 /**
- * Check if a generation mode is a palette axis
- */
-export function isPaletteMode(mode: GenerationMode): mode is PaletteAxis {
-    return ['l', 'c', 'h', 'a'].includes(mode);
-}
-
-/**
  * Rotate a color's hue by a specified angle
  */
 export function rotateHue(color: Oklch, angle: number): string {
@@ -163,12 +156,7 @@ export function generateColors(
         return generateHarmony(baseColor, mode);
     }
 
-    if (isPaletteMode(mode)) {
-        return generatePalette(baseColor, mode, steps);
-    }
-
-    // Fallback
-    return [formatCss(baseColor)];
+    return generatePalette(baseColor, mode, steps);
 }
 
 /**
@@ -183,109 +171,4 @@ export function getAllHarmonies(baseColor: Oklch): Record<HarmonyType, string[]>
         tetradic: generateHarmony(baseColor, 'tetradic'),
         square: generateHarmony(baseColor, 'square'),
     };
-}
-
-/**
- * Configuration for palette generation
- */
-export interface PaletteConfig {
-    mode: GenerationMode;
-    steps: number;
-    baseColor: Oklch;
-}
-
-/**
- * Palette generator class for more complex use cases
- */
-export class PaletteGenerator {
-    private config: PaletteConfig;
-
-    constructor(config: PaletteConfig) {
-        this.config = config;
-    }
-
-    /**
-     * Update the base color
-     */
-    setBaseColor(color: Oklch): void {
-        this.config.baseColor = color;
-    }
-
-    /**
-     * Update the generation mode
-     */
-    setMode(mode: GenerationMode): void {
-        this.config.mode = mode;
-    }
-
-    /**
-     * Update the number of steps (only for palette modes)
-     */
-    setSteps(steps: number): void {
-        this.config.steps = Math.max(2, Math.min(20, steps));
-    }
-
-    /**
-     * Generate the color palette
-     */
-    generate(): string[] {
-        return generateColors(this.config.baseColor, this.config.mode, this.config.steps);
-    }
-
-    /**
-     * Get the current configuration
-     */
-    getConfig(): Readonly<PaletteConfig> {
-        return { ...this.config };
-    }
-
-    /**
-     * Check if current mode is a harmony
-     */
-    isHarmony(): boolean {
-        return isHarmonyMode(this.config.mode);
-    }
-
-    /**
-     * Check if current mode is a palette
-     */
-    isPalette(): boolean {
-        return isPaletteMode(this.config.mode);
-    }
-}
-
-/**
- * Helper to create human-readable labels for generation modes
- */
-export function getModeLabel(mode: GenerationMode): string {
-    if (isHarmonyMode(mode)) {
-        return HARMONY_DEFINITIONS[mode].name;
-    }
-
-    const labels: Record<PaletteAxis, string> = {
-        l: 'Lightness',
-        c: 'Chroma',
-        h: 'Hue',
-        a: 'Alpha',
-    };
-
-    return labels[mode as PaletteAxis] || mode;
-}
-
-/**
- * Get description for a generation mode
- */
-export function getModeDescription(mode: GenerationMode): string {
-    if (isHarmonyMode(mode)) {
-        return HARMONY_DEFINITIONS[mode].description;
-    }
-
-    const descriptions: Record<PaletteAxis, string> = {
-        l: 'Vary the lightness from dark to light',
-        c: 'Vary the chroma from gray to vivid',
-        h: 'Vary the hue across the color wheel',
-        a: 'Vary the alpha from transparent to opaque',
-    };
-
-    return descriptions[mode as PaletteAxis] || '';
 }

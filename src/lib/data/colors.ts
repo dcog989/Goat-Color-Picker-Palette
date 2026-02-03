@@ -1,6 +1,5 @@
 // Lazy-loaded color name list to improve initial bundle size
 // The color-name-list package contains ~30k color entries (~500KB)
-// This module provides both synchronous (cached) and asynchronous (dynamic import) access
 
 import type { ColorName } from 'color-name-list';
 
@@ -86,25 +85,4 @@ export async function loadColorNames(): Promise<ColorName[]> {
     })();
 
     return loadPromise;
-}
-
-/**
- * Get the cached color name list (synchronous)
- * Returns empty array if not yet loaded
- * Use loadColorNames() to load asynchronously first
- */
-export const colorNameList: ColorName[] = [];
-
-/**
- * Check if color names are loaded
- */
-export function isColorNamesLoaded(): boolean {
-    return cachedList !== null;
-}
-
-/**
- * Get the current cached list (may be null if not loaded)
- */
-export function getCachedColorNames(): ColorName[] | null {
-    return cachedList;
 }

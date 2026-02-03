@@ -1,10 +1,10 @@
 import { PRECISION } from '../constants';
 
-export function formatFloat(value: number, precision: number): number {
+function formatFloat(value: number, precision: number): number {
     return parseFloat(value.toFixed(precision));
 }
 
-export function formatPercent(value: number, precision: number): string {
+function formatPercent(value: number, precision: number): string {
     return `${formatFloat(value, precision)}%`;
 }
 

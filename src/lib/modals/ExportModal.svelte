@@ -1,6 +1,6 @@
 <script lang="ts">
     import { getApp } from '../context';
-    import { availableStrategies, exportCode, type ExportFormat } from '../utils/export';
+    import { exportCode, strategies, type ExportFormat } from '../utils/export';
 
     interface Props {
         onClose: () => void;
@@ -19,9 +19,9 @@
     };
 
     const exports = $derived.by(() =>
-        availableStrategies.map((strategy) => ({
+        Object.entries(strategies).map(([key, strategy]) => ({
             name: strategy.name,
-            content: exportCode(app, strategy.key, exportFormat),
+            content: exportCode(app, key, exportFormat),
         })),
     );
 </script>

@@ -1,32 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import {
-    formatCmyk,
-    formatFloat,
-    formatHsl,
-    formatLab,
-    formatOklab,
-    formatOklch,
-    formatPercent,
-    formatRgb,
-} from './format';
+import { formatCmyk, formatHsl, formatLab, formatOklab, formatOklch, formatRgb } from './format';
 
 describe('format utilities', () => {
-    describe('formatFloat', () => {
-        it('should format number to specified precision', () => {
-            expect(formatFloat(3.14159, 2)).toBe(3.14);
-            expect(formatFloat(3.14159, 0)).toBe(3);
-            expect(formatFloat(3.14159, 4)).toBe(3.1416);
-        });
-    });
-
-    describe('formatPercent', () => {
-        it('should format number as percentage string', () => {
-            expect(formatPercent(50, 0)).toBe('50%');
-            expect(formatPercent(50.5, 1)).toBe('50.5%');
-            expect(formatPercent(99.999, 2)).toBe('100%');
-        });
-    });
-
     describe('formatOklch', () => {
         it('should format OKLCH color string in practical mode', () => {
             expect(formatOklch(0.5, 0.2, 180)).toBe('oklch(50% 0.2 180)');

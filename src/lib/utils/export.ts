@@ -63,10 +63,12 @@ function generateColorName(index: number, source: ColorSource): string {
 }
 
 interface ExportStrategy {
+    name: string;
     format(source: ColorSource, exportFormat: ExportFormat): string;
 }
 
 class CssExportStrategy implements ExportStrategy {
+    name = 'CSS Variables';
     format(source: ColorSource, exportFormat: ExportFormat): string {
         const lines: string[] = [':root {'];
         source.colors.forEach((item, i) => {
@@ -79,6 +81,7 @@ class CssExportStrategy implements ExportStrategy {
 }
 
 class TailwindExportStrategy implements ExportStrategy {
+    name = 'Tailwind Config';
     format(source: ColorSource, exportFormat: ExportFormat): string {
         const lines = ['theme: {', '  extend: {', '    colors: {'];
         source.colors.forEach((item, i) => {
@@ -91,6 +94,7 @@ class TailwindExportStrategy implements ExportStrategy {
 }
 
 class AndroidXmlExportStrategy implements ExportStrategy {
+    name = 'Android XML';
     format(source: ColorSource, exportFormat: ExportFormat): string {
         const lines = ['<?xml version="1.0" encoding="utf-8"?>', '<resources>'];
         source.colors.forEach((item, i) => {
@@ -106,6 +110,7 @@ class AndroidXmlExportStrategy implements ExportStrategy {
 }
 
 class JsonExportStrategy implements ExportStrategy {
+    name = 'JSON';
     format(source: ColorSource, exportFormat: ExportFormat): string {
         const obj: Record<string, string> = {};
         source.colors.forEach((item, i) => {
@@ -116,6 +121,7 @@ class JsonExportStrategy implements ExportStrategy {
 }
 
 class ScssExportStrategy implements ExportStrategy {
+    name = 'SCSS Variables';
     format(source: ColorSource, exportFormat: ExportFormat): string {
         const lines = ['// Color Variables'];
         source.colors.forEach((item, i) => {
@@ -125,7 +131,7 @@ class ScssExportStrategy implements ExportStrategy {
     }
 }
 
-const strategies: Record<string, ExportStrategy> = {
+export const strategies: Record<string, ExportStrategy> = {
     css: new CssExportStrategy(),
     tailwind: new TailwindExportStrategy(),
     xml: new AndroidXmlExportStrategy(),
@@ -377,43 +383,3 @@ export function exportPdf(root: RootStore): void {
 
     doc.save(generateFilename(root, 'pdf'));
 }
-
-export interface ExportStrategyInfo {
-    name: string;
-    key: string;
-    description: string;
-    defaultFormat: ExportFormat;
-}
-
-export const availableStrategies: ExportStrategyInfo[] = [
-    {
-        name: 'CSS Variables',
-        key: 'css',
-        description: 'CSS custom properties (--var-name)',
-        defaultFormat: 'oklch',
-    },
-    {
-        name: 'Tailwind Config',
-        key: 'tailwind',
-        description: 'Tailwind CSS theme configuration',
-        defaultFormat: 'hex',
-    },
-    {
-        name: 'Android XML',
-        key: 'xml',
-        description: 'Android colors.xml resource file',
-        defaultFormat: 'hex',
-    },
-    {
-        name: 'JSON',
-        key: 'json',
-        description: 'JSON object with color values',
-        defaultFormat: 'oklch',
-    },
-    {
-        name: 'SCSS Variables',
-        key: 'scss',
-        description: 'Sass/SCSS variable declarations',
-        defaultFormat: 'hex',
-    },
-];
