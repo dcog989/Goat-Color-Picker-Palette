@@ -1,13 +1,7 @@
 import { calcAPCA } from 'apca-w3';
 import type { Oklch } from 'culori/fn';
 import { PRECISION } from '../constants';
-import {
-    generateColors,
-    getAllHarmonies,
-    isHarmonyMode,
-    type GenerationMode,
-    type HarmonyType,
-} from '../utils/harmonies';
+import { generateColors, isHarmonyMode, type GenerationMode } from '../utils/harmonies';
 import type { ColorStore } from './color.svelte';
 import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
 
@@ -29,7 +23,6 @@ export class EngineStore {
     contrastWhite: string;
     contrastBlack: string;
     isHarmonyMode: boolean;
-    harmonies: Record<HarmonyType, string[]>;
     generated: string[];
 
     constructor(colorStore: ColorStore) {
@@ -51,8 +44,6 @@ export class EngineStore {
         });
 
         this.isHarmonyMode = $derived(isHarmonyMode(this.genAxis));
-
-        this.harmonies = $derived(getAllHarmonies(this.#getBaseColor()));
 
         this.generated = $derived.by(() => {
             return generateColors(this.#getBaseColor(), this.genAxis, this.genSteps);
