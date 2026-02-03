@@ -1,6 +1,6 @@
 import { converter, parse, type Oklch } from 'culori/fn';
-import { SvelteURL } from 'svelte/reactivity';
 import { IMAGE_ANALYSIS } from '../constants';
+import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
 
 const toOklch = converter<Oklch>('oklch');
 
@@ -107,10 +107,7 @@ export class ImageStore {
             // Cleanup bitmap immediately
             bitmap.close();
 
-            this.#activeWorker = new Worker(
-                new SvelteURL('../workers/color-analysis.ts', import.meta.url),
-                { type: 'module' },
-            );
+            this.#activeWorker = new ColorAnalysisWorker();
 
             // 5. Zero-Copy Transfer
             this.#activeWorker.postMessage({ imageData, distance: 0.05 }, [imageData.data.buffer]);
