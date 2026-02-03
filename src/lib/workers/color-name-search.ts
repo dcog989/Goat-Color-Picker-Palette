@@ -1,4 +1,4 @@
-import {
+﻿import {
     converter,
     modeLrgb,
     modeOklab,
@@ -11,9 +11,6 @@ import {
     type Oklch,
 } from 'culori/fn';
 
-// Register color spaces in worker scope
-// CRITICAL: Registering intermediate spaces (Linear RGB, XYZ) is mandatory
-// for accurate conversion between Hex (sRGB) and OKLAB/OKLCH.
 useMode(modeRgb);
 useMode(modeLrgb);
 useMode(modeXyz65);
@@ -33,10 +30,8 @@ interface WorkerResponse {
     colors?: Array<{ name: string; hex: string }>;
 }
 
-// Explicitly type the converter so TypeScript knows it returns Oklab
 const toOklab = converter<Oklab>('oklab');
 
-// Flattened data for high-performance scanning
 let coordinates: Float32Array | null = null;
 let names: string[] = [];
 let hexValues: string[] = [];
@@ -67,10 +62,8 @@ async function prepareData(): Promise<void> {
             names[i] = entry.name;
             hexValues[i] = entry.hex;
 
-            // Hex string parses to { mode: 'rgb', ... }
             const color = parse(entry.hex);
             if (color) {
-                // Requires modeRgb to be registered to work
                 const lab = toOklab(color);
                 const ptr = i * 3;
                 if (lab) {
@@ -104,7 +97,6 @@ async function prepareData(): Promise<void> {
 self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
     if (e.data.type === 'search' && e.data.color) {
         if (coordinates === null || isLoading) {
-            // Buffer message until data is ready
             messageQueue.push(e.data.color);
             return;
         }
@@ -113,17 +105,14 @@ self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
         self.postMessage({ type: 'result', name: result } as WorkerResponse);
     } else if (e.data.type === 'filter') {
         if (coordinates === null || isLoading) {
-            // Buffer message until data is ready
-            // We still need to process this after loading, so we'll handle it differently
             await waitForData();
         }
 
-        const results = filterColors(e.data.query || '', e.data.limit || 100);
+        const results = filterColors(e.data.query || '', e.data.limit || 500);
         self.postMessage({ type: 'filterResult', colors: results } as WorkerResponse);
     }
 };
 
-// Helper to wait for data to be ready
 async function waitForData(): Promise<void> {
     while (coordinates === null || isLoading) {
         await new Promise((resolve) => setTimeout(resolve, 10));
@@ -178,7 +167,6 @@ function filterColors(query: string, limit: number): Array<{ name: string; hex: 
         return [];
     }
 
-    // Empty query - return empty array (component will show all via different path)
     if (!query.trim()) {
         return [];
     }
@@ -187,7 +175,6 @@ function filterColors(query: string, limit: number): Array<{ name: string; hex: 
     const results: Array<{ name: string; hex: string }> = [];
     const len = names.length;
 
-    // Fast scan - stop at limit
     for (let i = 0; i < len && results.length < limit; i++) {
         const name = names[i];
         if (name && name.toLowerCase().includes(q)) {
@@ -198,6 +185,4 @@ function filterColors(query: string, limit: number): Array<{ name: string; hex: 
     return results;
 }
 
-// Initialize data immediately on worker startup
-// This ensures the data is loaded once and kept in memory
 prepareData();

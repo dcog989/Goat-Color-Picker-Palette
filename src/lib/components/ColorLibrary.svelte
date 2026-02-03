@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
     import type { ColorName } from 'color-name-list';
     import { AlertCircle } from 'lucide-svelte';
     import { onDestroy, onMount } from 'svelte';
@@ -11,17 +11,17 @@
     let searchQuery = $state('');
     let searchInput = $state<HTMLInputElement>();
 
-    // Store as plain array to avoid Proxy overhead on 30k items
     let colorNameList: ColorName[] = [];
-    // Worker-filtered results (limited to first 100 matches)
     let workerFilteredColors: Array<{ name: string; hex: string }> = $state([]);
 
     let isLoading = $state(true);
     let isFiltering = $state(false);
     let loadError = $state<string | null>(null);
 
-    // Web Worker for offloading color filtering
     let filterWorker: Worker | null = null;
+
+    const INITIAL_DISPLAY_LIMIT = 100;
+    let displayedColors = $state<Array<{ name: string; hex: string }>>([]);
 
     onMount(async () => {
         filterWorker = new ColorNameSearchWorker();
@@ -35,6 +35,7 @@
 
         try {
             colorNameList = await loadColorNames();
+            displayedColors = colorNameList.slice(0, INITIAL_DISPLAY_LIMIT);
         } catch (error) {
             console.error('Failed to load color names:', error);
             loadError = 'Failed to load color library. Please refresh the page.';
@@ -47,48 +48,55 @@
         filterWorker?.terminate();
     });
 
-    // Send filter requests to worker when query changes
     $effect(() => {
         if (filterWorker && searchQuery.trim()) {
             isFiltering = true;
             filterWorker.postMessage({
                 type: 'filter',
                 query: searchQuery,
-                limit: 100,
+                limit: 500,
             });
+        } else if (!searchQuery.trim() && !isLoading) {
+            displayedColors = colorNameList.slice(0, INITIAL_DISPLAY_LIMIT);
         }
     });
 
-    // Use worker results when searching, full list when empty
     let filteredColors = $derived.by((): Array<{ name: string; hex: string }> => {
         if (isLoading) return [];
-
-        if (!searchQuery.trim()) {
-            // Show all colors when no search query
-            return colorNameList;
-        }
-
-        // Show worker-filtered results (limited to 100)
-        return workerFilteredColors;
+        return searchQuery.trim() ? workerFilteredColors : displayedColors;
     });
 
     let _scrollTop = $state(0);
     let throttledScrollTop = $state(0);
     let viewportHeight = $state(400);
     const itemHeight = 56;
-    const buffer = 10;
-    let animationFrameId: number | null = null;
+    const buffer = 5;
+    let scrollThrottleTimeout: number | null = null;
 
     function handleScroll(e: Event) {
         const target = e.target as HTMLElement;
         _scrollTop = target.scrollTop;
 
-        if (animationFrameId === null) {
-            animationFrameId = requestAnimationFrame(() => {
-                throttledScrollTop = _scrollTop;
-                animationFrameId = null;
-            });
+        if (scrollThrottleTimeout !== null) {
+            return;
         }
+
+        scrollThrottleTimeout = window.setTimeout(() => {
+            throttledScrollTop = _scrollTop;
+            scrollThrottleTimeout = null;
+
+            if (!searchQuery.trim() && !isLoading) {
+                const scrolledNearBottom =
+                    _scrollTop + viewportHeight > displayedColors.length * itemHeight - 500;
+                if (scrolledNearBottom && displayedColors.length < colorNameList.length) {
+                    const nextBatch = colorNameList.slice(
+                        displayedColors.length,
+                        displayedColors.length + 100,
+                    );
+                    displayedColors = [...displayedColors, ...nextBatch];
+                }
+            }
+        }, 16);
     }
 
     let totalHeight = $derived(filteredColors.length * itemHeight);
@@ -200,9 +208,7 @@
                     {#if filteredColors.length > 0}
                         <div
                             style:height="{totalHeight}px"
-                            class="
-                              pointer-events-none absolute top-0 left-0 w-full
-                            ">
+                            class="pointer-events-none absolute top-0 left-0 w-full">
                         </div>
 
                         <div
