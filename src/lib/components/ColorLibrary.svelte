@@ -4,6 +4,7 @@
     import { onDestroy, onMount } from 'svelte';
     import { getApp } from '../context';
     import { loadColorNames } from '../data/colors';
+    import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
 
     const { color: colorStore } = getApp();
 
@@ -23,10 +24,7 @@
     let filterWorker: Worker | null = null;
 
     onMount(async () => {
-        // Initialize worker for filtering
-        filterWorker = new Worker(new URL('../workers/color-name-search.ts', import.meta.url), {
-            type: 'module',
-        });
+        filterWorker = new ColorNameSearchWorker();
 
         filterWorker.onmessage = (e) => {
             if (e.data.type === 'filterResult') {

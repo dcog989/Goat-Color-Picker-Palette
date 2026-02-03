@@ -9,6 +9,7 @@ import {
     type HarmonyType,
 } from '../utils/harmonies';
 import type { ColorStore } from './color.svelte';
+import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
 
 export class EngineStore {
     closestName = $state('Searching...');
@@ -86,11 +87,7 @@ export class EngineStore {
 
     #initWorker() {
         try {
-            this.#searchWorker = new Worker(
-                // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Worker URLs are static
-                new URL('../workers/color-name-search.ts', import.meta.url),
-                { type: 'module' },
-            );
+            this.#searchWorker = new ColorNameSearchWorker();
 
             this.#searchWorker.onmessage = (e: MessageEvent<{ type: string; name: string }>) => {
                 if (e.data.type === 'result') {
