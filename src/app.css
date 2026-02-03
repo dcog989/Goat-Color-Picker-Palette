@@ -279,9 +279,17 @@ select {
     background: linear-gradient(
         to right,
         oklch(var(--picker-l) var(--picker-c) 0),
+        oklch(var(--picker-l) var(--picker-c) 30),
+        oklch(var(--picker-l) var(--picker-c) 60),
         oklch(var(--picker-l) var(--picker-c) 90),
+        oklch(var(--picker-l) var(--picker-c) 120),
+        oklch(var(--picker-l) var(--picker-c) 150),
         oklch(var(--picker-l) var(--picker-c) 180),
+        oklch(var(--picker-l) var(--picker-c) 210),
+        oklch(var(--picker-l) var(--picker-c) 240),
         oklch(var(--picker-l) var(--picker-c) 270),
+        oklch(var(--picker-l) var(--picker-c) 300),
+        oklch(var(--picker-l) var(--picker-c) 330),
         oklch(var(--picker-l) var(--picker-c) 360)
     );
 }
@@ -306,11 +314,17 @@ select {
     background: linear-gradient(
         to right,
         hsl(0 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(30 var(--picker-hsl-s) var(--picker-hsl-l)),
         hsl(60 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(90 var(--picker-hsl-s) var(--picker-hsl-l)),
         hsl(120 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(150 var(--picker-hsl-s) var(--picker-hsl-l)),
         hsl(180 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(210 var(--picker-hsl-s) var(--picker-hsl-l)),
         hsl(240 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(270 var(--picker-hsl-s) var(--picker-hsl-l)),
         hsl(300 var(--picker-hsl-s) var(--picker-hsl-l)),
+        hsl(330 var(--picker-hsl-s) var(--picker-hsl-l)),
         hsl(360 var(--picker-hsl-s) var(--picker-hsl-l))
     );
 }
