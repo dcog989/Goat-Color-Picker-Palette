@@ -176,6 +176,7 @@
         {#if mode === 'custom'}
             <div class="relative flex-1 pb-6">
                 <input
+                    id="contrastColor"
                     type="text"
                     bind:value={customColor}
                     class="

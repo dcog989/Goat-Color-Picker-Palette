@@ -147,6 +147,7 @@
               md:p-6
             ">
             <input
+                id="searchInput"
                 bind:this={searchInput}
                 type="text"
                 bind:value={searchQuery}
