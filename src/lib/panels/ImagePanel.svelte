@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { Copy, Image, LayersPlus, Plus, X } from 'lucide-svelte';
+    import { Image, LayersPlus, X } from 'lucide-svelte';
     import { onDestroy } from 'svelte';
     import { IMAGE_ANALYSIS } from '../constants';
     import { getApp } from '../context';
     import type { SortMode } from '../stores/image.svelte';
+    import Swatch from '../components/Swatch.svelte';
 
-    const { color, image: imageAnalyzer, paintbox, toast } = getApp();
+    const { image: imageAnalyzer, paintbox, toast } = getApp();
 
     let isDragging = $state(false);
 
-    // Create fixed-length array for grid to prevent layout shifts
     const gridColors = $derived.by(() => {
         const colors = imageAnalyzer.extractedPalette;
         return Array.from({ length: 24 }, (_, i) => colors[i] ?? null);
@@ -47,22 +47,9 @@
         }
     };
 
-    const copy = (swatchCss: string, e?: MouseEvent) => {
-        const formatted = color.formatColor(swatchCss);
-        navigator.clipboard.writeText(formatted);
-        toast.show('Copied', e);
-    };
-
     const addAll = (e?: MouseEvent) => {
         imageAnalyzer.extractedPalette.forEach((c) => paintbox.add(c));
         toast.show('Added All to Paintbox', e);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent, swatch: string) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            color.set(swatch);
-        }
     };
 
     const sortOptions: { label: string; value: SortMode }[] = [
@@ -242,67 +229,7 @@
                 <div class="grid grid-cols-6 gap-2">
                     {#each gridColors as swatch, i (i)}
                         {#if swatch !== null}
-                            <div
-                                role="button"
-                                tabindex="0"
-                                class="
-                                  group relative aspect-square cursor-pointer
-                                  overflow-hidden rounded-lg border
-                                  border-white/10 shadow-md transition-all
-                                  [background:var(--swatch-color)]
-                                  hover:scale-105
-                                "
-                                style:--swatch-color={swatch}
-                                title={color.formatColor(swatch)}
-                                onclick={() => color.set(swatch)}
-                                onkeydown={(e) => handleKeyDown(e, swatch)}
-                                aria-label="Select extracted color {i + 1}">
-                                <div
-                                    class="
-                                      absolute inset-0 flex items-center
-                                      justify-center opacity-0
-                                      transition-opacity
-                                      group-hover:opacity-100
-                                    ">
-                                    <button
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            paintbox.add(swatch);
-                                            toast.show('Added', e);
-                                        }}
-                                        class="
-                                          cursor-pointer rounded-full
-                                          bg-white/30 p-3 text-white shadow-lg
-                                          backdrop-blur-md transition-all
-                                          hover:scale-115 hover:bg-white/50
-                                        "
-                                        title="Add to paintbox"
-                                        type="button">
-                                        <Plus
-                                            class="
-                                          pointer-events-none size-3
-                                        " />
-                                    </button>
-                                    <button
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            copy(swatch, e);
-                                        }}
-                                        class="
-                                          cursor-pointer rounded-full
-                                          bg-white/30 p-3 text-white shadow-lg
-                                          backdrop-blur-md transition-all
-                                          hover:scale-115 hover:bg-white/50
-                                        "
-                                        title="Copy"
-                                        type="button">
-                                        <Copy
-                                            class="
-                                          pointer-events-none size-3
-                                        " />
-                                    </button>
-                                </div>
-                            </div>
+                            <Swatch color={swatch} index={i} dynamicClass={false} />
                         {:else}
                             <div
                                 class="

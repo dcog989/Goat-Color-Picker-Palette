@@ -1,27 +1,13 @@
 <script lang="ts">
-    import { converter, parse, type Oklch } from 'culori/fn';
-    import { Copy, LayersPlus, ListMinus, ListPlus, Plus } from 'lucide-svelte';
+    import { LayersPlus, ListMinus, ListPlus } from 'lucide-svelte';
     import { getApp } from '../context';
+    import Swatch from '../components/Swatch.svelte';
 
-    const { color, engine, paintbox, toast } = getApp();
-    const toOklch = converter<Oklch>('oklch');
-
-    const copy = (swatchCss: string, e?: MouseEvent) => {
-        const formatted = color.formatColor(swatchCss);
-        navigator.clipboard.writeText(formatted);
-        toast.show('Copied', e);
-    };
+    const { engine, paintbox, toast } = getApp();
 
     const addAll = (e?: MouseEvent) => {
         engine.generated.forEach((c: string) => paintbox.add(c));
         toast.show('Added All to Paintbox', e);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent, swatch: string) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            color.set(swatch);
-        }
     };
 
     const addRow = () => {
@@ -30,14 +16,6 @@
 
     const removeRow = () => {
         engine.genSteps = Math.max(2, engine.genSteps - 4);
-    };
-
-    const getActionClass = (css: string) => {
-        const parsed = parse(css);
-        const l = parsed ? (toOklch(parsed)?.l ?? 0) : 0;
-        return l > 0.6
-            ? 'bg-black/10 hover:bg-black/20 text-black'
-            : 'bg-white/20 hover:bg-white/30 text-white';
     };
 </script>
 
@@ -136,58 +114,7 @@
 
     <div class="grid grid-cols-4 gap-2">
         {#each engine.generated as swatch, i (swatch + i)}
-            {@const btnClass = getActionClass(swatch)}
-            <div
-                role="button"
-                tabindex="0"
-                class="
-                  group relative aspect-square cursor-pointer overflow-hidden
-                  rounded-lg border border-white/10 shadow-md transition-all
-                  [background:var(--swatch-color)]
-                  hover:scale-105
-                "
-                style:--swatch-color={swatch}
-                title={color.formatColor(swatch)}
-                onclick={() => color.set(swatch)}
-                onkeydown={(e) => handleKeyDown(e, swatch)}
-                aria-label="Select swatch {i + 1}">
-                <div
-                    class="
-                      absolute inset-0 flex items-center justify-center gap-2
-                      opacity-0 transition-opacity
-                      group-hover:opacity-100
-                    ">
-                    <button
-                        onclick={(e) => {
-                            e.stopPropagation();
-                            paintbox.add(swatch);
-                            toast.show('Added', e);
-                        }}
-                        class="{btnClass}
-                          cursor-pointer rounded-full p-3 shadow-sm
-                          transition-transform
-                          hover:scale-110
-                        "
-                        title="Add to paintbox"
-                        type="button">
-                        <Plus class="pointer-events-none size-4" />
-                    </button>
-                    <button
-                        onclick={(e) => {
-                            e.stopPropagation();
-                            copy(swatch, e);
-                        }}
-                        class="{btnClass}
-                          cursor-pointer rounded-full p-3 shadow-sm
-                          transition-transform
-                          hover:scale-110
-                        "
-                        title="Copy"
-                        type="button">
-                        <Copy class="pointer-events-none size-4" />
-                    </button>
-                </div>
-            </div>
+            <Swatch color={swatch} index={i} />
         {/each}
     </div>
 </section>
