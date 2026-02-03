@@ -387,4 +387,3 @@ select {
         hsl(var(--picker-hsl-h) var(--picker-hsl-s) 100%)
     );
 }
-
