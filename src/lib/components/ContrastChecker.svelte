@@ -13,6 +13,17 @@
     let customColor = $state('#888888');
     let isFg = $state(true); // Is Color0 the foreground?
 
+    // Validate color string
+    const isValidColor = (color: string): boolean => {
+        const parsed = parse(color);
+        return (
+            parsed !== undefined &&
+            (parsed.mode === 'rgb' || parsed.mode === 'oklch' || parsed.mode === 'hsl')
+        );
+    };
+
+    let customColorError = $derived(mode === 'custom' && !isValidColor(customColor));
+
     // ------------------------------------------------------------------------
     // Comparison Logic
     // ------------------------------------------------------------------------
@@ -24,7 +35,7 @@
             case 'black':
                 return '#000000';
             case 'custom':
-                return customColor;
+                return isValidColor(customColor) ? customColor : '#888888';
         }
     };
 
@@ -56,16 +67,18 @@
 
     // Calculate stats for ALL modes to show in tabs
     let stats = $derived.by(() => {
+        const isCustomValid = isValidColor(customColor);
+
         const targets: Record<ContrastMode, string> = {
             white: '#ffffff',
             black: '#000000',
-            custom: customColor,
+            custom: isCustomValid ? customColor : '#888888',
         };
 
-        const result: Record<ContrastMode, { apca: number; wcag: number }> = {
-            white: { apca: 0, wcag: 0 },
-            black: { apca: 0, wcag: 0 },
-            custom: { apca: 0, wcag: 0 },
+        const result: Record<ContrastMode, { apca: number; wcag: number; valid: boolean }> = {
+            white: { apca: 0, wcag: 0, valid: true },
+            black: { apca: 0, wcag: 0, valid: true },
+            custom: { apca: 0, wcag: 0, valid: isCustomValid },
         };
 
         (Object.keys(targets) as ContrastMode[]).forEach((m) => {
@@ -74,8 +87,12 @@
             const b = isFg ? t : color.hex;
 
             const rawApca = calcAPCA(f, b);
-            result[m].apca = typeof rawApca === 'number' ? Math.round(Math.abs(rawApca)) : 0;
-            result[m].wcag = getWcagRatio(f, b);
+            const apcaValue =
+                typeof rawApca === 'number' && !isNaN(rawApca) ? Math.abs(rawApca) : 0;
+            result[m].apca = Math.round(apcaValue);
+
+            const ratio = getWcagRatio(f, b);
+            result[m].wcag = !isNaN(ratio) && isFinite(ratio) ? ratio : 0;
         });
 
         return result;
@@ -133,8 +150,13 @@
                       text-[10px] font-black tracking-wider uppercase opacity-50
                     ">{m}</span>
                 <div class="flex items-baseline gap-1">
-                    <span class="text-lg font-black">{stats[m as ContrastMode].apca}</span>
-                    <span class="font-mono text-[10px] opacity-50">Lc</span>
+                    {#if m === 'custom' && !stats[m as ContrastMode].valid}
+                        <span class="text-lg font-black text-red-500">--</span>
+                        <span class="font-mono text-[10px] text-red-500/70">!</span>
+                    {:else}
+                        <span class="text-lg font-black">{stats[m as ContrastMode].apca}</span>
+                        <span class="font-mono text-[10px] opacity-50">Lc</span>
+                    {/if}
                 </div>
                 <!-- Active Indicator -->
                 {#if mode === m}
@@ -152,23 +174,36 @@
     <!-- 2. Controls Row (Custom Input & Swap) -->
     <div class="flex min-h-10.5 items-center gap-4">
         {#if mode === 'custom'}
-            <div class="relative flex-1">
+            <div class="relative flex-1 pb-6">
                 <input
                     type="text"
                     bind:value={customColor}
                     class="
-                      w-full rounded-lg border border-(--ui-border) bg-(--ui-bg)
+                      w-full rounded-lg border bg-(--ui-bg)
                       py-2 pr-4 pl-9 font-mono text-sm uppercase transition-all
                       outline-none
                       focus:ring-2 focus:ring-(--current-color)
+                      {customColorError
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50'
+                        : 'border-(--ui-border)'}
                     " />
                 <div
                     class="
                       absolute top-1/2 left-3 size-4 -translate-y-1/2
                       rounded-full border border-(--ui-border)
                     "
-                    style:background-color={customColor}>
+                    style:background-color={customColorError ? 'transparent' : customColor}>
+                    {#if customColorError}
+                        <span
+                            class="absolute inset-0 flex items-center justify-center text-red-500 text-xs font-bold"
+                            >!</span>
+                    {/if}
                 </div>
+                {#if customColorError}
+                    <div class="absolute -bottom-6 left-0 text-xs text-red-500 font-medium">
+                        Invalid color format
+                    </div>
+                {/if}
             </div>
         {:else}
             <div
@@ -230,14 +265,17 @@
                       text-xs font-black tracking-wider text-(--ui-text-muted)
                       uppercase
                     ">APCA</span>
-                <span class="text-xl font-black">{currentApca}</span>
+                <span class="text-xl font-black"
+                    >{customColorError && mode === 'custom' ? '--' : currentApca}</span>
             </div>
             <div
                 class="
                   mt-1 border-t border-(--ui-border) pt-2 text-xs font-medium
                   opacity-70
                 ">
-                {getApcaRating(currentApca)}
+                {customColorError && mode === 'custom'
+                    ? 'Invalid color format'
+                    : getApcaRating(currentApca)}
             </div>
         </div>
 
@@ -252,37 +290,55 @@
                       text-xs font-black tracking-wider text-(--ui-text-muted)
                       uppercase
                     ">Ratio</span>
-                <span class="text-xl font-black">{currentWcag.toFixed(2)}:1</span>
+                <span class="text-xl font-black"
+                    >{customColorError && mode === 'custom'
+                        ? '--'
+                        : currentWcag.toFixed(2)}:1</span>
             </div>
 
             <div
                 class="
                   mt-1 flex justify-between border-t border-(--ui-border) pt-2
                 ">
-                <div class="flex flex-col items-center gap-1">
-                    <span class="text-[10px] font-bold uppercase opacity-50">AA Lg</span>
-                    {#if passes(currentWcag, 'AA Large')}
-                        <Check class="size-4 text-green-500" />
-                    {:else}
-                        <X class="size-4 text-red-500 opacity-50" />
-                    {/if}
-                </div>
-                <div class="flex flex-col items-center gap-1">
-                    <span class="text-[10px] font-bold uppercase opacity-50">AA</span>
-                    {#if passes(currentWcag, 'AA')}
-                        <Check class="size-4 text-green-500" />
-                    {:else}
-                        <X class="size-4 text-red-500 opacity-50" />
-                    {/if}
-                </div>
-                <div class="flex flex-col items-center gap-1">
-                    <span class="text-[10px] font-bold uppercase opacity-50">AAA</span>
-                    {#if passes(currentWcag, 'AAA')}
-                        <Check class="size-4 text-green-500" />
-                    {:else}
-                        <X class="size-4 text-red-500 opacity-50" />
-                    {/if}
-                </div>
+                {#if customColorError && mode === 'custom'}
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="text-[10px] font-bold uppercase opacity-50">AA Lg</span>
+                        <X class="size-4 text-gray-400 opacity-50" />
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="text-[10px] font-bold uppercase opacity-50">AA</span>
+                        <X class="size-4 text-gray-400 opacity-50" />
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="text-[10px] font-bold uppercase opacity-50">AAA</span>
+                        <X class="size-4 text-gray-400 opacity-50" />
+                    </div>
+                {:else}
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="text-[10px] font-bold uppercase opacity-50">AA Lg</span>
+                        {#if passes(currentWcag, 'AA Large')}
+                            <Check class="size-4 text-green-500" />
+                        {:else}
+                            <X class="size-4 text-red-500 opacity-50" />
+                        {/if}
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="text-[10px] font-bold uppercase opacity-50">AA</span>
+                        {#if passes(currentWcag, 'AA')}
+                            <Check class="size-4 text-green-500" />
+                        {:else}
+                            <X class="size-4 text-red-500 opacity-50" />
+                        {/if}
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="text-[10px] font-bold uppercase opacity-50">AAA</span>
+                        {#if passes(currentWcag, 'AAA')}
+                            <Check class="size-4 text-green-500" />
+                        {:else}
+                            <X class="size-4 text-red-500 opacity-50" />
+                        {/if}
+                    </div>
+                {/if}
             </div>
         </div>
     </div>
