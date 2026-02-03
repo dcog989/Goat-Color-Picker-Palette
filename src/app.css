@@ -14,91 +14,87 @@
 }
 
 :root {
-    /* Enable native UI adaptation for light/dark modes (scrollbars, form controls) */
     color-scheme: light dark;
 
-    /* CSS variables are set dynamically by App.svelte $effect */
-    /* Initial values removed to prevent conflicts and FOUC */
-    /* Fallback values if JS fails to load */
     --current-color: oklch(0.6 0.15 250);
     --current-hue: 250;
 
-    /* Light Mode: Higher luminance backgrounds with subtle hue tint */
+    /* Light Mode */
     --ui-card: oklch(0.96 0.02 var(--current-hue));
     --ui-bg: oklch(0.92 0.025 var(--current-hue));
     --ui-text: oklch(0.3 0.12 var(--current-hue));
     --ui-text-muted: oklch(0.5 0.08 var(--current-hue));
     --ui-border: oklch(0.85 0.03 var(--current-hue));
-
-    /* Contrast utilities for dynamic text on current-color backgrounds */
     --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+
+    /* Checkerboard */
+    --checker-color: #aaa;
 }
 
-/* Dark mode overrides (Class-based for manual toggle support) */
-/* Theme class is applied by blocking script in index.html before render */
 :root.dark {
-    /* Dark Mode: Richer, more saturated panels with better lift from black */
+    /* Dark Mode */
     --ui-card: oklch(0.3 0.05 var(--current-hue));
     --ui-bg: oklch(0.24 0.04 var(--current-hue));
     --ui-text: oklch(0.85 0.1 var(--current-hue));
     --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
     --ui-border: oklch(0.38 0.07 var(--current-hue));
-
-    /* Contrast utilities for dynamic text on current-color backgrounds */
     --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+
+    /* Checkerboard */
+    --checker-color: #333;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not(.light) {
+        --ui-card: oklch(0.3 0.05 var(--current-hue));
+        --ui-bg: oklch(0.24 0.04 var(--current-hue));
+        --ui-text: oklch(0.85 0.1 var(--current-hue));
+        --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
+        --ui-border: oklch(0.38 0.07 var(--current-hue));
+        --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+
+        --checker-color: #333;
+    }
+}
+
+.checkerboard {
+    background-image:
+        linear-gradient(45deg, var(--checker-color) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--checker-color) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--checker-color) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--checker-color) 75%);
+    background-size: 12px 12px;
+    background-position:
+        0 0,
+        0 6px,
+        6px -6px,
+        -6px 0px;
 }
 
 body {
     min-height: 100vh;
-    /* Layer 1 (Top): The current color (as a gradient so it sits on top of the image) */
-    /* Layer 2 (Bottom): The checkerboard pattern */
     background-image:
         linear-gradient(var(--current-color), var(--current-color)),
-        linear-gradient(45deg, #ccc 25%, transparent 25%),
-        linear-gradient(-45deg, #ccc 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #ccc 75%),
-        linear-gradient(-45deg, transparent 75%, #ccc 75%);
-
+        linear-gradient(45deg, var(--checker-color) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--checker-color) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--checker-color) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--checker-color) 75%);
     background-size:
         100% 100%,
         12px 12px,
         12px 12px,
         12px 12px,
         12px 12px;
-
     background-position:
         0 0,
         0 0,
         0 6px,
         6px -6px,
         -6px 0px;
-
-    background-attachment: fixed; /* Ensures pattern doesn't scroll */
-
+    background-attachment: fixed;
     color: var(--ui-text);
     @apply antialiased selection:bg-brand selection:text-white;
     transition: background-color 500ms ease;
-}
-
-/* Dark mode body background */
-:root.dark body {
-    background-image:
-        linear-gradient(var(--current-color), var(--current-color)),
-        linear-gradient(45deg, #333 25%, transparent 25%),
-        linear-gradient(-45deg, #333 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #333 75%),
-        linear-gradient(-45deg, transparent 75%, #333 75%);
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not(.light) body {
-        background-image:
-            linear-gradient(var(--current-color), var(--current-color)),
-            linear-gradient(45deg, #333 25%, transparent 25%),
-            linear-gradient(-45deg, #333 25%, transparent 25%),
-            linear-gradient(45deg, transparent 75%, #333 75%),
-            linear-gradient(-45deg, transparent 75%, #333 75%);
-    }
 }
 
 /* Custom range inputs */
@@ -109,7 +105,6 @@ input[type='range'] {
     cursor: pointer;
 }
 
-/* Track styling */
 input[type='range']::-webkit-slider-track {
     height: 16px;
     border-radius: 9999px;
@@ -147,7 +142,6 @@ input[type='range']:focus {
     outline: none;
 }
 
-/* Number Input Styling - Ensure Spinners are Visible */
 input[type='number'] {
     appearance: auto;
     -moz-appearance: auto;
@@ -156,7 +150,7 @@ input[type='number'] {
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: auto;
-    opacity: 1; /* Force visibility */
+    opacity: 1;
 }
 
 ::-webkit-scrollbar {
@@ -198,39 +192,6 @@ select {
     outline-offset: 2px;
 }
 
-.checkerboard {
-    background-image:
-        linear-gradient(45deg, #ccc 25%, transparent 25%),
-        linear-gradient(-45deg, #ccc 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #ccc 75%),
-        linear-gradient(-45deg, transparent 75%, #ccc 75%);
-    background-size: 12px 12px;
-    background-position:
-        0 0,
-        0 6px,
-        6px -6px,
-        -6px 0px;
-}
-
-:root.dark .checkerboard {
-    background-image:
-        linear-gradient(45deg, #333 25%, transparent 25%),
-        linear-gradient(-45deg, #333 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #333 75%),
-        linear-gradient(-45deg, transparent 75%, #333 75%);
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not(.light) .checkerboard {
-        background-image:
-            linear-gradient(45deg, #333 25%, transparent 25%),
-            linear-gradient(-45deg, #333 25%, transparent 25%),
-            linear-gradient(45deg, transparent 75%, #333 75%),
-            linear-gradient(-45deg, transparent 75%, #333 75%);
-    }
-}
-
-/* Animation System */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -298,20 +259,14 @@ select {
     animation: slideUp 300ms ease-out;
 }
 
-/* Dynamic text color utility - switches between light and dark based on background luminance */
-/* Uses data-color-contrast attribute set by JavaScript based on L threshold of 0.55 */
-
-/* Default: Light text for dark backgrounds (L < 0.55) */
 .text-on-current {
     color: oklch(0.95 0.03 var(--current-hue));
 }
 
-/* Dark text for light backgrounds (L > 0.55) */
 :root[data-color-contrast='dark'] .text-on-current {
     color: oklch(0.2 0.08 var(--current-hue));
 }
 
-/* Group hover variant for better specificity */
 .group:hover .group-hover\:text-on-current {
     color: oklch(0.95 0.03 var(--current-hue)) !important;
 }
@@ -320,10 +275,6 @@ select {
     color: oklch(0.2 0.08 var(--current-hue)) !important;
 }
 
-/* OKLCH Slider Gradients - Using CSS Custom Properties for Performance */
-/* These gradients update automatically when CSS variables change, avoiding JS re-calculation */
-
-/* Hue gradient: Shows full spectrum at current L and C values */
 .gradient-oklch-h {
     background: linear-gradient(
         to right,
@@ -335,7 +286,6 @@ select {
     );
 }
 
-/* Lightness gradient: From black to white at current C and H values */
 .gradient-oklch-l {
     background: linear-gradient(
         to right,
@@ -344,8 +294,6 @@ select {
     );
 }
 
-/* Chroma gradient: From gray to max achievable chroma for current L/H */
-/* --picker-max-c is dynamically calculated based on sRGB gamut boundary */
 .gradient-oklch-c {
     background: linear-gradient(
         to right,
@@ -354,7 +302,6 @@ select {
     );
 }
 
-/* HSL Hue gradient: Shows full hue spectrum at current S and L values */
 .gradient-hsl-h {
     background: linear-gradient(
         to right,
@@ -367,7 +314,7 @@ select {
         hsl(360 var(--picker-hsl-s) var(--picker-hsl-l))
     );
 }
-/* HSL Saturation gradient: At current H and L values */
+
 .gradient-hsl-s {
     background: linear-gradient(
         to right,
@@ -376,7 +323,6 @@ select {
     );
 }
 
-/* HSL Lightness gradient: At current H and S values */
 .gradient-hsl-l {
     background: linear-gradient(
         to right,

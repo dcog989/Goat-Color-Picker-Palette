@@ -148,7 +148,6 @@
     // Get inline gradient style for RGB and alpha gradients
     const getGradientStyle = (type: string) => {
         const { r, g, b } = color.rgbComp;
-        const hex = color.hex;
 
         switch (type) {
             case 'r':
@@ -158,7 +157,7 @@
             case 'b':
                 return `linear-gradient(to right, rgb(${r},${g},0), rgb(${r},${g},255))`;
             case 'alpha':
-                return `linear-gradient(to right, transparent, ${hex})`;
+                return `linear-gradient(to right, rgba(${r},${g},${b},0), rgba(${r},${g},${b},1))`;
             default:
                 return 'transparent';
         }
