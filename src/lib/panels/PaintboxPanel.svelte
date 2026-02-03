@@ -47,6 +47,7 @@
                   sm:w-auto
                 ">
                 <select
+                    id="paintboxSort"
                     bind:value={paintbox.sortMode}
                     class="
                       flex-1 cursor-pointer rounded-lg border

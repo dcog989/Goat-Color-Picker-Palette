@@ -65,6 +65,7 @@
               xl:w-auto
             ">
             <select
+                id="paletteVariable"
                 bind:value={engine.genAxis}
                 class="
                   min-w-35 flex-1 cursor-pointer rounded-lg border

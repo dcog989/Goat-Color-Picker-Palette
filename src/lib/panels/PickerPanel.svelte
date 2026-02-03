@@ -83,8 +83,8 @@
         }
     };
 
-    import { converter } from 'culori/fn';
     import type { Oklch, Rgb } from 'culori/fn';
+    import { converter } from 'culori/fn';
 
     // Converter to check if colors are in gamut
     const toRgb = converter<Rgb>('rgb');
@@ -209,6 +209,7 @@
                 <input
                     type="text"
                     value={inputVal}
+                    id="inputColor"
                     onchange={handleInput}
                     class="
                       w-full rounded-md border bg-(--ui-bg) py-2 pr-8 pl-3
