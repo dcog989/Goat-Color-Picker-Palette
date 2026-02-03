@@ -181,6 +181,8 @@ export function exportPng(root: RootStore): void {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    ctx.textAlign = 'left';
+
     if (isSingle) {
         // Single color export (existing behavior)
         ctx.fillStyle = colors[0]?.css ?? root.color.hex;
