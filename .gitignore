@@ -223,7 +223,6 @@ obj/x64/
 obj/x86/
 OpenCover/
 orleans.codegen.cs
-package-lock.json
 Package.StoreAssociation.xml
 paket-files/
 project.fragment.lock.json
