@@ -9,36 +9,14 @@
 
     let { name }: Props = $props();
 
-    // Calculate dynamic size based on name length to prevent wrapping
-    let blockSize = $derived.by(() => {
-        const letterCount = name.replace(/\s/g, '').length;
+    const blockSize = 'w-10 h-10 lg:w-12 lg:h-12 text-lg md:text-xl lg:text-2xl';
+    const gapSize = 'gap-1 md:gap-1';
 
-        // Use consistent readable size when in ticker mode
-        if (letterCount > 18) {
-            return 'w-7 h-7 md:w-9 md:h-9 lg:w-11 lg:h-11 text-base md:text-lg lg:text-xl';
-        }
-
-        // Normal sizing for non-ticker mode
-        if (letterCount <= 8)
-            return 'w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 text-lg md:text-xl lg:text-2xl';
-        if (letterCount <= 12)
-            return 'w-7 h-7 md:w-9 md:h-9 lg:w-11 lg:h-11 text-base md:text-lg lg:text-xl';
-        if (letterCount <= 16)
-            return 'w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-sm md:text-base lg:text-lg';
-        return 'w-5 h-5 md:w-7 md:h-7 lg:w-9 lg:h-9 text-xs md:text-sm lg:text-base';
-    });
-
-    let gapSize = $derived.by(() => {
-        const length = name.replace(/\s/g, '').length;
-        if (length <= 8) return 'gap-1 md:gap-2';
-        if (length <= 12) return 'gap-1.5 md:gap-2.5';
-        return 'gap-1 md:gap-2';
-    });
-
-    // Determine if we should use ticker display for very long names
+    // Determine if we should use ticker display for long names
     let useTicker = $derived.by(() => {
         const letterCount = name.replace(/\s/g, '').length;
-        return letterCount > 18; // Use ticker for very long names (>18 letters)
+        const tickerThreshold = 18;
+        return letterCount > tickerThreshold;
     });
 
     const getBlockStyle = (index: number) => {
