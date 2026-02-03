@@ -59,11 +59,6 @@
         }
     });
 
-    const copy = (text: string, e?: MouseEvent) => {
-        navigator.clipboard.writeText(text);
-        toast.show('Copied', e);
-    };
-
     const addToPaintbox = (e?: MouseEvent) => {
         paintbox.add(color.hexa);
         toast.show('Added to Paintbox', e);
@@ -570,7 +565,7 @@
                   group-hover:opacity-100
                 ">
                 <button
-                    onclick={(e) => copy(inputVal, e)}
+                    onclick={(e) => app.copy(inputVal, e)}
                     class="
                       cursor-pointer rounded-full bg-white/30 p-3 text-white
                       shadow-lg backdrop-blur-md transition-all
@@ -597,7 +592,7 @@
     <div class="flex flex-wrap gap-2 border-t border-(--ui-border) pt-4">
         {#each [{ label: 'OKLCH', value: color.display }, { label: 'HEX', value: color.hex }, { label: 'RGB', value: color.rgb }, { label: 'HSL', value: color.hsl }, { label: 'OKLAB', value: color.oklab }, { label: 'LAB', value: color.lab }, { label: 'CMYK', value: color.cmyk }] as format (format.label)}
             <button
-                onclick={(e) => copy(format.value, e)}
+                onclick={(e) => app.copy(format.value, e)}
                 class="
                   group flex max-w-25 cursor-pointer items-center
                   overflow-hidden rounded-full border border-(--ui-border)

@@ -31,4 +31,9 @@ export class RootStore {
         this.engine.destroy();
         this.image.destroy();
     }
+
+    copy(text: string, e?: MouseEvent) {
+        navigator.clipboard.writeText(text);
+        this.toast.show('Copied', e);
+    }
 }

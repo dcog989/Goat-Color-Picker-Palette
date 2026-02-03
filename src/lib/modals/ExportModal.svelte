@@ -9,14 +9,8 @@
     let { onClose }: Props = $props();
 
     const app = getApp();
-    const { toast } = app;
 
     let exportFormat = $state<ExportFormat>('oklch');
-
-    const copy = (text: string, e?: MouseEvent) => {
-        navigator.clipboard.writeText(text);
-        toast.show('Copied Code to Clipboard', e);
-    };
 
     const exports = $derived.by(() =>
         Object.entries(strategies).map(([key, strategy]) => ({
@@ -96,7 +90,7 @@
                               opacity-50
                             ">{exportItem.name}</span>
                         <button
-                            onclick={(e) => copy(exportItem.content, e)}
+                            onclick={(e) => app.copy(exportItem.content, e)}
                             class="
                               cursor-pointer rounded-sm px-3 py-1 text-xs
                               font-bold text-brand uppercase transition-colors
