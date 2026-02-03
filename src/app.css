@@ -3,16 +3,14 @@
 @theme {
     --color-brand: var(--current-color);
 
-    /* Consistent Border Radius System */
-    --radius-sm: 0.75rem; /* 12px - Small elements (tags, badges) */
-    --radius-md: 1rem; /* 16px - Buttons, inputs, small cards */
-    --radius-lg: 1.5rem; /* 24px - Swatches, medium cards */
-    --radius-xl: 2rem; /* 32px - Panels, large cards, canvas */
-    --radius-2xl: 2.5rem; /* 40px - Export buttons, contrast cards */
-    --radius-3xl: 3rem; /* 48px - Modal dialogs */
-
-    /* Default radius (rounded) maps to md */
-    --radius: var(--radius-md);
+    /* Border Radius System */
+    --radius-sm: 0.75rem; /* Small elements (tags, badges) */
+    --radius-md: 1rem; /* Buttons, inputs, small cards */
+    --radius-lg: 1.5rem; /* Swatches, medium cards */
+    --radius-xl: 2rem; /* Panels, large cards, canvas */
+    --radius-2xl: 2.5rem; /* Export buttons, contrast cards */
+    --radius-3xl: 3rem; /* Modal dialogs */
+    --radius: var(--radius-md); /* Default radius (rounded) maps to md */
 }
 
 :root {
@@ -75,7 +73,7 @@ body {
         6px -6px,
         -6px 0px;
 
-    background-attachment: fixed; /* Ensures pattern doesn't scroll weirdly */
+    background-attachment: fixed; /* Ensures pattern doesn't scroll */
 
     color: var(--ui-text);
     @apply antialiased selection:bg-brand selection:text-white;
@@ -152,12 +150,12 @@ input[type='range']:focus {
 /* Number Input Styling - Ensure Spinners are Visible */
 input[type='number'] {
     appearance: auto;
-    -moz-appearance: auto; /* Firefox specific */
+    -moz-appearance: auto;
 }
 
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
-    -webkit-appearance: auto; /* WebKit specific */
+    -webkit-appearance: auto;
     opacity: 1; /* Force visibility */
 }
 
