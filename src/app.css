@@ -30,22 +30,22 @@
 
 :root.dark {
     /* Dark Mode */
-    --ui-card: oklch(0.3 0.05 var(--current-hue));
-    --ui-bg: oklch(0.24 0.04 var(--current-hue));
-    --ui-text: oklch(0.85 0.1 var(--current-hue));
-    --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
-    --ui-border: oklch(0.38 0.07 var(--current-hue));
-    --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+    --ui-card: oklch(0.24 0.06 var(--current-hue));
+    --ui-bg: oklch(0.28 0.06 var(--current-hue));
+    --ui-text: oklch(0.85 0.18 var(--current-hue));
+    --ui-text-muted: oklch(0.8 0.06 var(--current-hue));
+    --ui-border: oklch(0.48 0.06 var(--current-hue));
+    --ui-on-current: oklch(0.96 0.06 var(--current-hue));
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not(.light) {
-        --ui-card: oklch(0.3 0.05 var(--current-hue));
-        --ui-bg: oklch(0.24 0.04 var(--current-hue));
-        --ui-text: oklch(0.85 0.1 var(--current-hue));
-        --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
-        --ui-border: oklch(0.38 0.07 var(--current-hue));
-        --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+        --ui-card: oklch(0.24 0.06 var(--current-hue));
+        --ui-bg: oklch(0.28 0.06 var(--current-hue));
+        --ui-text: oklch(0.85 0.18 var(--current-hue));
+        --ui-text-muted: oklch(0.8 0.06 var(--current-hue));
+        --ui-border: oklch(0.48 0.06 var(--current-hue));
+        --ui-on-current: oklch(0.96 0.06 var(--current-hue));
     }
 }
 

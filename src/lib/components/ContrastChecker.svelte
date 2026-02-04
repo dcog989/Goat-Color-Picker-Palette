@@ -141,21 +141,22 @@
                   {mode === m
                     ? 'bg-(--ui-card) text-(--ui-text) shadow-sm'
                     : `
-                      opacity-60
+                      opacity-70
                       hover:bg-black/5 hover:opacity-100
                       dark:hover:bg-white/5
                     `}">
                 <span
                     class="
-                      text-[10px] font-black tracking-wider uppercase opacity-50
+                      text-xs font-black tracking-wider text-(--ui-text-muted)
+                      uppercase
                     ">{m}</span>
                 <div class="flex items-baseline gap-1">
                     {#if m === 'custom' && !stats[m as ContrastMode].valid}
                         <span class="text-lg font-black text-red-500">--</span>
-                        <span class="font-mono text-[10px] text-red-500/70">!</span>
+                        <span class="font-mono text-xs text-red-500/70">!</span>
                     {:else}
                         <span class="text-lg font-black">{stats[m as ContrastMode].apca}</span>
-                        <span class="font-mono text-[10px] opacity-50">Lc</span>
+                        <span class="font-mono text-xs opacity-50">Lc</span>
                     {/if}
                 </div>
                 <!-- Active Indicator -->
@@ -229,6 +230,7 @@
     </div>
 
     <!-- 3. Preview Area -->
+    <!-- Intentionally has poor contrast to demonstrate the checker -->
     <div
         class="
           group relative flex aspect-2/1 w-full flex-col items-center
@@ -236,7 +238,9 @@
           p-6 text-center transition-colors duration-300
         "
         style:background-color={bg}
-        style:color={fg}>
+        style:color={fg}
+        data-axe-ignore
+        aria-hidden="true">
         <h3
             class="
               mb-2 text-3xl font-black
@@ -271,7 +275,7 @@
             </div>
             <div
                 class="
-                  mt-1 border-t border-(--ui-border) pt-2 text-xs font-medium
+                  mt-1 border-t border-(--ui-border) pt-2 text-sm font-medium
                   opacity-70
                 ">
                 {customColorError && mode === 'custom'
@@ -294,7 +298,7 @@
                 <span class="text-xl font-black"
                     >{customColorError && mode === 'custom'
                         ? '--'
-                        : currentWcag.toFixed(2)}:1</span>
+                        : currentWcag.toFixed(1)}:1</span>
             </div>
 
             <div
@@ -303,40 +307,40 @@
                 ">
                 {#if customColorError && mode === 'custom'}
                     <div class="flex flex-col items-center gap-1">
-                        <span class="text-[10px] font-bold uppercase opacity-50">AA Lg</span>
-                        <X class="size-4 text-gray-400 opacity-50" />
+                        <span class="text-xs font-bold uppercase opacity-70">AA Lg</span>
+                        <X class="size-4 text-gray-400 opacity-70" />
                     </div>
                     <div class="flex flex-col items-center gap-1">
-                        <span class="text-[10px] font-bold uppercase opacity-50">AA</span>
-                        <X class="size-4 text-gray-400 opacity-50" />
+                        <span class="text-xs font-bold uppercase opacity-70">AA</span>
+                        <X class="size-4 text-gray-400 opacity-70" />
                     </div>
                     <div class="flex flex-col items-center gap-1">
-                        <span class="text-[10px] font-bold uppercase opacity-50">AAA</span>
-                        <X class="size-4 text-gray-400 opacity-50" />
+                        <span class="text-xs font-bold uppercase opacity-70">AAA</span>
+                        <X class="size-4 text-gray-400 opacity-70" />
                     </div>
                 {:else}
                     <div class="flex flex-col items-center gap-1">
-                        <span class="text-[10px] font-bold uppercase opacity-50">AA Lg</span>
+                        <span class="text-xs font-bold uppercase opacity-70">AA Lg</span>
                         {#if passes(currentWcag, 'AA Large')}
                             <Check class="size-4 text-green-500" />
                         {:else}
-                            <X class="size-4 text-red-500 opacity-50" />
+                            <X class="size-4 text-red-500 opacity-70" />
                         {/if}
                     </div>
                     <div class="flex flex-col items-center gap-1">
-                        <span class="text-[10px] font-bold uppercase opacity-50">AA</span>
+                        <span class="text-xs font-bold uppercase opacity-70">AA</span>
                         {#if passes(currentWcag, 'AA')}
                             <Check class="size-4 text-green-500" />
                         {:else}
-                            <X class="size-4 text-red-500 opacity-50" />
+                            <X class="size-4 text-red-500 opacity-70" />
                         {/if}
                     </div>
                     <div class="flex flex-col items-center gap-1">
-                        <span class="text-[10px] font-bold uppercase opacity-50">AAA</span>
+                        <span class="text-xs font-bold uppercase opacity-70">AAA</span>
                         {#if passes(currentWcag, 'AAA')}
                             <Check class="size-4 text-green-500" />
                         {:else}
-                            <X class="size-4 text-red-500 opacity-50" />
+                            <X class="size-4 text-red-500 opacity-70" />
                         {/if}
                     </div>
                 {/if}
