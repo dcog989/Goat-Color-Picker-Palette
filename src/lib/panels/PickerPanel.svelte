@@ -521,13 +521,12 @@
                 <div class="relative h-4">
                     <div
                         class="
-                          checkerboard pointer-events-none absolute inset-0
-                          overflow-hidden rounded-full
+                          checkerboard-alpha absolute inset-0 overflow-hidden rounded-full
                         ">
-                        <div
-                            class="size-full [background:var(--alpha-grad)]"
-                            style:--alpha-grad={getGradientStyle('alpha')}>
-                        </div>
+                    </div>
+                    <div
+                        class="pointer-events-none absolute inset-0 overflow-hidden rounded-full [background:var(--alpha-grad)]"
+                        style:--alpha-grad={getGradientStyle('alpha')}>
                     </div>
                     <input
                         type="range"
