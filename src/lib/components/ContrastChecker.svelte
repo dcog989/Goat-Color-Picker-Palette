@@ -196,12 +196,12 @@
                     style:background-color={customColorError ? 'transparent' : customColor}>
                     {#if customColorError}
                         <span
-                            class="absolute inset-0 flex items-center justify-center text-red-500 text-xs font-bold"
+                            class="absolute inset-0 flex items-center justify-center text-xs font-bold text-red-500"
                             >!</span>
                     {/if}
                 </div>
                 {#if customColorError}
-                    <div class="absolute -bottom-6 left-0 text-xs text-red-500 font-medium">
+                    <div class="absolute -bottom-6 left-0 text-xs font-medium text-red-500">
                         Invalid color format
                     </div>
                 {/if}

@@ -161,9 +161,9 @@
                 bind:value={searchQuery}
                 placeholder="Search 30,000+ colors..."
                 class="
-                  mb-4 w-full shrink-0 rounded-md border border-(--ui-border)
-                  bg-(--ui-card) p-4 font-mono text-sm shadow-inner outline-none
-                  focus:ring-2 focus:ring-brand/20
+                  focus:ring-brand/20 mb-4 w-full shrink-0 rounded-md border
+                  border-(--ui-border) bg-(--ui-card) p-4 font-mono text-sm shadow-inner
+                  outline-none focus:ring-2
                 " />
 
             {#if isLoading}

@@ -92,8 +92,8 @@
                         <button
                             onclick={(e) => app.copy(exportItem.content, e)}
                             class="
-                              cursor-pointer rounded-sm px-3 py-1 text-xs
-                              font-bold text-brand uppercase transition-colors
+                              text-brand cursor-pointer rounded-sm px-3 py-1
+                              text-xs font-bold uppercase transition-colors
                               hover:bg-(--ui-bg) hover:underline
                             ">
                             Copy
