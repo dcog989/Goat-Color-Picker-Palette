@@ -314,6 +314,7 @@
                             max="1"
                             step="0.01"
                             bind:value={color.l}
+                            aria-label="Lightness"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -336,6 +337,7 @@
                             max="0.37"
                             step="0.001"
                             bind:value={color.c}
+                            aria-label="Chroma"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -358,6 +360,7 @@
                             max="360"
                             step="0.1"
                             bind:value={color.h}
+                            aria-label="Hue"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -384,6 +387,7 @@
                             max="255"
                             bind:value={localRgb.r}
                             onchange={updateRgbFromLocal}
+                            aria-label="Red"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -409,6 +413,7 @@
                             max="255"
                             bind:value={localRgb.g}
                             onchange={updateRgbFromLocal}
+                            aria-label="Green"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -434,6 +439,7 @@
                             max="255"
                             bind:value={localRgb.b}
                             onchange={updateRgbFromLocal}
+                            aria-label="Blue"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -458,6 +464,7 @@
                             max="360"
                             bind:value={localHsl.h}
                             onchange={updateHslFromLocal}
+                            aria-label="HSL Hue"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -481,6 +488,7 @@
                             max="100"
                             bind:value={localHsl.s}
                             onchange={updateHslFromLocal}
+                            aria-label="Saturation"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -504,6 +512,7 @@
                             max="100"
                             bind:value={localHsl.l}
                             onchange={updateHslFromLocal}
+                            aria-label="HSL Lightness"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
                               bg-transparent
@@ -537,6 +546,7 @@
                         max="1"
                         step="0.01"
                         bind:value={color.alpha}
+                        aria-label="Alpha"
                         class="
                           absolute inset-0 z-10 size-full cursor-ew-resize
                           rounded-full bg-transparent

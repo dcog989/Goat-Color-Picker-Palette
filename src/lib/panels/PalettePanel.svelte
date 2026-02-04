@@ -45,6 +45,7 @@
             <select
                 id="paletteVariable"
                 bind:value={engine.genAxis}
+                aria-label="Palette generation variable"
                 class="
                   min-w-35 flex-1 cursor-pointer rounded-lg border
                   border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs

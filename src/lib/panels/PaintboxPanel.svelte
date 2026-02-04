@@ -49,6 +49,7 @@
                 <select
                     id="paintboxSort"
                     bind:value={paintbox.sortMode}
+                    aria-label="Sort paintbox by"
                     class="
                       flex-1 cursor-pointer rounded-lg border
                       border-(--ui-border) bg-(--ui-bg) px-2 py-1.5 text-xs
