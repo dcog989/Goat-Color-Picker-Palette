@@ -1,10 +1,10 @@
 <script lang="ts">
     import { Image, LayersPlus, X } from 'lucide-svelte';
     import { onDestroy } from 'svelte';
+    import Swatch from '../components/Swatch.svelte';
     import { IMAGE_ANALYSIS } from '../constants';
     import { getApp } from '../context';
     import type { SortMode } from '../stores/image.svelte';
-    import Swatch from '../components/Swatch.svelte';
 
     const { image: imageAnalyzer, paintbox, toast } = getApp();
 
@@ -92,7 +92,7 @@
                     for="img-upload"
                     class="
                       flex h-full min-h-65 cursor-pointer flex-col items-center
-                      justify-center rounded-2xl border-2 border-dashed
+                      justify-center rounded-xl border-2 border-dashed
                       bg-(--ui-bg) p-12 transition-all
                     "
                     class:border-brand={isDragging}
