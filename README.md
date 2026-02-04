@@ -22,6 +22,6 @@ A modern, perceptually uniform color workspace built for the post-sRGB era.
 
 ## Development
 
-- Install dependencies: `npm install` + `npm update`
-- Start development server: `npm run dev`
-- Build for production: `npm run build`
+- Install dependencies: `bun install` + `bun update`
+- Start development server: `bun run dev`
+- Build for production: `bun run build`

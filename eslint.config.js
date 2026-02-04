@@ -1,11 +1,11 @@
 import js from '@eslint/js';
-import tailwindcss from 'eslint-plugin-better-tailwindcss';
 import prettier from 'eslint-config-prettier';
+import tailwindcss from 'eslint-plugin-better-tailwindcss';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
-import ts from 'typescript-eslint';
+import tseslint from 'typescript-eslint';
 
-export default ts.config(
+export default tseslint.config(
     {
         ignores: [
             'build/',
@@ -18,7 +18,7 @@ export default ts.config(
         ],
     },
     js.configs.recommended,
-    ...ts.configs.recommended,
+    ...tseslint.configs.recommended,
     ...svelte.configs['flat/recommended'],
     prettier,
     ...svelte.configs['flat/prettier'],
@@ -66,7 +66,7 @@ export default ts.config(
         files: ['**/*.svelte', '**/*.svelte.ts'],
         languageOptions: {
             parserOptions: {
-                parser: ts.parser,
+                parser: tseslint.parser,
             },
         },
         rules: {

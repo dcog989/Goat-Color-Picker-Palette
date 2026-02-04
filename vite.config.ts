@@ -14,5 +14,16 @@ export default defineConfig({
     },
     build: {
         target: 'esnext',
+        minify: 'esbuild',
+        sourcemap: true, // Add for debugging
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    // Split vendor bundles
+                    'color-libs': ['culori', 'apca-w3', 'color-name-list'],
+                    'ui-libs': ['lucide-svelte'],
+                },
+            },
+        },
     },
 });

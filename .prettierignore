@@ -4,8 +4,10 @@
 .git/
 .husky/
 *.log
+*.tsbuildinfo
 build/
 bun.lock
+coverage/
 dist/
 node_modules/
 out/

@@ -1,17 +1,4 @@
 {
-  "[json]": {
-    "editor.tabSize": 2
-  },
-  "[jsonc]": {
-    "editor.tabSize": 2
-  },
-  "[rust]": {
-    "editor.defaultFormatter": "rust-lang.rust-analyzer",
-    "editor.formatOnSave": true
-  },
-  "[yaml]": {
-    "editor.tabSize": 2
-  },
   "css.lint.unknownAtRules": "ignore",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
@@ -36,7 +23,11 @@
     "*.css": "css",
     "*.svelte": "svelte"
   },
-  "rust-analyzer.check.command": "clippy",
   "scss.lint.unknownAtRules": "ignore",
-  "typescript.preferences.autoImportFileExcludePatterns": ["**/node_modules/@tauri-apps/**"]
+  "[json][jsonc][markdown][yaml]": {
+    "editor.tabSize": 2
+  },
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  }
 }
