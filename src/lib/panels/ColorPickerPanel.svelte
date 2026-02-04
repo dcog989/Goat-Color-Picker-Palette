@@ -543,46 +543,46 @@
         </div>
 
         <!-- Large Swatch -->
-        <div
-            class="
-              checkerboard group relative h-32 min-h-50 w-full overflow-hidden
-              rounded-xl border border-white/10 shadow-xl
-              md:h-auto
-            ">
+        <div class="h-32 min-h-50 w-full rounded-lg border border-white/10 shadow-xl md:h-auto">
             <div
                 class="
-                  absolute inset-0 transition-colors
-                  [background:var(--swatch-bg)]
-                "
-                style:--swatch-bg={color.cssVar}>
-            </div>
-            <div
-                class="
-                  absolute inset-0 flex flex-col items-center justify-center
-                  gap-2 bg-black/10 opacity-0 backdrop-blur-[2px]
-                  transition-opacity
-                  group-hover:opacity-100
+                  checkerboard group relative size-full overflow-hidden rounded-lg
                 ">
-                <button
-                    onclick={(e) => app.copy(inputVal, e)}
+                <div
                     class="
-                      cursor-pointer rounded-full bg-white/30 p-3 text-white
-                      shadow-lg backdrop-blur-md transition-all
-                      hover:scale-115 hover:bg-white/40
+                      absolute inset-0 transition-colors
+                      [background:var(--swatch-bg)]
                     "
-                    title="Copy {color.mode.toUpperCase()}">
-                    <Copy class="size-4" />
-                </button>
-                <button
-                    onclick={(e) => addToPaintbox(e)}
+                    style:--swatch-bg={color.cssVar}>
+                </div>
+                <div
                     class="
-                      cursor-pointer rounded-full bg-white/30 p-3 text-white
-                      shadow-lg backdrop-blur-md transition-all
-                      hover:scale-115 hover:bg-white/40
-                    "
-                    title="Add to Paintbox">
-                    <Plus class="size-4" />
-                </button>
+                      absolute inset-0 flex flex-col items-center justify-center
+                      gap-2 bg-black/10 opacity-0 backdrop-blur-[2px]
+                      transition-opacity
+                      group-hover:opacity-100
+                    ">
+                    <button
+                        onclick={(e) => app.copy(inputVal, e)}
+                        class="
+                          cursor-pointer rounded-full bg-white/30 p-3 text-white
+                          shadow-lg backdrop-blur-md transition-all
+                          hover:scale-115 hover:bg-white/40
+                        "
+                        title="Copy {color.mode.toUpperCase()}">
+                        <Copy class="size-4" />
+                    </button>
+                    <button
+                        onclick={(e) => addToPaintbox(e)}
+                        class="
+                          cursor-pointer rounded-full bg-white/30 p-3 text-white
+                          shadow-lg backdrop-blur-md transition-all
+                          hover:scale-115 hover:bg-white/40
+                        "
+                        title="Add to Paintbox">
+                        <Plus class="size-4" />
+                    </button>
+                </div>
             </div>
         </div>
     </div>
