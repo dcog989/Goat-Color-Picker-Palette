@@ -52,7 +52,7 @@
                     class="
                       flex-1 cursor-pointer rounded-lg border
                       border-(--ui-border) bg-(--ui-bg) px-2 py-1.5 text-xs
-                      font-bold uppercase transition-all outline-none
+                      font-bold uppercase transition-colors duration-200 outline-none
                       focus:border-(--current-color)
                       sm:flex-none
                     ">
@@ -67,8 +67,9 @@
                     class="
                       shrink-0 rounded-lg border border-(--ui-border)
                       bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm
-                      transition-all
-                      hover:bg-red-500 hover:text-white
+                      transition duration-200
+                      will-change-transform hover:bg-red-500
+                      hover:text-white
                       {paintbox.items.length > 0
                         ? 'opacity-100'
                         : `pointer-events-none opacity-35`}"
@@ -97,7 +98,8 @@
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
                   bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
-                  transition-all
+                  transition duration-200
+                  will-change-transform hover:scale-105
                   hover:bg-(--current-color)
                 ">PNG</button>
             <button
@@ -106,16 +108,27 @@
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
                   bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
-                  transition-all
+                  transition duration-200
+                  will-change-transform hover:scale-105
                   hover:bg-(--current-color)
                 ">SVG</button>
             <button
-                onclick={() => exportPdf(app)}
+                onclick={async () => {
+                    const btn = document.activeElement as HTMLButtonElement;
+                    const originalText = btn?.textContent ?? 'PDF';
+                    if (btn) btn.textContent = '...';
+                    try {
+                        await exportPdf(app);
+                    } finally {
+                        if (btn) btn.textContent = originalText;
+                    }
+                }}
                 class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
                   bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
-                  transition-all
+                  transition duration-200
+                  will-change-transform hover:scale-105
                   hover:bg-(--current-color)
                 ">PDF</button>
             <button
@@ -124,7 +137,8 @@
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
                   bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
-                  transition-all
+                  transition duration-200
+                  will-change-transform hover:scale-105
                   hover:bg-(--current-color)
                 ">Code</button>
         </div>

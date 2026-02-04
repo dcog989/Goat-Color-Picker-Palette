@@ -52,6 +52,25 @@
                 margin: 0;
                 padding: 0;
             }
+
+            /* Preload hint for faster font/CSS loading */
+            @font-face {
+                font-family: 'system-ui';
+                src: local('system-ui');
+                font-display: swap;
+            }
+
+            /* Prevent layout shift during load */
+            #app {
+                min-height: 100vh;
+                contain: layout style paint;
+            }
+
+            /* GPU acceleration for animations */
+            .will-change-transform {
+                will-change: transform;
+                transform: translateZ(0);
+            }
         </style>
     </head>
 

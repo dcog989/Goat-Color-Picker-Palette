@@ -207,7 +207,7 @@
                     onchange={handleInput}
                     class="
                       w-full rounded-md border bg-(--ui-bg) py-2 pr-8 pl-3
-                      font-mono text-base uppercase transition-all outline-none
+                      font-mono text-base uppercase transition-shadow duration-200 outline-none
                       focus:ring-2 focus:ring-(--current-color)
                       {hasError ? 'border-red-500 ring-2 ring-red-500/20' : `border-(--ui-border)`}"
                     placeholder="Paste color..." />
@@ -236,10 +236,12 @@
             <button
                 onclick={togglePrecision}
                 class="
-                  group relative shrink-0 rounded-md border border-(--ui-border)
-                  bg-(--ui-bg) p-2 transition-all
-                  hover:bg-(--current-color)
-                ">
+                      group relative shrink-0 rounded-md border border-(--ui-border)
+                      bg-(--ui-bg) p-2
+                      transition duration-200
+                      will-change-transform
+                      hover:bg-(--current-color)
+                    ">
                 {#if app.precision === 'precise'}
                     <DecimalsArrowRight
                         class="
@@ -276,7 +278,8 @@
                     onclick={() => (color.mode = m as 'oklch' | 'rgb' | 'hsl')}
                     class="
                       rounded-sm px-4 py-2 text-xs font-black uppercase
-                      transition-all
+                      transition duration-200
+                      will-change-transform
                       {color.mode === m
                         ? 'text-on-current bg-(--current-color)'
                         : 'hover:bg-(--ui-card)'}">
@@ -559,15 +562,17 @@
                     class="
                       absolute inset-0 flex flex-col items-center justify-center
                       gap-2 bg-black/10 opacity-0 backdrop-blur-[2px]
-                      transition-opacity
+                      transition-opacity duration-200
                       group-hover:opacity-100
                     ">
                     <button
                         onclick={(e) => app.copy(inputVal, e)}
                         class="
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
-                          shadow-lg backdrop-blur-md transition-all
-                          hover:scale-115 hover:bg-white/40
+                          shadow-lg backdrop-blur-md
+                          transition-transform duration-200
+                          will-change-transform hover:scale-115
+                          hover:bg-white/40
                         "
                         title="Copy {color.mode.toUpperCase()}">
                         <Copy class="size-4" />
@@ -576,8 +581,10 @@
                         onclick={(e) => addToPaintbox(e)}
                         class="
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
-                          shadow-lg backdrop-blur-md transition-all
-                          hover:scale-115 hover:bg-white/40
+                          shadow-lg backdrop-blur-md
+                          transition-transform duration-200
+                          will-change-transform hover:scale-115
+                          hover:bg-white/40
                         "
                         title="Add to Paintbox">
                         <Plus class="size-4" />
@@ -595,8 +602,10 @@
                 class="
                   group flex max-w-25 cursor-pointer items-center
                   overflow-hidden rounded-full border border-(--ui-border)
-                  bg-(--ui-bg) px-4 py-2 text-xs transition-colors
-                  hover:max-w-75 hover:bg-(--current-color)
+                  bg-(--ui-bg) px-4 py-2 text-xs
+                  transition duration-200
+                  will-change-transform hover:max-w-75
+                  hover:bg-(--current-color)
                 ">
                 <span
                     class="
@@ -606,7 +615,7 @@
                 <span
                     class="
                       text-on-current w-0 font-mono whitespace-nowrap opacity-0
-                      transition-all duration-300
+                      transition duration-300
                       group-hover:w-auto group-hover:opacity-100
                     ">{format.value}</span>
                 <Copy

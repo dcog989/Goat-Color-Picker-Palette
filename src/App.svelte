@@ -35,25 +35,41 @@
         app.destroy();
     });
 
-    // Global CSS variable sync
+    // Global CSS variable sync with optimized batching
+    let rafId: number | null = null;
     $effect(() => {
-        // Sync these reactively
+        // Read reactive values
         const cssVar = color.cssVar;
         const hStr = color.h.toString();
         const l = color.l;
 
-        requestAnimationFrame(() => {
-            document.documentElement.style.setProperty('--current-color', cssVar);
-            document.documentElement.style.setProperty('--current-hue', hStr);
-            document.body.style.backgroundColor = cssVar;
+        // Cancel pending update
+        if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+        }
+
+        // Batch DOM writes in next frame
+        rafId = requestAnimationFrame(() => {
+            const root = document.documentElement;
+            const body = document.body;
+
+            // Batch all style changes together to minimize reflows
+            root.style.cssText += `--current-color: ${cssVar}; --current-hue: ${hStr};`;
+            body.style.backgroundColor = cssVar;
 
             // Set data attribute for contrast-dependent styling
             const needsDarkText = l > 0.55;
-            document.documentElement.setAttribute(
-                'data-color-contrast',
-                needsDarkText ? 'dark' : 'light',
-            );
+            root.setAttribute('data-color-contrast', needsDarkText ? 'dark' : 'light');
+
+            rafId = null;
         });
+
+        // Cleanup on effect re-run
+        return () => {
+            if (rafId !== null) {
+                cancelAnimationFrame(rafId);
+            }
+        };
     });
 
     const handleKeyboard = (e: KeyboardEvent) => {

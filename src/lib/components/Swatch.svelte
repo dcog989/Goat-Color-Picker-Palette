@@ -45,7 +45,8 @@
     tabindex="0"
     class="
       group relative aspect-square cursor-pointer overflow-hidden rounded-lg
-      border border-white/10 shadow-md transition-all
+      border border-white/10 shadow-md
+      will-change-transform
       [background:var(--swatch-color)]
       hover:scale-105
     "
@@ -68,7 +69,8 @@
             }}
             class="{getActionClass()}
               cursor-pointer rounded-full p-3 shadow-sm
-              transition-transform
+              transition-transform duration-200
+              will-change-transform
               hover:scale-110
             "
             title="Add to paintbox"
@@ -82,7 +84,8 @@
             }}
             class="{getActionClass()}
               cursor-pointer rounded-full p-3 shadow-sm
-              transition-transform
+              transition-transform duration-200
+              will-change-transform
               hover:scale-110
             "
             title="Copy"

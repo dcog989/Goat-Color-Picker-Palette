@@ -1,8 +1,17 @@
 import { converter, formatHex, formatHsl, formatRgb, parse, type Oklch } from 'culori/fn';
-import { jsPDF } from 'jspdf';
 import { EXPORT } from '../constants';
 import type { RootStore } from '../stores/root.svelte';
 import { formatOklch } from './format';
+
+// Dynamically import jsPDF only when needed
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let jsPDFModule: any = null;
+async function getJsPDF() {
+    if (!jsPDFModule) {
+        jsPDFModule = await import('jspdf');
+    }
+    return jsPDFModule.jsPDF;
+}
 
 export type ExportFormat = 'hex' | 'rgb' | 'hsl' | 'oklch';
 
@@ -316,9 +325,12 @@ ${swatches}
     downloadFile(svg.trim(), generateFilename(root, 'svg'), 'image/svg+xml');
 }
 
-export function exportPdf(root: RootStore): void {
+export async function exportPdf(root: RootStore): Promise<void> {
     const source = getColorSource(root);
     const colors = source.colors;
+
+    // Dynamically import jsPDF
+    const jsPDF = await getJsPDF();
 
     // A4 Portrait
     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });

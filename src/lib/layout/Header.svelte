@@ -18,8 +18,9 @@
     class="
       hover:text-on-current
       fixed top-6 right-6 z-60 cursor-pointer rounded-full border
-      border-(--ui-border) bg-(--ui-card) p-3 shadow-lg transition-all
-      hover:bg-(--current-color)
+      border-(--ui-border) bg-(--ui-card) p-3 shadow-lg
+      transition duration-300
+      hover:scale-110 hover:bg-(--current-color)
     "
     aria-label="Toggle Theme"
     title="Toggle Light/Dark Mode">
@@ -48,8 +49,9 @@
             class="
               hover:text-on-current
               cursor-pointer rounded-full border border-(--ui-border)
-              bg-(--ui-card) p-2 shadow-lg transition-all
-              hover:bg-(--current-color)
+              bg-(--ui-card) p-2 shadow-lg
+              transition duration-300
+              hover:scale-110 hover:bg-(--current-color)
               sm:p-3
             "
             aria-label="Search colors"
@@ -76,8 +78,9 @@
             class="
               hover:text-on-current
               cursor-pointer rounded-full border border-(--ui-border)
-              bg-(--ui-card) p-2 shadow-lg transition-all
-              hover:bg-(--current-color)
+              bg-(--ui-card) p-2 shadow-lg
+              transition duration-300
+              hover:scale-110 hover:bg-(--current-color)
               sm:p-3
             "
             aria-label="Random color"
