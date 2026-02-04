@@ -279,7 +279,7 @@ select {
     background: linear-gradient(
         to right,
         oklch(var(--picker-l) 0 var(--picker-h)),
-        oklch(var(--picker-l) var(--picker-max-c) var(--picker-h))
+        oklch(var(--picker-l) 0.37 var(--picker-h))
     );
 }
 
