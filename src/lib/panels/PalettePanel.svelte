@@ -78,8 +78,7 @@
                         onclick={removeRow}
                         class="
                           rounded-md p-1.5 text-(--ui-text-muted)
-                          transition-colors
-                          hover:bg-(--ui-card) hover:text-(--current-color)
+                          transition-all hover:bg-(--current-color) hover:text-white
                         "
                         title="Remove Row"
                         aria-label="Decrease steps">
@@ -89,8 +88,7 @@
                         onclick={addRow}
                         class="
                           rounded-md p-1.5 text-(--ui-text-muted)
-                          transition-colors
-                          hover:bg-(--ui-card) hover:text-(--current-color)
+                          transition-all hover:bg-(--current-color) hover:text-white
                         "
                         title="Add Row"
                         aria-label="Increase steps">
