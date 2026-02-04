@@ -1,6 +1,6 @@
 ﻿<script lang="ts">
     import type { ColorName } from 'color-name-list';
-    import { AlertCircle } from 'lucide-svelte';
+    import { CircleAlert } from 'lucide-svelte';
     import { onDestroy, onMount } from 'svelte';
     import { getApp } from '../context';
     import { loadColorNames } from '../data/colors';
@@ -196,7 +196,7 @@
             {:else if loadError}
                 <div class="flex flex-1 items-center justify-center">
                     <div class="text-center text-red-500">
-                        <AlertCircle class="mx-auto mb-4 size-12" />
+                        <CircleAlert class="mx-auto mb-4 size-12" />
                         <div class="text-sm">{loadError}</div>
                     </div>
                 </div>
