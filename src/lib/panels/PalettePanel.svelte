@@ -1,7 +1,7 @@
 <script lang="ts">
     import { LayersPlus, ListMinus, ListPlus } from 'lucide-svelte';
-    import { getApp } from '../context';
     import Swatch from '../components/Swatch.svelte';
+    import { getApp } from '../context';
 
     const { engine, paintbox, toast } = getApp();
 
@@ -15,7 +15,7 @@
     };
 
     const removeRow = () => {
-        engine.genSteps = Math.max(2, engine.genSteps - 4);
+        engine.genSteps = Math.max(4, engine.genSteps - 4);
     };
 </script>
 
@@ -76,9 +76,11 @@
                     ">
                     <button
                         onclick={removeRow}
+                        disabled={engine.genSteps <= 4}
                         class="
                           rounded-md p-1.5 text-(--ui-text-muted)
                           transition-all hover:bg-(--current-color) hover:text-white
+                          {engine.genSteps <= 4 ? 'pointer-events-none opacity-55' : ''}
                         "
                         title="Remove Row"
                         aria-label="Decrease steps">
