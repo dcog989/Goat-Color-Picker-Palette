@@ -7,11 +7,11 @@
     import ExportModal from './lib/modals/ExportModal.svelte';
     import InfoModal from './lib/modals/InfoModal.svelte';
     import SearchModal from './lib/modals/SearchModal.svelte';
+    import ColorPickerPanel from './lib/panels/ColorPickerPanel.svelte';
     import ContrastPanel from './lib/panels/ContrastPanel.svelte';
     import ImagePanel from './lib/panels/ImagePanel.svelte';
     import PaintboxPanel from './lib/panels/PaintboxPanel.svelte';
     import PalettePanel from './lib/panels/PalettePanel.svelte';
-    import PickerPanel from './lib/panels/PickerPanel.svelte';
     import { RootStore } from './lib/stores/root.svelte';
 
     // Create Root Store
@@ -121,7 +121,7 @@
           lg:grid-cols-2
         ">
         <div class="lg:col-span-2">
-            <PickerPanel />
+            <ColorPickerPanel />
         </div>
 
         <PalettePanel />

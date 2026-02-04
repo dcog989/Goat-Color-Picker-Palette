@@ -521,7 +521,7 @@
                 <div class="relative h-4">
                     <div
                         class="
-                          checkerboard-alpha absolute inset-0 overflow-hidden rounded-full
+                          checkerboard absolute inset-0 overflow-hidden rounded-full
                         ">
                     </div>
                     <div

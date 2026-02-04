@@ -26,9 +26,6 @@
     --ui-text-muted: oklch(0.5 0.08 var(--current-hue));
     --ui-border: oklch(0.85 0.03 var(--current-hue));
     --ui-on-current: oklch(0.98 0.02 var(--current-hue));
-
-    /* Checkerboard */
-    --checker-color: #aaa;
 }
 
 :root.dark {
@@ -39,9 +36,6 @@
     --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
     --ui-border: oklch(0.38 0.07 var(--current-hue));
     --ui-on-current: oklch(0.98 0.02 var(--current-hue));
-
-    /* Checkerboard */
-    --checker-color: #333;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,63 +46,27 @@
         --ui-text-muted: oklch(0.6 0.06 var(--current-hue));
         --ui-border: oklch(0.38 0.07 var(--current-hue));
         --ui-on-current: oklch(0.98 0.02 var(--current-hue));
-
-        --checker-color: #333;
     }
 }
 
 .checkerboard {
-    background-image:
-        linear-gradient(45deg, var(--checker-color) 25%, transparent 25%),
-        linear-gradient(-45deg, var(--checker-color) 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, var(--checker-color) 75%),
-        linear-gradient(-45deg, transparent 75%, var(--checker-color) 75%);
-    background-size: 12px 12px;
-    background-position:
-        0 0,
-        0 6px,
-        6px -6px,
-        -6px 0px;
-}
-
-.checkerboard-alpha {
     background-color: #fff;
-    background-image:
-        linear-gradient(45deg, #aaa 25%, transparent 25%),
-        linear-gradient(-45deg, #aaa 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #aaa 75%),
-        linear-gradient(-45deg, transparent 75%, #aaa 75%);
-    background-size: 12px 12px;
-    background-position:
-        0 0,
-        0 6px,
-        6px -6px,
-        -6px 0px;
+    background-image: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%);
+    background-size: 16px 16px;
 }
 
 body {
     min-height: 100vh;
+    background-color: #999;
     background-image:
         linear-gradient(var(--current-color), var(--current-color)),
-        linear-gradient(45deg, var(--checker-color) 25%, transparent 25%),
-        linear-gradient(-45deg, var(--checker-color) 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, var(--checker-color) 75%),
-        linear-gradient(-45deg, transparent 75%, var(--checker-color) 75%);
+        repeating-conic-gradient(#000 0% 25%, #fff 0% 50%);
     background-size:
         100% 100%,
-        12px 12px,
-        12px 12px,
-        12px 12px,
-        12px 12px;
-    background-position:
-        0 0,
-        0 0,
-        0 6px,
-        6px -6px,
-        -6px 0px;
+        64px 64px;
     background-attachment: fixed;
     color: var(--ui-text);
-    @apply antialiased selection:bg-brand selection:text-white;
+    @apply selection:bg-brand antialiased selection:text-white;
     transition: background-color 500ms ease;
 }
 

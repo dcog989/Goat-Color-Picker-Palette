@@ -44,7 +44,6 @@ export default tseslint.config(
                         '^group-hover:text-on-current$',
                         // Component classes
                         '^checkerboard$',
-                        '^checkerboard-alpha$',
                         '^custom-scrollbar$',
                     ],
                 },
