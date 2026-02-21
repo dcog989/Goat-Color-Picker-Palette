@@ -109,9 +109,9 @@ class AndroidXmlExportStrategy implements ExportStrategy {
         source.colors.forEach((item, i) => {
             const name = generateColorName(i, source).replace(/-/g, '_');
             const useFormat = exportFormat === 'rgb' ? 'hex' : exportFormat;
-            lines.push(
-                `  <color name="${name}">${formatColor(item.css, useFormat).toUpperCase()}</color>`,
-            );
+            const hex = formatColor(item.css, useFormat).toUpperCase();
+            const androidHex = hex.length === 9 ? `#${hex.slice(7, 9)}${hex.slice(1, 7)}` : hex;
+            lines.push(`  <color name="${name}">${androidHex}</color>`);
         });
         lines.push('</resources>');
         return lines.join('\n');
