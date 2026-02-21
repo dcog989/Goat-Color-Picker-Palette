@@ -108,7 +108,11 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
                 Math.abs(current.b - other.b);
 
             if (dist < threshold) {
-                mergedCount += other.count;
+                const total = mergedCount + other.count;
+                current.r = Math.round((current.r * mergedCount + other.r * other.count) / total);
+                current.g = Math.round((current.g * mergedCount + other.g * other.count) / total);
+                current.b = Math.round((current.b * mergedCount + other.b * other.count) / total);
+                mergedCount = total;
                 mergedIndices[j] = 1;
             }
         }
