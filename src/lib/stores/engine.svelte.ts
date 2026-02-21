@@ -19,35 +19,26 @@ export class EngineStore {
     genSteps = $state(8);
     genAxis = $state<GenerationMode>('l');
 
-    // Derived properties
-    contrastWhite: string;
-    contrastBlack: string;
-    isHarmonyMode: boolean;
-    generated: string[];
-
     constructor(colorStore: ColorStore) {
         this.#colorStore = colorStore;
+    }
 
-        // Initialize derived properties in constructor to ensure #colorStore is available
-        this.contrastWhite = $derived.by(() => {
-            const raw = calcAPCA('#ffffff', this.#colorStore.hex);
-            return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(
-                PRECISION.CONTRAST_DISPLAY,
-            );
-        });
+    get contrastWhite(): string {
+        const raw = calcAPCA('#ffffff', this.#colorStore.hex);
+        return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(PRECISION.CONTRAST_DISPLAY);
+    }
 
-        this.contrastBlack = $derived.by(() => {
-            const raw = calcAPCA('#000000', this.#colorStore.hex);
-            return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(
-                PRECISION.CONTRAST_DISPLAY,
-            );
-        });
+    get contrastBlack(): string {
+        const raw = calcAPCA('#000000', this.#colorStore.hex);
+        return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(PRECISION.CONTRAST_DISPLAY);
+    }
 
-        this.isHarmonyMode = $derived(isHarmonyMode(this.genAxis));
+    get isHarmonyMode(): boolean {
+        return isHarmonyMode(this.genAxis);
+    }
 
-        this.generated = $derived.by(() => {
-            return generateColors(this.#getBaseColor(), this.genAxis, this.genSteps);
-        });
+    get generated(): string[] {
+        return generateColors(this.#getBaseColor(), this.genAxis, this.genSteps);
     }
 
     init() {
