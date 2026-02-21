@@ -177,6 +177,18 @@ export class ColorStore {
         if (converted) this.#current = converted;
     }
 
+    setRgbValues(r: number, g: number, b: number) {
+        const newRgb: Rgb = { mode: 'rgb', r: r / 255, g: g / 255, b: b / 255, alpha: this.alpha };
+        const converted = toOklch(newRgb);
+        if (converted) this.#current = converted;
+    }
+
+    setHslValues(h: number, s: number, l: number) {
+        const newHsl: Hsl = { mode: 'hsl', h, s: s / 100, l: l / 100, alpha: this.alpha };
+        const converted = toOklch(newHsl);
+        if (converted) this.#current = converted;
+    }
+
     // HSL Helpers
     get hslComp() {
         const hsl = toHsl(this.#mappedRgb) ?? { mode: 'hsl', h: 0, s: 0, l: 0 };

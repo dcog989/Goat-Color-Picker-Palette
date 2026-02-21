@@ -34,19 +34,11 @@
         }
     });
 
-    // Update store from local RGB state (called on change event)
-    const updateRgbFromLocal = () => {
-        color.setRgb('r', localRgb.r);
-        color.setRgb('g', localRgb.g);
-        color.setRgb('b', localRgb.b);
-    };
+    // Update store from local RGB state (called on input event)
+    const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, localRgb.b);
 
-    // Update store from local HSL state (called on change event)
-    const updateHslFromLocal = () => {
-        color.setHsl('h', localHsl.h);
-        color.setHsl('s', localHsl.s);
-        color.setHsl('l', localHsl.l);
-    };
+    // Update store from local HSL state (called on input event)
+    const updateHslFromLocal = () => color.setHslValues(localHsl.h, localHsl.s, localHsl.l);
 
     let inputVal = $derived.by(() => {
         switch (color.mode) {
@@ -386,7 +378,7 @@
                             min="0"
                             max="255"
                             bind:value={localRgb.r}
-                            onchange={updateRgbFromLocal}
+                            oninput={updateRgbFromLocal}
                             aria-label="Red"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
@@ -412,7 +404,7 @@
                             min="0"
                             max="255"
                             bind:value={localRgb.g}
-                            onchange={updateRgbFromLocal}
+                            oninput={updateRgbFromLocal}
                             aria-label="Green"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
@@ -438,7 +430,7 @@
                             min="0"
                             max="255"
                             bind:value={localRgb.b}
-                            onchange={updateRgbFromLocal}
+                            oninput={updateRgbFromLocal}
                             aria-label="Blue"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
@@ -463,7 +455,7 @@
                             min="0"
                             max="360"
                             bind:value={localHsl.h}
-                            onchange={updateHslFromLocal}
+                            oninput={updateHslFromLocal}
                             aria-label="HSL Hue"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
@@ -487,7 +479,7 @@
                             min="0"
                             max="100"
                             bind:value={localHsl.s}
-                            onchange={updateHslFromLocal}
+                            oninput={updateHslFromLocal}
                             aria-label="Saturation"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
@@ -511,7 +503,7 @@
                             min="0"
                             max="100"
                             bind:value={localHsl.l}
-                            onchange={updateHslFromLocal}
+                            oninput={updateHslFromLocal}
                             aria-label="HSL Lightness"
                             class="
                               absolute inset-0 z-10 size-full rounded-full
