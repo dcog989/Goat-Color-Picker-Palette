@@ -54,7 +54,8 @@
             const body = document.body;
 
             // Batch all style changes together to minimize reflows
-            root.style.cssText += `--current-color: ${cssVar}; --current-hue: ${hStr};`;
+            root.style.setProperty('--current-color', cssVar);
+            root.style.setProperty('--current-hue', hStr);
             body.style.backgroundColor = cssVar;
 
             // Set data attribute for contrast-dependent styling
