@@ -94,12 +94,12 @@
 
             if (
                 rgb &&
-                rgb.r >= 0 &&
-                rgb.r <= 1 &&
-                rgb.g >= 0 &&
-                rgb.g <= 1 &&
-                rgb.b >= 0 &&
-                rgb.b <= 1
+                rgb.r >= -0.005 &&
+                rgb.r <= 1.005 &&
+                rgb.g >= -0.005 &&
+                rgb.g <= 1.005 &&
+                rgb.b >= -0.005 &&
+                rgb.b <= 1.005
             ) {
                 min = mid;
             } else {
