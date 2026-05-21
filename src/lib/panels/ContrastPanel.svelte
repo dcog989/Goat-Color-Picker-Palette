@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ContrastChecker from '../components/ContrastChecker.svelte';
+import ContrastChecker from '../components/ContrastChecker.svelte';
 </script>
 
 <section

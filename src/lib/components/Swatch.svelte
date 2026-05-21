@@ -1,43 +1,43 @@
 <script lang="ts">
-    import { Copy, Plus } from 'lucide-svelte';
-    import { converter, parse, type Oklch } from 'culori/fn';
-    import { getApp } from '../context';
+import { converter, type Oklch, parse } from 'culori/fn';
+import { Copy, Plus } from 'lucide-svelte';
+import { getApp } from '../context';
 
-    const { color, paintbox, toast } = getApp();
-    const toOklch = converter<Oklch>('oklch');
+const { color, paintbox, toast } = getApp();
+const toOklch = converter<Oklch>('oklch');
 
-    interface Props {
-        color: string;
-        index: number;
-        onSelect?: () => void;
-        dynamicClass?: boolean;
+interface Props {
+    color: string;
+    index: number;
+    onSelect?: () => void;
+    dynamicClass?: boolean;
+}
+
+let { color: swatchColor, index, onSelect, dynamicClass = true }: Props = $props();
+
+const copy = (e: MouseEvent) => {
+    const formatted = color.formatColor(swatchColor);
+    navigator.clipboard.writeText(formatted);
+    toast.show('Copied', e);
+};
+
+const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        color.set(swatchColor);
     }
+};
 
-    let { color: swatchColor, index, onSelect, dynamicClass = true }: Props = $props();
-
-    const copy = (e: MouseEvent) => {
-        const formatted = color.formatColor(swatchColor);
-        navigator.clipboard.writeText(formatted);
-        toast.show('Copied', e);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            color.set(swatchColor);
-        }
-    };
-
-    const getActionClass = () => {
-        if (!dynamicClass) {
-            return 'bg-white/30 hover:bg-white/50 text-white';
-        }
-        const parsed = parse(swatchColor);
-        const l = parsed ? (toOklch(parsed)?.l ?? 0) : 0;
-        return l > 0.6
-            ? 'bg-black/10 hover:bg-black/20 text-black'
-            : 'bg-white/20 hover:bg-white/30 text-white';
-    };
+const getActionClass = () => {
+    if (!dynamicClass) {
+        return 'bg-white/30 hover:bg-white/50 text-white';
+    }
+    const parsed = parse(swatchColor);
+    const l = parsed ? (toOklch(parsed)?.l ?? 0) : 0;
+    return l > 0.6
+        ? 'bg-black/10 hover:bg-black/20 text-black'
+        : 'bg-white/20 hover:bg-white/30 text-white';
+};
 </script>
 
 <div

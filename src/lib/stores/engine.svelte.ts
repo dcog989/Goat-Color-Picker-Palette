@@ -1,9 +1,9 @@
 import { calcAPCA } from 'apca-w3';
 import type { Oklch } from 'culori/fn';
 import { PRECISION } from '../constants';
-import { generateColors, isHarmonyMode, type GenerationMode } from '../utils/harmonies';
-import type { ColorStore } from './color.svelte';
+import { type GenerationMode, generateColors, isHarmonyMode } from '../utils/harmonies';
 import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
+import type { ColorStore } from './color.svelte';
 
 export class EngineStore {
     closestName = $state('Searching...');

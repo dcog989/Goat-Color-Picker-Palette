@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { quadOut } from 'svelte/easing';
-    import { fade, scale } from 'svelte/transition';
-    import ColorLibrary from '../components/ColorLibrary.svelte';
+import { quadOut } from 'svelte/easing';
+import { fade, scale } from 'svelte/transition';
+import ColorLibrary from '../components/ColorLibrary.svelte';
 
-    interface Props {
-        onClose: () => void;
-    }
+interface Props {
+    onClose: () => void;
+}
 
-    let { onClose }: Props = $props();
+let { onClose }: Props = $props();
 </script>
 
 <div

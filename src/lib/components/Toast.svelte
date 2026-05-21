@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { getApp } from '../context';
+import { getApp } from '../context';
 
-    const { toast } = getApp();
+const { toast } = getApp();
 
-    const isCursor = $derived(toast.active?.x !== undefined && toast.active?.y !== undefined);
+const isCursor = $derived(toast.active?.x !== undefined && toast.active?.y !== undefined);
 </script>
 
 {#if toast.active}

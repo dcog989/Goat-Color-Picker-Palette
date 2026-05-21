@@ -1,23 +1,23 @@
 <script lang="ts">
-    import { getApp } from '../context';
-    import { exportCode, strategies, type ExportFormat } from '../utils/export';
+import { getApp } from '../context';
+import { type ExportFormat, exportCode, strategies } from '../utils/export';
 
-    interface Props {
-        onClose: () => void;
-    }
+interface Props {
+    onClose: () => void;
+}
 
-    let { onClose }: Props = $props();
+let { onClose }: Props = $props();
 
-    const app = getApp();
+const app = getApp();
 
-    let exportFormat = $state<ExportFormat>('oklch');
+let exportFormat = $state<ExportFormat>('oklch');
 
-    const exports = $derived.by(() =>
-        Object.entries(strategies).map(([key, strategy]) => ({
-            name: strategy.name,
-            content: exportCode(app, key, exportFormat),
-        })),
-    );
+const exports = $derived.by(() =>
+    Object.entries(strategies).map(([key, strategy]) => ({
+        name: strategy.name,
+        content: exportCode(app, key, exportFormat),
+    })),
+);
 </script>
 
 <div

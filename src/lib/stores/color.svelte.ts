@@ -1,6 +1,8 @@
 import {
     converter,
     formatHex,
+    type Hsl,
+    type Lab,
     modeHsl,
     modeLab,
     modeLrgb,
@@ -8,14 +10,12 @@ import {
     modeOklch,
     modeRgb,
     modeXyz65,
-    parse,
-    toGamut,
-    useMode,
-    type Hsl,
-    type Lab,
     type Oklab,
     type Oklch,
+    parse,
     type Rgb,
+    toGamut,
+    useMode,
 } from 'culori/fn';
 import {
     formatCmyk,

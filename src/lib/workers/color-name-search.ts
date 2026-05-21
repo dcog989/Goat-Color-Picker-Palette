@@ -5,10 +5,10 @@
     modeOklch,
     modeRgb,
     modeXyz65,
-    parse,
-    useMode,
     type Oklab,
     type Oklch,
+    parse,
+    useMode,
 } from 'culori/fn';
 
 useMode(modeRgb);

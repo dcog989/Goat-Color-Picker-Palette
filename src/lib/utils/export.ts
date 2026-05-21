@@ -1,10 +1,10 @@
-import { converter, formatHex, formatHsl, formatRgb, parse, type Oklch } from 'culori/fn';
+import { converter, formatHex, formatHsl, formatRgb, type Oklch, parse } from 'culori/fn';
 import { EXPORT } from '../constants';
 import type { RootStore } from '../stores/root.svelte';
 import { formatOklch } from './format';
 
 // Dynamically import jsPDF only when needed
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: jsPDF type is dynamic
 let jsPDFModule: any = null;
 async function getJsPDF() {
     if (!jsPDFModule) {

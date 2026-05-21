@@ -7,11 +7,9 @@
       "!.svelte-kit/",
       "!dist/",
       "!node_modules/",
-      "!eslint.config.js",
       "!vite.config.ts",
       "!svelte.config.js",
-      "!scripts/",
-      "src/app.css"
+      "!scripts/"
     ]
   },
   "formatter": {
@@ -45,11 +43,12 @@
       "recommended": true,
       "complexity": {
         "noUselessConstructor": "warn",
-        "noUselessSwitchCase": "warn"
+        "noUselessSwitchCase": "warn",
+        "noImportantStyles": "off"
       },
       "correctness": {
-        "noUnusedVariables": "warn",
-        "noUnusedImports": "warn"
+        "noUnusedVariables": "off",
+        "noUnusedImports": "off"
       },
       "style": {
         "useImportType": "error",
@@ -65,7 +64,7 @@
   },
   "overrides": [
     {
-      "includes": ["*.md", "*.yml", "*.yaml", "*.toml", "*.json", ".prettierrc"],
+      "includes": ["*.md", "*.yml", "*.yaml", "*.toml", "*.json"],
       "formatter": {
         "indentWidth": 2
       }

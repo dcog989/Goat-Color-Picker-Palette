@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { quadOut } from 'svelte/easing';
-    import { fade, scale } from 'svelte/transition';
+import { quadOut } from 'svelte/easing';
+import { fade, scale } from 'svelte/transition';
 
-    interface Props {
-        title: string;
-        content: string;
-        onClose: () => void;
-    }
+interface Props {
+    title: string;
+    content: string;
+    onClose: () => void;
+}
 
-    let { title, content, onClose }: Props = $props();
+let { title, content, onClose }: Props = $props();
 </script>
 
 <div

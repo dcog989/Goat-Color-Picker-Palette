@@ -1,67 +1,69 @@
 <script lang="ts">
-    import { Image, LayersPlus, X } from 'lucide-svelte';
-    import { onDestroy } from 'svelte';
-    import Swatch from '../components/Swatch.svelte';
-    import { IMAGE_ANALYSIS } from '../constants';
-    import { getApp } from '../context';
-    import type { SortMode } from '../stores/image.svelte';
+import { Image, LayersPlus, X } from 'lucide-svelte';
+import { onDestroy } from 'svelte';
+import Swatch from '../components/Swatch.svelte';
+import { IMAGE_ANALYSIS } from '../constants';
+import { getApp } from '../context';
+import type { SortMode } from '../stores/image.svelte';
 
-    const { image: imageAnalyzer, paintbox, toast } = getApp();
+const { image: imageAnalyzer, paintbox, toast } = getApp();
 
-    let isDragging = $state(false);
+let isDragging = $state(false);
 
-    const gridColors = $derived.by(() => {
-        const colors = imageAnalyzer.extractedPalette;
-        return Array.from({ length: 24 }, (_, i) => colors[i] ?? null);
-    });
+const gridColors = $derived.by(() => {
+    const colors = imageAnalyzer.extractedPalette;
+    return Array.from({ length: 24 }, (_, i) => colors[i] ?? null);
+});
 
-    const handleFiles = async (files: FileList | null) => {
-        if (files?.[0]) {
-            try {
-                await imageAnalyzer.analyze(files[0]);
-            } catch (err) {
-                toast.show(err instanceof Error ? err.message : 'Failed to analyze image');
-            }
+const handleFiles = async (files: FileList | null) => {
+    if (files?.[0]) {
+        try {
+            await imageAnalyzer.analyze(files[0]);
+        } catch (err) {
+            toast.show(err instanceof Error ? err.message : 'Failed to analyze image');
         }
-    };
+    }
+};
 
-    const handleInput = (e: Event) => {
-        const input = e.target as HTMLInputElement;
-        handleFiles(input.files);
-    };
+const handleInput = (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    handleFiles(input.files);
+};
 
-    const onDragOver = (e: DragEvent) => {
-        e.preventDefault();
-        isDragging = true;
-    };
+const onDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    isDragging = true;
+};
 
-    const onDragLeave = () => {
-        isDragging = false;
-    };
+const onDragLeave = () => {
+    isDragging = false;
+};
 
-    const onDrop = (e: DragEvent) => {
-        e.preventDefault();
-        isDragging = false;
-        if (e.dataTransfer?.files) {
-            handleFiles(e.dataTransfer.files);
-        }
-    };
+const onDrop = (e: DragEvent) => {
+    e.preventDefault();
+    isDragging = false;
+    if (e.dataTransfer?.files) {
+        handleFiles(e.dataTransfer.files);
+    }
+};
 
-    const addAll = (e?: MouseEvent) => {
-        imageAnalyzer.extractedPalette.forEach((c) => paintbox.add(c));
-        toast.show('Added All to Paintbox', e);
-    };
-
-    const sortOptions: { label: string; value: SortMode }[] = [
-        { label: 'Dominant', value: 'dominant' },
-        { label: 'Vibrant', value: 'vibrant' },
-        { label: 'Bright', value: 'bright' },
-        { label: 'Dark', value: 'dark' },
-    ];
-
-    onDestroy(() => {
-        imageAnalyzer.destroy();
+const addAll = (e?: MouseEvent) => {
+    imageAnalyzer.extractedPalette.forEach((c) => {
+        paintbox.add(c);
     });
+    toast.show('Added All to Paintbox', e);
+};
+
+const sortOptions: { label: string; value: SortMode }[] = [
+    { label: 'Dominant', value: 'dominant' },
+    { label: 'Vibrant', value: 'vibrant' },
+    { label: 'Bright', value: 'bright' },
+    { label: 'Dark', value: 'dark' },
+];
+
+onDestroy(() => {
+    imageAnalyzer.destroy();
+});
 </script>
 
 <section

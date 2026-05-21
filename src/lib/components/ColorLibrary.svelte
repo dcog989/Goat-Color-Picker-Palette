@@ -1,135 +1,135 @@
 ﻿<script lang="ts">
-    import type { ColorName } from 'color-name-list';
-    import { CircleAlert } from 'lucide-svelte';
-    import { onDestroy, onMount } from 'svelte';
-    import { getApp } from '../context';
-    import { loadColorNames } from '../data/colors';
-    import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
+import type { ColorName } from 'color-name-list';
+import { CircleAlert } from 'lucide-svelte';
+import { onDestroy, onMount } from 'svelte';
+import { getApp } from '../context';
+import { loadColorNames } from '../data/colors';
+import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
 
-    const { color: colorStore } = getApp();
+const { color: colorStore } = getApp();
 
-    let searchQuery = $state('');
-    let searchInput = $state<HTMLInputElement>();
+let searchQuery = $state('');
+let searchInput = $state<HTMLInputElement>();
 
-    let colorNameList: ColorName[] = [];
-    let workerFilteredColors: Array<{ name: string; hex: string }> = $state([]);
+let colorNameList: ColorName[] = [];
+let workerFilteredColors: Array<{ name: string; hex: string }> = $state([]);
 
-    let isLoading = $state(true);
-    let isFiltering = $state(false);
-    let loadError = $state<string | null>(null);
+let isLoading = $state(true);
+let isFiltering = $state(false);
+let loadError = $state<string | null>(null);
 
-    let filterWorker: Worker | null = null;
+let filterWorker: Worker | null = null;
 
-    const INITIAL_DISPLAY_LIMIT = 100;
-    let displayedColors = $state<Array<{ name: string; hex: string }>>([]);
+const INITIAL_DISPLAY_LIMIT = 100;
+let displayedColors = $state<Array<{ name: string; hex: string }>>([]);
 
-    onMount(async () => {
-        filterWorker = new ColorNameSearchWorker();
+onMount(async () => {
+    filterWorker = new ColorNameSearchWorker();
 
-        filterWorker.onmessage = (e) => {
-            if (e.data.type === 'filterResult') {
-                workerFilteredColors = e.data.colors || [];
-                isFiltering = false;
+    filterWorker.onmessage = (e) => {
+        if (e.data.type === 'filterResult') {
+            workerFilteredColors = e.data.colors || [];
+            isFiltering = false;
+        }
+    };
+
+    try {
+        colorNameList = await loadColorNames();
+        displayedColors = colorNameList.slice(0, INITIAL_DISPLAY_LIMIT);
+    } catch (error) {
+        console.error('Failed to load color names:', error);
+        loadError = 'Failed to load color library. Please refresh the page.';
+    } finally {
+        isLoading = false;
+    }
+});
+
+onDestroy(() => {
+    filterWorker?.terminate();
+});
+
+$effect(() => {
+    if (filterWorker && searchQuery.trim()) {
+        isFiltering = true;
+        filterWorker.postMessage({
+            type: 'filter',
+            query: searchQuery,
+            limit: 500,
+        });
+    } else if (!searchQuery.trim() && !isLoading) {
+        displayedColors = colorNameList.slice(0, INITIAL_DISPLAY_LIMIT);
+    }
+});
+
+let filteredColors = $derived.by((): Array<{ name: string; hex: string }> => {
+    if (isLoading) return [];
+    return searchQuery.trim() ? workerFilteredColors : displayedColors;
+});
+
+let _scrollTop = $state(0);
+let throttledScrollTop = $state(0);
+let viewportHeight = $state(400);
+const itemHeight = 56;
+const buffer = 5;
+let scrollThrottleTimeout: number | null = null;
+
+function handleScroll(e: Event) {
+    const target = e.target as HTMLElement;
+    _scrollTop = target.scrollTop;
+
+    if (scrollThrottleTimeout !== null) {
+        return;
+    }
+
+    scrollThrottleTimeout = window.setTimeout(() => {
+        throttledScrollTop = _scrollTop;
+        scrollThrottleTimeout = null;
+
+        if (!searchQuery.trim() && !isLoading) {
+            const scrolledNearBottom =
+                _scrollTop + viewportHeight > displayedColors.length * itemHeight - 500;
+            if (scrolledNearBottom && displayedColors.length < colorNameList.length) {
+                const nextBatch = colorNameList.slice(
+                    displayedColors.length,
+                    displayedColors.length + 100,
+                );
+                displayedColors = [...displayedColors, ...nextBatch];
             }
-        };
-
-        try {
-            colorNameList = await loadColorNames();
-            displayedColors = colorNameList.slice(0, INITIAL_DISPLAY_LIMIT);
-        } catch (error) {
-            console.error('Failed to load color names:', error);
-            loadError = 'Failed to load color library. Please refresh the page.';
-        } finally {
-            isLoading = false;
         }
-    });
+    }, 16);
+}
 
-    onDestroy(() => {
-        filterWorker?.terminate();
-    });
+let totalHeight = $derived(filteredColors.length * itemHeight);
+let startIndex = $derived(Math.max(0, Math.floor(throttledScrollTop / itemHeight) - buffer));
+let endIndex = $derived(
+    Math.min(
+        filteredColors.length,
+        Math.ceil((throttledScrollTop + viewportHeight) / itemHeight) + buffer,
+    ),
+);
+let visibleItems = $derived(filteredColors.slice(startIndex, endIndex));
+let offsetY = $derived(startIndex * itemHeight);
 
-    $effect(() => {
-        if (filterWorker && searchQuery.trim()) {
-            isFiltering = true;
-            filterWorker.postMessage({
-                type: 'filter',
-                query: searchQuery,
-                limit: 500,
-            });
-        } else if (!searchQuery.trim() && !isLoading) {
-            displayedColors = colorNameList.slice(0, INITIAL_DISPLAY_LIMIT);
-        }
-    });
+interface Props {
+    onSelect?: () => void;
+    forceExpanded?: boolean;
+}
 
-    let filteredColors = $derived.by((): Array<{ name: string; hex: string }> => {
-        if (isLoading) return [];
-        return searchQuery.trim() ? workerFilteredColors : displayedColors;
-    });
+let { onSelect, forceExpanded = false }: Props = $props();
 
-    let _scrollTop = $state(0);
-    let throttledScrollTop = $state(0);
-    let viewportHeight = $state(400);
-    const itemHeight = 56;
-    const buffer = 5;
-    let scrollThrottleTimeout: number | null = null;
+function selectColor(hex: string) {
+    colorStore.set(hex);
+    onSelect?.();
+}
 
-    function handleScroll(e: Event) {
-        const target = e.target as HTMLElement;
-        _scrollTop = target.scrollTop;
+let isExpanded = $state(false);
+let shouldShowContent = $derived(forceExpanded || isExpanded);
 
-        if (scrollThrottleTimeout !== null) {
-            return;
-        }
-
-        scrollThrottleTimeout = window.setTimeout(() => {
-            throttledScrollTop = _scrollTop;
-            scrollThrottleTimeout = null;
-
-            if (!searchQuery.trim() && !isLoading) {
-                const scrolledNearBottom =
-                    _scrollTop + viewportHeight > displayedColors.length * itemHeight - 500;
-                if (scrolledNearBottom && displayedColors.length < colorNameList.length) {
-                    const nextBatch = colorNameList.slice(
-                        displayedColors.length,
-                        displayedColors.length + 100,
-                    );
-                    displayedColors = [...displayedColors, ...nextBatch];
-                }
-            }
-        }, 16);
+$effect(() => {
+    if (shouldShowContent && searchInput) {
+        searchInput.focus();
     }
-
-    let totalHeight = $derived(filteredColors.length * itemHeight);
-    let startIndex = $derived(Math.max(0, Math.floor(throttledScrollTop / itemHeight) - buffer));
-    let endIndex = $derived(
-        Math.min(
-            filteredColors.length,
-            Math.ceil((throttledScrollTop + viewportHeight) / itemHeight) + buffer,
-        ),
-    );
-    let visibleItems = $derived(filteredColors.slice(startIndex, endIndex));
-    let offsetY = $derived(startIndex * itemHeight);
-
-    interface Props {
-        onSelect?: () => void;
-        forceExpanded?: boolean;
-    }
-
-    let { onSelect, forceExpanded = false }: Props = $props();
-
-    function selectColor(hex: string) {
-        colorStore.set(hex);
-        onSelect?.();
-    }
-
-    let isExpanded = $state(false);
-    let shouldShowContent = $derived(forceExpanded || isExpanded);
-
-    $effect(() => {
-        if (shouldShowContent && searchInput) {
-            searchInput.focus();
-        }
-    });
+});
 </script>
 
 <div class="flex h-full flex-col">

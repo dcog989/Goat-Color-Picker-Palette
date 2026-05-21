@@ -1,4 +1,4 @@
-import { converter, parse, type Oklch } from 'culori/fn';
+import { converter, type Oklch, parse } from 'culori/fn';
 import { IMAGE_ANALYSIS } from '../constants';
 import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
 
