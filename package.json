@@ -33,6 +33,7 @@
     "lucide-svelte": "^1.0.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
     "@eslint/js": "^10.0.1",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@tailwindcss/node": "^4.3.0",
