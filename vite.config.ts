@@ -19,12 +19,18 @@ export default defineConfig({
         cssMinify: true,
         rollupOptions: {
             output: {
-                manualChunks: {
-                    // Split vendor bundles
-                    'color-libs': ['culori', 'apca-w3', 'color-name-list'],
-                    'ui-libs': ['lucide-svelte'],
+                manualChunks(id: string) {
+                    if (
+                        id.includes('culori') ||
+                        id.includes('apca-w3') ||
+                        id.includes('color-name-list')
+                    ) {
+                        return 'color-libs';
+                    }
+                    if (id.includes('lucide-svelte')) {
+                        return 'ui-libs';
+                    }
                 },
-                // Add content hashes for long-term caching
                 entryFileNames: 'assets/[name]-[hash].js',
                 chunkFileNames: 'assets/[name]-[hash].js',
                 assetFileNames: 'assets/[name]-[hash][extname]',

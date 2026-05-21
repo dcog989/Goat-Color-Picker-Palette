@@ -101,7 +101,7 @@
                     </div>
                     <pre
                         class="
-                          max-h-50 overflow-x-auto overflow-y-auto rounded-2xl
+                          max-h-50 overflow-auto rounded-2xl
                           border border-(--ui-border) bg-(--ui-bg) p-4 font-mono
                           text-xs
                           md:p-6
