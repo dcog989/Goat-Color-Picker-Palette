@@ -87,11 +87,12 @@ let stats = $derived.by(() => {
         const b = isFg ? t : color.hex;
 
         const rawApca = calcAPCA(f, b);
-        const apcaValue = typeof rawApca === 'number' && !isNaN(rawApca) ? Math.abs(rawApca) : 0;
+        const apcaValue =
+            typeof rawApca === 'number' && !Number.isNaN(rawApca) ? Math.abs(rawApca) : 0;
         result[m].apca = Math.round(apcaValue);
 
         const ratio = getWcagRatio(f, b);
-        result[m].wcag = !isNaN(ratio) && isFinite(ratio) ? ratio : 0;
+        result[m].wcag = !Number.isNaN(ratio) && Number.isFinite(ratio) ? ratio : 0;
     });
 
     return result;

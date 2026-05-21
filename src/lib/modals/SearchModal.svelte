@@ -12,8 +12,8 @@ let { onClose }: Props = $props();
 
 <div
     class="
-      fixed inset-0 z-50 flex items-center justify-center p-4
-      md:p-8
+      fixed inset-0 z-50 flex items-start justify-center px-4 pt-20
+      md:px-8 md:pt-28
     "
     transition:fade={{ duration: 300, easing: quadOut }}>
     <button

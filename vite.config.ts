@@ -10,7 +10,7 @@ export default defineConfig({
         format: 'es',
     },
     optimizeDeps: {
-        include: ['culori', 'culori/all', 'culori/fn', 'color-name-list', 'apca-w3'],
+        include: ['culori', 'culori/all', 'culori/fn', 'apca-w3'],
     },
     build: {
         target: 'esnext',
@@ -18,13 +18,10 @@ export default defineConfig({
         sourcemap: true, // Add for debugging
         cssMinify: true,
         rollupOptions: {
+            external: ['html2canvas', 'canvg', 'dompurify'],
             output: {
                 manualChunks(id: string) {
-                    if (
-                        id.includes('culori') ||
-                        id.includes('apca-w3') ||
-                        id.includes('color-name-list')
-                    ) {
+                    if (id.includes('culori') || id.includes('apca-w3')) {
                         return 'color-libs';
                     }
                     if (id.includes('lucide-svelte')) {

@@ -68,7 +68,7 @@ export async function loadColorNames(): Promise<ColorName[]> {
     // Start loading
     loadPromise = (async () => {
         try {
-            const source = await import('color-name-list');
+            const source = await import('color-name-list/short');
             const list = extractColorList(source);
 
             if (list.length === 0) {

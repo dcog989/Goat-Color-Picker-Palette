@@ -30,7 +30,7 @@ export class ImageStore {
                     const val: Oklch = converted || { mode: 'oklch', l: 0, c: 0, h: 0 };
                     cache.set(hex, val);
                 }
-                return cache.get(hex)!;
+                return cache.get(hex) as Oklch;
             };
         })();
 
@@ -44,7 +44,6 @@ export class ImageStore {
             case 'dark':
                 candidates.sort((a, b) => getOklch(a.color).l - getOklch(b.color).l);
                 break;
-            case 'dominant':
             default:
                 candidates.sort((a, b) => b.pixels - a.pixels);
                 break;
