@@ -598,7 +598,7 @@
 
     <!-- Output Formats -->
     <div class="flex flex-wrap gap-2 border-t border-(--ui-border) pt-4">
-        {#each [{ label: 'OKLCH', value: color.display }, { label: 'HEX', value: color.hex }, { label: 'RGB', value: color.rgb }, { label: 'HSL', value: color.hsl }, { label: 'OKLAB', value: color.oklab }, { label: 'LAB', value: color.lab }, { label: 'CMYK', value: color.cmyk }] as format (format.label)}
+        {#each [{ label: 'OKLCH', value: color.display }, { label: 'HEX', value: color.hexa }, { label: 'RGB', value: color.rgb }, { label: 'HSL', value: color.hsl }, { label: 'OKLAB', value: color.oklab }, { label: 'LAB', value: color.lab }, { label: 'CMYK', value: color.cmyk }] as format (format.label)}
             <button
                 onclick={(e) => app.copy(format.value, e)}
                 class="
