@@ -13,7 +13,7 @@ Goat Color is a modern, perceptually uniform color workspace built for the post-
 - **Color Libraries:**
   - `culori` v4.0 - Color manipulation and conversion
   - `apca-w3` v0.1.9 - APCA contrast calculation
-  - `color-name-list` v14.17 - Named color database (30,000+ colors)
+  - `color-name-list` v14.17 - Named color database (2000+ colors)
 - **UI Icons:** lucide-svelte v0.562.0
 - **PDF Export:** jspdf v4.0
 
@@ -24,7 +24,7 @@ Goat Color is a modern, perceptually uniform color workspace built for the post-
 3. **Image Analysis** - Extract dominant and vibrant palettes using local K-Means clustering
 4. **Accessibility Tools** - Real-time APCA (Lc) and WCAG 2.1 contrast checking
 5. **Smart Paintbox** - Persistent storage with multi-format export
-6. **Color Library** - Search 30,000+ named colors
+6. **Color Library** - Search 2000+ named colors
 7. **Export Formats** - Tailwind, CSS, SVG, PDF
 
 ## Project Structure

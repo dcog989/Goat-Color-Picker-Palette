@@ -135,14 +135,17 @@ $effect(() => {
 <div class="flex h-full flex-col">
     {#if !forceExpanded}
         <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-xs font-black tracking-widest uppercase opacity-30">Color Library</h3>
+            <h3 class="text-xs font-black tracking-widest uppercase opacity-30">
+                Color Library
+            </h3>
             <button
                 onclick={() => (isExpanded = !isExpanded)}
                 class="
                   text-xs font-bold uppercase opacity-40 transition-opacity
                   hover:opacity-100
-                ">
-                {isExpanded ? 'Collapse' : 'Expand'}
+                "
+            >
+                {isExpanded ? "Collapse" : "Expand"}
             </button>
         </div>
     {/if}
@@ -153,18 +156,20 @@ $effect(() => {
               flex flex-1 flex-col overflow-hidden rounded-xl border
               border-(--ui-border) bg-(--ui-bg) p-4
               md:p-6
-            ">
+            "
+        >
             <input
                 id="searchInput"
                 bind:this={searchInput}
                 type="text"
                 bind:value={searchQuery}
-                placeholder="Search 30,000+ colors..."
+                placeholder="Search 2000+ colors..."
                 class="
                   focus:ring-brand/20 mb-4 w-full shrink-0 rounded-md border
                   border-(--ui-border) bg-(--ui-card) p-4 font-mono text-sm shadow-inner
                   outline-none focus:ring-2
-                " />
+                "
+            />
 
             {#if isLoading}
                 <div class="flex flex-1 items-center justify-center">
@@ -174,10 +179,12 @@ $effect(() => {
                               mx-auto mb-4 size-12 animate-spin rounded-full
                               border-4 border-(--ui-border)
                               border-t-(--current-color)
-                            ">
+                            "
+                        ></div>
+                        <div class="text-sm opacity-60">
+                            Loading color library...
                         </div>
-                        <div class="text-sm opacity-60">Loading color library...</div>
-                        <div class="mt-1 text-xs opacity-40">30,000+ colors</div>
+                        <div class="mt-1 text-xs opacity-40">2000+ colors</div>
                     </div>
                 </div>
             {:else if isFiltering}
@@ -188,8 +195,8 @@ $effect(() => {
                               mx-auto mb-4 size-12 animate-spin rounded-full
                               border-4 border-(--ui-border)
                               border-t-(--current-color)
-                            ">
-                        </div>
+                            "
+                        ></div>
                         <div class="text-sm opacity-60">Searching...</div>
                     </div>
                 </div>
@@ -204,16 +211,18 @@ $effect(() => {
                 <div
                     class="custom-scrollbar relative flex-1 overflow-y-auto"
                     onscroll={handleScroll}
-                    bind:clientHeight={viewportHeight}>
+                    bind:clientHeight={viewportHeight}
+                >
                     {#if filteredColors.length > 0}
                         <div
                             style:height="{totalHeight}px"
-                            class="pointer-events-none absolute top-0 left-0 w-full">
-                        </div>
+                            class="pointer-events-none absolute top-0 left-0 w-full"
+                        ></div>
 
                         <div
                             style:transform="translateY({offsetY}px)"
-                            class="absolute top-0 left-0 w-full px-1">
+                            class="absolute top-0 left-0 w-full px-1"
+                        >
                             {#each visibleItems as color (color.hex + color.name)}
                                 <button
                                     onclick={() => selectColor(color.hex)}
@@ -222,7 +231,8 @@ $effect(() => {
                                       items-center gap-4 rounded-md p-2
                                       text-left transition-colors
                                       hover:bg-(--ui-card)
-                                    ">
+                                    "
+                                >
                                     <div
                                         class="
                                           size-10 shrink-0 rounded-sm border
@@ -232,21 +242,25 @@ $effect(() => {
                                           group-hover:scale-110
                                         "
                                         style:--item-bg={color.hex}
-                                        title={colorStore.formatColor(color.hex)}>
-                                    </div>
+                                        title={colorStore.formatColor(
+                                            color.hex,
+                                        )}
+                                    ></div>
                                     <div class="min-w-0 flex-1">
                                         <div
                                             class="
                                               truncate text-sm font-bold
                                               text-(--ui-text)
-                                            ">
+                                            "
+                                        >
                                             {color.name}
                                         </div>
                                         <div
                                             class="
                                               font-mono text-xs tracking-wider
                                               uppercase opacity-70
-                                            ">
+                                            "
+                                        >
                                             {color.hex}
                                         </div>
                                     </div>
@@ -258,7 +272,8 @@ $effect(() => {
                             class="
                               flex h-full items-center justify-center text-sm
                               opacity-60
-                            ">
+                            "
+                        >
                             No colors found
                         </div>
                     {/if}
@@ -288,7 +303,9 @@ $effect(() => {
 
     @media (prefers-color-scheme: dark) {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: oklch(from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9);
+            background: oklch(
+                from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9
+            );
         }
     }
 </style>

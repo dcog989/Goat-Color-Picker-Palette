@@ -139,9 +139,9 @@ function findClosestName(current: Oklch): string {
     for (let i = 0; i < len; i++) {
         const ptr = i * 3;
 
-        const vL = coords[ptr]!;
-        const va = coords[ptr + 1]!;
-        const vb = coords[ptr + 2]!;
+        const vL = coords[ptr] as number;
+        const va = coords[ptr + 1] as number;
+        const vb = coords[ptr + 2] as number;
 
         const dL = vL - tL;
         const da = va - ta;
@@ -156,7 +156,7 @@ function findClosestName(current: Oklch): string {
     }
 
     if (bestIndex !== -1) {
-        return names[bestIndex]!;
+        return names[bestIndex] as string;
     }
 
     return 'Custom Color';
@@ -177,8 +177,8 @@ function filterColors(query: string, limit: number): Array<{ name: string; hex: 
 
     for (let i = 0; i < len && results.length < limit; i++) {
         const name = names[i];
-        if (name && name.toLowerCase().includes(q)) {
-            results.push({ name, hex: hexValues[i]! });
+        if (name?.toLowerCase().includes(q)) {
+            results.push({ name, hex: hexValues[i] as string });
         }
     }
 

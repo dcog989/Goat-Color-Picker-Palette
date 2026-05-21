@@ -12,10 +12,6 @@ export class PaintboxStore {
     #initialized = false;
     sortMode = $state<PaintboxSortMode>('recent');
 
-    constructor() {
-        // Defer loading to init()
-    }
-
     init() {
         if (this.#initialized) return;
         this.#initialized = true;
@@ -79,7 +75,7 @@ export class PaintboxStore {
         if (item.oklch) {
             return item as SavedColor;
         }
-        const parsed = parse(item.css!);
+        const parsed = parse(item.css ?? '');
         const oklch = (parsed ? toOklch(parsed) : undefined) || DEFAULT_OKLCH;
         return { ...item, oklch } as SavedColor;
     }
@@ -94,7 +90,6 @@ export class PaintboxStore {
                 return list.sort((a, b) => b.oklch.l - a.oklch.l);
             case 'chroma':
                 return list.sort((a, b) => b.oklch.c - a.oklch.c);
-            case 'recent':
             default:
                 return list.sort((a, b) => b.timestamp - a.timestamp);
         }
