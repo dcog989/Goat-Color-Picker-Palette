@@ -59,7 +59,7 @@
     "bun": ">=1.3.9"
   },
   "lint-staged": {
-    "*.{js,ts,mts,cts,jsx,tsx,svelte,css,md,mdx,json,yaml,yml,toml,html}": [
+    "*.{js,ts,mts,cts,jsx,tsx,svelte,css,json,yaml,yml,toml,html}": [
       "bunx biome check --write --no-errors-on-unmatched"
     ]
   },
