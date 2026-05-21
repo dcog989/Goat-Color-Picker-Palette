@@ -1,25 +1,25 @@
 <script lang="ts">
-    import { CircleX } from 'lucide-svelte';
-    import PaintboxGrid from '../components/PaintboxGrid.svelte';
-    import { getApp } from '../context';
-    import type { PaintboxSortMode } from '../stores/paintbox.svelte';
-    import { exportPdf, exportPng, exportSvg } from '../utils/export';
+import { CircleX } from 'lucide-svelte';
+import PaintboxGrid from '../components/PaintboxGrid.svelte';
+import { getApp } from '../context';
+import type { PaintboxSortMode } from '../stores/paintbox.svelte';
+import { exportPdf, exportPng, exportSvg } from '../utils/export';
 
-    interface Props {
-        onExport: () => void;
-    }
+interface Props {
+    onExport: () => void;
+}
 
-    let { onExport }: Props = $props();
+let { onExport }: Props = $props();
 
-    const app = getApp();
-    const { paintbox } = app;
+const app = getApp();
+const { paintbox } = app;
 
-    const sortOptions: { label: string; value: PaintboxSortMode }[] = [
-        { label: 'Recent', value: 'recent' },
-        { label: 'Hue', value: 'hue' },
-        { label: 'Bright', value: 'lightness' },
-        { label: 'Vivid', value: 'chroma' },
-    ];
+const sortOptions: { label: string; value: PaintboxSortMode }[] = [
+    { label: 'Recent', value: 'recent' },
+    { label: 'Hue', value: 'hue' },
+    { label: 'Bright', value: 'lightness' },
+    { label: 'Vivid', value: 'chroma' },
+];
 </script>
 
 <section

@@ -1,16 +1,16 @@
 <script lang="ts">
-    import { Moon, RefreshCw, Search, Sun } from 'lucide-svelte';
-    import { fade } from 'svelte/transition';
-    import Title from '../components/Title.svelte';
-    import { getApp } from '../context';
+import { Moon, RefreshCw, Search, Sun } from 'lucide-svelte';
+import { fade } from 'svelte/transition';
+import Title from '../components/Title.svelte';
+import { getApp } from '../context';
 
-    interface Props {
-        onSearch: () => void;
-    }
+interface Props {
+    onSearch: () => void;
+}
 
-    let { onSearch }: Props = $props();
+let { onSearch }: Props = $props();
 
-    const { color, engine, theme } = getApp();
+const { color, engine, theme } = getApp();
 </script>
 
 <button

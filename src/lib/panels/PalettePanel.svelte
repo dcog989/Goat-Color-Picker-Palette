@@ -1,22 +1,24 @@
 <script lang="ts">
-    import { LayersPlus, ListMinus, ListPlus } from 'lucide-svelte';
-    import Swatch from '../components/Swatch.svelte';
-    import { getApp } from '../context';
+import { LayersPlus, ListMinus, ListPlus } from 'lucide-svelte';
+import Swatch from '../components/Swatch.svelte';
+import { getApp } from '../context';
 
-    const { engine, paintbox, toast } = getApp();
+const { engine, paintbox, toast } = getApp();
 
-    const addAll = (e?: MouseEvent) => {
-        engine.generated.forEach((c: string) => paintbox.add(c));
-        toast.show('Added All to Paintbox', e);
-    };
+const addAll = (e?: MouseEvent) => {
+    engine.generated.forEach((c: string) => {
+        paintbox.add(c);
+    });
+    toast.show('Added All to Paintbox', e);
+};
 
-    const addRow = () => {
-        engine.genSteps = Math.min(20, engine.genSteps + 4);
-    };
+const addRow = () => {
+    engine.genSteps = Math.min(20, engine.genSteps + 4);
+};
 
-    const removeRow = () => {
-        engine.genSteps = Math.max(4, engine.genSteps - 4);
-    };
+const removeRow = () => {
+    engine.genSteps = Math.max(4, engine.genSteps - 4);
+};
 </script>
 
 <section

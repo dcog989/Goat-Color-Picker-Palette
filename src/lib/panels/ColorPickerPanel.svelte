@@ -1,164 +1,158 @@
 <script lang="ts">
-    import {
-        Copy,
-        DecimalsArrowLeft,
-        DecimalsArrowRight,
-        Plus,
-        TriangleAlert,
-    } from 'lucide-svelte';
-    import { getApp } from '../context';
+import { Copy, DecimalsArrowLeft, DecimalsArrowRight, Plus, TriangleAlert } from 'lucide-svelte';
+import { getApp } from '../context';
 
-    const app = getApp();
-    const { color, paintbox, toast } = app;
+const app = getApp();
+const { color, paintbox, toast } = app;
 
-    let hasError = $state(false);
+let hasError = $state(false);
 
-    // Local state for RGB sliders to prevent jitter from round-trip conversion
-    let localRgb = $state({ r: 0, g: 0, b: 0 });
-    // Local state for HSL sliders to prevent jitter from round-trip conversion
-    let localHsl = $state({ h: 0, s: 0, l: 0 });
+// Local state for RGB sliders to prevent jitter from round-trip conversion
+let localRgb = $state({ r: 0, g: 0, b: 0 });
+// Local state for HSL sliders to prevent jitter from round-trip conversion
+let localHsl = $state({ h: 0, s: 0, l: 0 });
 
-    // Sync local RGB state from store when RGB mode is active or values change externally
-    $effect(() => {
-        if (color.mode === 'rgb') {
-            const rgb = color.rgbComp;
-            localRgb = { r: rgb.r, g: rgb.g, b: rgb.b };
-        }
-    });
+// Sync local RGB state from store when RGB mode is active or values change externally
+$effect(() => {
+    if (color.mode === 'rgb') {
+        const rgb = color.rgbComp;
+        localRgb = { r: rgb.r, g: rgb.g, b: rgb.b };
+    }
+});
 
-    // Sync local HSL state from store when HSL mode is active or values change externally
-    $effect(() => {
-        if (color.mode === 'hsl') {
-            const hsl = color.hslComp;
-            localHsl = { h: hsl.h, s: hsl.s, l: hsl.l };
-        }
-    });
-
-    // Update store from local RGB state (called on input event)
-    const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, localRgb.b);
-
-    // Update store from local HSL state (called on input event)
-    const updateHslFromLocal = () => color.setHslValues(localHsl.h, localHsl.s, localHsl.l);
-
-    let inputVal = $derived.by(() => {
-        switch (color.mode) {
-            case 'oklch':
-                return color.display;
-            case 'rgb':
-                return color.rgb;
-            case 'hsl':
-                return color.hsl;
-        }
-    });
-
-    const addToPaintbox = (e?: MouseEvent) => {
-        paintbox.add(color.hexa);
-        toast.show('Added to Paintbox', e);
-    };
-
-    const togglePrecision = () => {
-        app.precision = app.precision === 'precise' ? 'practical' : 'precise';
-    };
-
-    const handleInput = (e: Event) => {
-        const val = (e.target as HTMLInputElement).value;
-        if (color.set(val)) {
-            hasError = false;
-        } else {
-            hasError = true;
-            toast.show('Invalid color format');
-        }
-    };
-
-    import type { Oklch, Rgb } from 'culori/fn';
-    import { converter } from 'culori/fn';
-
-    // Converter to check if colors are in gamut
-    const toRgb = converter<Rgb>('rgb');
-
-    // Calculate max chroma for current L/H within sRGB gamut
-    // This gives us the practical limit for the gradient display
-    const maxChromaForCurrentLH = $derived.by((): number => {
-        const l = color.l;
-        const h = color.h;
-
-        // Binary search for max chroma within sRGB gamut
-        let min = 0;
-        let max = 0.4;
-        const epsilon = 0.001;
-
-        while (max - min > epsilon) {
-            const mid = (min + max) / 2;
-            const testColor: Oklch = { mode: 'oklch', l, c: mid, h, alpha: 1 };
-            const rgb = toRgb(testColor);
-
-            if (
-                rgb &&
-                rgb.r >= -0.005 &&
-                rgb.r <= 1.005 &&
-                rgb.g >= -0.005 &&
-                rgb.g <= 1.005 &&
-                rgb.b >= -0.005 &&
-                rgb.b <= 1.005
-            ) {
-                min = mid;
-            } else {
-                max = mid;
-            }
-        }
-
-        return min;
-    });
-
-    // Get CSS class for gradient backgrounds
-    // RGB gradients use inline styles (dynamic per-component)
-    // OKLCH/HSL gradients use CSS classes with custom properties (browser-optimized)
-    const getGradientClass = (type: string) => {
-        switch (type) {
-            case 'h':
-                return 'gradient-oklch-h';
-            case 'l':
-                return 'gradient-oklch-l';
-            case 'c':
-                return 'gradient-oklch-c';
-            case 'hsl-h':
-                return 'gradient-hsl-h';
-            case 'hsl-s':
-                return 'gradient-hsl-s';
-            case 'hsl-l':
-                return 'gradient-hsl-l';
-            default:
-                return '';
-        }
-    };
-
-    // Get inline gradient style for RGB and alpha gradients
-    const getGradientStyle = (type: string) => {
-        const { r, g, b } = color.rgbComp;
-
-        switch (type) {
-            case 'r':
-                return `linear-gradient(to right, rgb(0,${g},${b}), rgb(255,${g},${b}))`;
-            case 'g':
-                return `linear-gradient(to right, rgb(${r},0,${b}), rgb(${r},255,${b}))`;
-            case 'b':
-                return `linear-gradient(to right, rgb(${r},${g},0), rgb(${r},${g},255))`;
-            case 'alpha':
-                return `linear-gradient(to right, rgba(${r},${g},${b},0), rgba(${r},${g},${b},1))`;
-            default:
-                return 'transparent';
-        }
-    };
-
-    // Compute HSL values once for CSS custom properties
-    const hslValues = $derived.by(() => {
+// Sync local HSL state from store when HSL mode is active or values change externally
+$effect(() => {
+    if (color.mode === 'hsl') {
         const hsl = color.hslComp;
-        return {
-            h: Math.round(hsl.h),
-            s: Math.round(hsl.s),
-            l: Math.round(hsl.l),
-        };
-    });
+        localHsl = { h: hsl.h, s: hsl.s, l: hsl.l };
+    }
+});
+
+// Update store from local RGB state (called on input event)
+const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, localRgb.b);
+
+// Update store from local HSL state (called on input event)
+const updateHslFromLocal = () => color.setHslValues(localHsl.h, localHsl.s, localHsl.l);
+
+let inputVal = $derived.by(() => {
+    switch (color.mode) {
+        case 'oklch':
+            return color.display;
+        case 'rgb':
+            return color.rgb;
+        case 'hsl':
+            return color.hsl;
+    }
+});
+
+const addToPaintbox = (e?: MouseEvent) => {
+    paintbox.add(color.hexa);
+    toast.show('Added to Paintbox', e);
+};
+
+const togglePrecision = () => {
+    app.precision = app.precision === 'precise' ? 'practical' : 'precise';
+};
+
+const handleInput = (e: Event) => {
+    const val = (e.target as HTMLInputElement).value;
+    if (color.set(val)) {
+        hasError = false;
+    } else {
+        hasError = true;
+        toast.show('Invalid color format');
+    }
+};
+
+import type { Oklch, Rgb } from 'culori/fn';
+import { converter } from 'culori/fn';
+
+// Converter to check if colors are in gamut
+const toRgb = converter<Rgb>('rgb');
+
+// Calculate max chroma for current L/H within sRGB gamut
+// This gives us the practical limit for the gradient display
+const maxChromaForCurrentLH = $derived.by((): number => {
+    const l = color.l;
+    const h = color.h;
+
+    // Binary search for max chroma within sRGB gamut
+    let min = 0;
+    let max = 0.4;
+    const epsilon = 0.001;
+
+    while (max - min > epsilon) {
+        const mid = (min + max) / 2;
+        const testColor: Oklch = { mode: 'oklch', l, c: mid, h, alpha: 1 };
+        const rgb = toRgb(testColor);
+
+        if (
+            rgb &&
+            rgb.r >= -0.005 &&
+            rgb.r <= 1.005 &&
+            rgb.g >= -0.005 &&
+            rgb.g <= 1.005 &&
+            rgb.b >= -0.005 &&
+            rgb.b <= 1.005
+        ) {
+            min = mid;
+        } else {
+            max = mid;
+        }
+    }
+
+    return min;
+});
+
+// Get CSS class for gradient backgrounds
+// RGB gradients use inline styles (dynamic per-component)
+// OKLCH/HSL gradients use CSS classes with custom properties (browser-optimized)
+const getGradientClass = (type: string) => {
+    switch (type) {
+        case 'h':
+            return 'gradient-oklch-h';
+        case 'l':
+            return 'gradient-oklch-l';
+        case 'c':
+            return 'gradient-oklch-c';
+        case 'hsl-h':
+            return 'gradient-hsl-h';
+        case 'hsl-s':
+            return 'gradient-hsl-s';
+        case 'hsl-l':
+            return 'gradient-hsl-l';
+        default:
+            return '';
+    }
+};
+
+// Get inline gradient style for RGB and alpha gradients
+const getGradientStyle = (type: string) => {
+    const { r, g, b } = color.rgbComp;
+
+    switch (type) {
+        case 'r':
+            return `linear-gradient(to right, rgb(0,${g},${b}), rgb(255,${g},${b}))`;
+        case 'g':
+            return `linear-gradient(to right, rgb(${r},0,${b}), rgb(${r},255,${b}))`;
+        case 'b':
+            return `linear-gradient(to right, rgb(${r},${g},0), rgb(${r},${g},255))`;
+        case 'alpha':
+            return `linear-gradient(to right, rgba(${r},${g},${b},0), rgba(${r},${g},${b},1))`;
+        default:
+            return 'transparent';
+    }
+};
+
+// Compute HSL values once for CSS custom properties
+const hslValues = $derived.by(() => {
+    const hsl = color.hslComp;
+    return {
+        h: Math.round(hsl.h),
+        s: Math.round(hsl.s),
+        l: Math.round(hsl.l),
+    };
+});
 </script>
 
 <section

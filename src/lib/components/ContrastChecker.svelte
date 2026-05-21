@@ -1,128 +1,127 @@
 <script lang="ts">
-    import { calcAPCA } from 'apca-w3';
-    import { parse, type Rgb } from 'culori/fn';
-    import { ArrowRightLeft, Check, X } from 'lucide-svelte';
-    import { getApp } from '../context';
+import { calcAPCA } from 'apca-w3';
+import { parse, type Rgb } from 'culori/fn';
+import { ArrowRightLeft, Check, X } from 'lucide-svelte';
+import { getApp } from '../context';
 
-    const { color } = getApp();
+const { color } = getApp();
 
-    type ContrastMode = 'white' | 'black' | 'custom';
-    type WcagLevel = 'AA Large' | 'AA' | 'AAA';
+type ContrastMode = 'white' | 'black' | 'custom';
+type WcagLevel = 'AA Large' | 'AA' | 'AAA';
 
-    let mode = $state<ContrastMode>('white');
-    let customColor = $state('#888888');
-    let isFg = $state(true); // Is Color0 the foreground?
+let mode = $state<ContrastMode>('white');
+let customColor = $state('#888888');
+let isFg = $state(true); // Is Color0 the foreground?
 
-    // Validate color string
-    const isValidColor = (color: string): boolean => {
-        const parsed = parse(color);
-        return (
-            parsed !== undefined &&
-            (parsed.mode === 'rgb' || parsed.mode === 'oklch' || parsed.mode === 'hsl')
-        );
+// Validate color string
+const isValidColor = (color: string): boolean => {
+    const parsed = parse(color);
+    return (
+        parsed !== undefined &&
+        (parsed.mode === 'rgb' || parsed.mode === 'oklch' || parsed.mode === 'hsl')
+    );
+};
+
+let customColorError = $derived(mode === 'custom' && !isValidColor(customColor));
+
+// ------------------------------------------------------------------------
+// Comparison Logic
+// ------------------------------------------------------------------------
+
+const getTargetColor = (m: ContrastMode): string => {
+    switch (m) {
+        case 'white':
+            return '#ffffff';
+        case 'black':
+            return '#000000';
+        case 'custom':
+            return isValidColor(customColor) ? customColor : '#888888';
+    }
+};
+
+// Calculate Relative Luminance for WCAG 2.1
+const getLuminance = (hex: string): number => {
+    const rgb = parse(hex) as Rgb;
+    if (!rgb || rgb.mode !== 'rgb') return 0;
+
+    const channel = (c: number) => {
+        const v = Math.max(0, Math.min(1, c));
+        return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
     };
 
-    let customColorError = $derived(mode === 'custom' && !isValidColor(customColor));
+    return 0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b);
+};
 
-    // ------------------------------------------------------------------------
-    // Comparison Logic
-    // ------------------------------------------------------------------------
+const getWcagRatio = (c1: string, c2: string): number => {
+    const l1 = getLuminance(c1);
+    const l2 = getLuminance(c2);
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+};
 
-    const getTargetColor = (m: ContrastMode): string => {
-        switch (m) {
-            case 'white':
-                return '#ffffff';
-            case 'black':
-                return '#000000';
-            case 'custom':
-                return isValidColor(customColor) ? customColor : '#888888';
-        }
+// Derived Stats
+let currentTarget = $derived(getTargetColor(mode));
+let fg = $derived(isFg ? color.hex : currentTarget);
+let bg = $derived(isFg ? currentTarget : color.hex);
+
+// Calculate stats for ALL modes to show in tabs
+let stats = $derived.by(() => {
+    const isCustomValid = isValidColor(customColor);
+
+    const targets: Record<ContrastMode, string> = {
+        white: '#ffffff',
+        black: '#000000',
+        custom: isCustomValid ? customColor : '#888888',
     };
 
-    // Calculate Relative Luminance for WCAG 2.1
-    const getLuminance = (hex: string): number => {
-        const rgb = parse(hex) as Rgb;
-        if (!rgb || rgb.mode !== 'rgb') return 0;
-
-        const channel = (c: number) => {
-            const v = Math.max(0, Math.min(1, c));
-            return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-        };
-
-        return 0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b);
+    const result: Record<ContrastMode, { apca: number; wcag: number; valid: boolean }> = {
+        white: { apca: 0, wcag: 0, valid: true },
+        black: { apca: 0, wcag: 0, valid: true },
+        custom: { apca: 0, wcag: 0, valid: isCustomValid },
     };
 
-    const getWcagRatio = (c1: string, c2: string): number => {
-        const l1 = getLuminance(c1);
-        const l2 = getLuminance(c2);
-        const lighter = Math.max(l1, l2);
-        const darker = Math.min(l1, l2);
-        return (lighter + 0.05) / (darker + 0.05);
-    };
+    (Object.keys(targets) as ContrastMode[]).forEach((m) => {
+        const t = targets[m];
+        const f = isFg ? color.hex : t;
+        const b = isFg ? t : color.hex;
 
-    // Derived Stats
-    let currentTarget = $derived(getTargetColor(mode));
-    let fg = $derived(isFg ? color.hex : currentTarget);
-    let bg = $derived(isFg ? currentTarget : color.hex);
+        const rawApca = calcAPCA(f, b);
+        const apcaValue = typeof rawApca === 'number' && !isNaN(rawApca) ? Math.abs(rawApca) : 0;
+        result[m].apca = Math.round(apcaValue);
 
-    // Calculate stats for ALL modes to show in tabs
-    let stats = $derived.by(() => {
-        const isCustomValid = isValidColor(customColor);
-
-        const targets: Record<ContrastMode, string> = {
-            white: '#ffffff',
-            black: '#000000',
-            custom: isCustomValid ? customColor : '#888888',
-        };
-
-        const result: Record<ContrastMode, { apca: number; wcag: number; valid: boolean }> = {
-            white: { apca: 0, wcag: 0, valid: true },
-            black: { apca: 0, wcag: 0, valid: true },
-            custom: { apca: 0, wcag: 0, valid: isCustomValid },
-        };
-
-        (Object.keys(targets) as ContrastMode[]).forEach((m) => {
-            const t = targets[m];
-            const f = isFg ? color.hex : t;
-            const b = isFg ? t : color.hex;
-
-            const rawApca = calcAPCA(f, b);
-            const apcaValue =
-                typeof rawApca === 'number' && !isNaN(rawApca) ? Math.abs(rawApca) : 0;
-            result[m].apca = Math.round(apcaValue);
-
-            const ratio = getWcagRatio(f, b);
-            result[m].wcag = !isNaN(ratio) && isFinite(ratio) ? ratio : 0;
-        });
-
-        return result;
+        const ratio = getWcagRatio(f, b);
+        result[m].wcag = !isNaN(ratio) && isFinite(ratio) ? ratio : 0;
     });
 
-    // Current Context Stats
-    let currentWcag = $derived(stats[mode].wcag);
-    let currentApca = $derived(stats[mode].apca);
+    return result;
+});
 
-    // Pass/Fail Logic
-    const passes = (ratio: number, level: WcagLevel): boolean => {
-        switch (level) {
-            case 'AA Large':
-                return ratio >= 3.0;
-            case 'AA':
-                return ratio >= 4.5;
-            case 'AAA':
-                return ratio >= 7.0;
-        }
-    };
+// Current Context Stats
+let currentWcag = $derived(stats[mode].wcag);
+let currentApca = $derived(stats[mode].apca);
 
-    // Apca Rating Text
-    const getApcaRating = (score: number) => {
-        if (score >= 90) return 'Excellent for all.';
-        if (score >= 75) return 'Good for all.';
-        if (score >= 60) return 'OK for large text + headlines.';
-        if (score >= 45) return 'Poor for text, OK for large headlines.';
-        if (score >= 30) return "'Spot' / disabled text only.";
-        return 'Fail for all.';
-    };
+// Pass/Fail Logic
+const passes = (ratio: number, level: WcagLevel): boolean => {
+    switch (level) {
+        case 'AA Large':
+            return ratio >= 3.0;
+        case 'AA':
+            return ratio >= 4.5;
+        case 'AAA':
+            return ratio >= 7.0;
+    }
+};
+
+// Apca Rating Text
+const getApcaRating = (score: number) => {
+    if (score >= 90) return 'Excellent for all.';
+    if (score >= 75) return 'Good for all.';
+    if (score >= 60) return 'OK for large text + headlines.';
+    if (score >= 45) return 'Poor for text, OK for large headlines.';
+    if (score >= 30) return "'Spot' / disabled text only.";
+    return 'Fail for all.';
+};
 </script>
 
 <div class="flex h-full flex-col gap-6">

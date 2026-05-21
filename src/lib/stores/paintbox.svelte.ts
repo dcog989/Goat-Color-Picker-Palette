@@ -1,4 +1,4 @@
-﻿import { converter, parse, type Oklch } from 'culori/fn';
+﻿import { converter, type Oklch, parse } from 'culori/fn';
 import { PAINTBOX } from '../constants';
 
 type SavedColor = { id: string; css: string; timestamp: number; oklch: Oklch };

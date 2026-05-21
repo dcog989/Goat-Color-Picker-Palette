@@ -1,21 +1,21 @@
 <script lang="ts">
-    import { getApp } from '../context';
+import { getApp } from '../context';
 
-    const { color, paintbox } = getApp();
+const { color, paintbox } = getApp();
 
-    const desktopCols = 6;
-    const mobileCols = 4;
-    const minRows = 2;
+const desktopCols = 6;
+const mobileCols = 4;
+const minRows = 2;
 
-    const items = $derived(paintbox.items);
-    const itemCount = $derived(items.length);
+const items = $derived(paintbox.items);
+const itemCount = $derived(items.length);
 
-    // Calculate total slots needed to fill the desktop grid (min 2 rows)
-    const totalSlots = $derived(Math.max(desktopCols * minRows, itemCount));
-    const emptySlotsCount = $derived(totalSlots - itemCount);
+// Calculate total slots needed to fill the desktop grid (min 2 rows)
+const totalSlots = $derived(Math.max(desktopCols * minRows, itemCount));
+const emptySlotsCount = $derived(totalSlots - itemCount);
 
-    // Calculate how many empty slots are needed for mobile (min 2 rows)
-    const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - itemCount);
+// Calculate how many empty slots are needed for mobile (min 2 rows)
+const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - itemCount);
 </script>
 
 <div

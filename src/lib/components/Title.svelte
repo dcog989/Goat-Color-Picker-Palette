@@ -1,43 +1,43 @@
 <script lang="ts">
-    import { getApp } from '../context';
+import { getApp } from '../context';
 
-    const { color } = getApp();
+const { color } = getApp();
 
-    interface Props {
-        name: string;
-    }
+interface Props {
+    name: string;
+}
 
-    let { name }: Props = $props();
+let { name }: Props = $props();
 
-    const blockSize = 'w-10 h-10 lg:w-12 lg:h-12 text-lg md:text-xl lg:text-2xl';
-    const gapSize = 'gap-1 md:gap-1';
+const blockSize = 'w-10 h-10 lg:w-12 lg:h-12 text-lg md:text-xl lg:text-2xl';
+const gapSize = 'gap-1 md:gap-1';
 
-    // Determine if we should use ticker display for long names
-    let useTicker = $derived.by(() => {
-        const letterCount = name.replace(/\s/g, '').length;
-        const tickerThreshold = 18;
-        return letterCount > tickerThreshold;
-    });
+// Determine if we should use ticker display for long names
+let useTicker = $derived.by(() => {
+    const letterCount = name.replace(/\s/g, '').length;
+    const tickerThreshold = 18;
+    return letterCount > tickerThreshold;
+});
 
-    const getBlockStyle = (index: number) => {
-        const l = color.l;
-        const c = color.c;
-        const h = color.h;
+const getBlockStyle = (index: number) => {
+    const l = color.l;
+    const c = color.c;
+    const h = color.h;
 
-        const offset = (index % 3) * 0.05;
-        const isDark = l < 0.5;
+    const offset = (index % 3) * 0.05;
+    const isDark = l < 0.5;
 
-        const bgL = isDark ? Math.min(0.95, l + 0.25 + offset) : Math.max(0.05, l - 0.25 - offset);
-        const bgC = Math.max(0, c * 0.6);
+    const bgL = isDark ? Math.min(0.95, l + 0.25 + offset) : Math.max(0.05, l - 0.25 - offset);
+    const bgC = Math.max(0, c * 0.6);
 
-        const textL = bgL > 0.5 ? 0.15 : 0.98;
-        const textC = c < 0.02 ? 0 : Math.max(0.1, c);
+    const textL = bgL > 0.5 ? 0.15 : 0.98;
+    const textC = c < 0.02 ? 0 : Math.max(0.1, c);
 
-        const bgColor = `oklch(${bgL} ${bgC} ${h})`;
-        const textColor = `oklch(${textL} ${textC} ${h})`;
+    const bgColor = `oklch(${bgL} ${bgC} ${h})`;
+    const textColor = `oklch(${textL} ${textC} ${h})`;
 
-        return { bgColor, textColor };
-    };
+    return { bgColor, textColor };
+};
 </script>
 
 {#if useTicker}
