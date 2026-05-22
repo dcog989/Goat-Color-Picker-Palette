@@ -19,6 +19,8 @@ let isFiltering = $state(false);
 let loadError = $state<string | null>(null);
 
 let filterWorker: Worker | null = null;
+let searchDebounceTimeout: number | null = null;
+let debouncedQuery = $state('');
 
 const INITIAL_DISPLAY_LIMIT = 100;
 let displayedColors = $state<Array<{ name: string; hex: string }>>([]);
@@ -45,20 +47,40 @@ onMount(async () => {
 });
 
 onDestroy(() => {
+    if (searchDebounceTimeout !== null) {
+        clearTimeout(searchDebounceTimeout);
+    }
     filterWorker?.terminate();
 });
 
 $effect(() => {
-    if (filterWorker && searchQuery.trim()) {
+    if (searchDebounceTimeout !== null) {
+        clearTimeout(searchDebounceTimeout);
+    }
+
+    if (searchQuery.trim()) {
         isFiltering = true;
+        searchDebounceTimeout = window.setTimeout(() => {
+            debouncedQuery = searchQuery.trim();
+            searchDebounceTimeout = null;
+        }, 500);
+    } else {
+        isFiltering = false;
+        debouncedQuery = '';
+    }
+
+    _scrollTop = 0;
+    throttledScrollTop = 0;
+});
+
+$effect(() => {
+    if (filterWorker && debouncedQuery) {
         filterWorker.postMessage({
             type: 'filter',
-            query: searchQuery,
+            query: debouncedQuery,
             limit: 500,
         });
     }
-    _scrollTop = 0;
-    throttledScrollTop = 0;
 });
 
 let filteredColors = $derived.by((): Array<{ name: string; hex: string }> => {
