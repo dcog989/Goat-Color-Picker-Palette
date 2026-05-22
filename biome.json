@@ -47,8 +47,8 @@
         "noImportantStyles": "off"
       },
       "correctness": {
-        "noUnusedVariables": "off",
-        "noUnusedImports": "off"
+        "noUnusedVariables": "warn",
+        "noUnusedImports": "warn"
       },
       "style": {
         "useImportType": "error",
@@ -67,6 +67,17 @@
       "includes": ["*.md", "*.yml", "*.yaml", "*.toml", "*.json"],
       "formatter": {
         "indentWidth": 2
+      }
+    },
+    {
+      "includes": ["*.svelte", "**/*.svelte"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedImports": "off"
+          }
+        }
       }
     }
   ]
