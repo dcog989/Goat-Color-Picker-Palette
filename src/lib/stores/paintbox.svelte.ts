@@ -91,7 +91,7 @@ export class PaintboxStore {
             case 'chroma':
                 return list.sort((a, b) => b.oklch.c - a.oklch.c);
             default:
-                return list.sort((a, b) => b.timestamp - a.timestamp);
+                return list.sort((a, b) => a.timestamp - b.timestamp);
         }
     }
 
