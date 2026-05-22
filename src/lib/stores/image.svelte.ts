@@ -1,18 +1,8 @@
-import Color from 'colorjs.io';
 import { IMAGE_ANALYSIS } from '../constants';
+import { parseToOklch } from '../utils/format';
 import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
 
 export type SortMode = 'dominant' | 'vibrant' | 'bright' | 'dark';
-
-function getOklchValues(hex: string): { l: number; c: number; h: number; alpha: number } {
-    try {
-        const color = new Color(hex);
-        const oklch = color.oklch;
-        return { l: oklch[0] ?? 0, c: oklch[1] ?? 0, h: oklch[2] ?? 0, alpha: color.alpha ?? 1 };
-    } catch {
-        return { l: 0, c: 0, h: 0, alpha: 1 };
-    }
-}
 
 export class ImageStore {
     mosaicData = $state<{ color: string; pixels: number }[]>([]);
@@ -29,8 +19,8 @@ export class ImageStore {
 
         const candidates = [...this.mosaicData];
 
-        const getL = (hex: string) => getOklchValues(hex).l;
-        const getC = (hex: string) => getOklchValues(hex).c;
+        const getL = (hex: string) => parseToOklch(hex).l;
+        const getC = (hex: string) => parseToOklch(hex).c;
 
         switch (this.sortMode) {
             case 'vibrant':

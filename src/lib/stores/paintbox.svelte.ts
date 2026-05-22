@@ -1,5 +1,5 @@
-﻿import Color from 'colorjs.io';
-import { PAINTBOX } from '../constants';
+﻿import { PAINTBOX } from '../constants';
+import { parseToOklch } from '../utils/format';
 
 type SavedColor = {
     id: string;
@@ -8,18 +8,6 @@ type SavedColor = {
     oklch: { l: number; c: number; h: number; alpha: number };
 };
 export type PaintboxSortMode = 'newest' | 'oldest' | 'hue' | 'lightness' | 'chroma';
-
-const DEFAULT_OKLCH = { l: 0, c: 0, h: 0, alpha: 1 };
-
-function parseToOklch(css: string): { l: number; c: number; h: number; alpha: number } {
-    try {
-        const color = new Color(css);
-        const oklch = color.oklch;
-        return { l: oklch[0] ?? 0, c: oklch[1] ?? 0, h: oklch[2] ?? 0, alpha: color.alpha ?? 1 };
-    } catch {
-        return DEFAULT_OKLCH;
-    }
-}
 
 export class PaintboxStore {
     #colors = $state<SavedColor[]>([]);
