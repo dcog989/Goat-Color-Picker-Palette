@@ -7,7 +7,7 @@ type SavedColor = {
     timestamp: number;
     oklch: { l: number; c: number; h: number; alpha: number };
 };
-export type PaintboxSortMode = 'recent' | 'hue' | 'lightness' | 'chroma';
+export type PaintboxSortMode = 'newest' | 'oldest' | 'hue' | 'lightness' | 'chroma';
 
 const DEFAULT_OKLCH = { l: 0, c: 0, h: 0, alpha: 1 };
 
@@ -24,7 +24,7 @@ function parseToOklch(css: string): { l: number; c: number; h: number; alpha: nu
 export class PaintboxStore {
     #colors = $state<SavedColor[]>([]);
     #initialized = false;
-    sortMode = $state<PaintboxSortMode>('recent');
+    sortMode = $state<PaintboxSortMode>('newest');
 
     init() {
         if (this.#initialized) return;
@@ -103,6 +103,8 @@ export class PaintboxStore {
                 return list.sort((a, b) => b.oklch.l - a.oklch.l);
             case 'chroma':
                 return list.sort((a, b) => b.oklch.c - a.oklch.c);
+            case 'newest':
+                return list.sort((a, b) => b.timestamp - a.timestamp);
             default:
                 return list.sort((a, b) => a.timestamp - b.timestamp);
         }

@@ -13,7 +13,7 @@ Goat Color is a modern, perceptually uniform color workspace built for the post-
 - **Color Libraries:**
   - `culori` v4.0 - Color manipulation and conversion
   - `apca-w3` v0.1.9 - APCA contrast calculation
-   - `color-name-list` v14.17 - Named color database (3000+ colors)
+  - `color-name-list` v14.17 - Named color database (3000+ colors)
 - **UI Icons:** lucide-svelte v0.562.0
 - **PDF Export:** jspdf v4.0
 
@@ -29,61 +29,7 @@ Goat Color is a modern, perceptually uniform color workspace built for the post-
 
 ## Project Structure
 
-```
-src/
-├── App.svelte                 # Main application component
-├── main.ts                    # Application entry point
-├── app.css                    # Global styles
-├── ambient.d.ts               # TypeScript ambient declarations
-│
-├── lib/
-│   ├── components/            # Reusable UI components
-│   │   ├── ColorLibrary.svelte
-│   │   ├── ContrastChecker.svelte
-│   │   ├── PaintboxGrid.svelte
-│   │   ├── Swatch.svelte
-│   │   ├── Title.svelte
-│   │   └── Toast.svelte
-│   │
-│   ├── panels/                # Main feature panels
-│   │   ├── PickerPanel.svelte      # Color picker interface
-│   │   ├── PalettePanel.svelte     # Palette generation
-│   │   ├── ContrastPanel.svelte    # Accessibility checking
-│   │   ├── ImagePanel.svelte       # Image color extraction
-│   │   └── PaintboxPanel.svelte    # Color collection management
-│   │
-│   ├── modals/                # Modal dialogs
-│   │   ├── ExportModal.svelte      # Export functionality
-│   │   ├── InfoModal.svelte        # Information/help
-│   │   └── SearchModal.svelte      # Color name search
-│   │
-│   ├── layout/
-│   │   └── Header.svelte           # Application header
-│   │
-│   ├── stores/                # Svelte 5 state stores (using runes)
-│   │   ├── color.svelte.ts         # Current color state
-│   │   ├── engine.svelte.ts        # Palette generation engine
-│   │   ├── image.svelte.ts         # Image analysis state
-│   │   ├── paintbox.svelte.ts      # Saved colors collection
-│   │   ├── root.svelte.ts          # Root application state
-│   │   ├── theme.svelte.ts         # Theme management
-│   │   └── toast.svelte.ts         # Toast notifications
-│   │
-│   ├── utils/                 # Utility functions
-│   │   ├── export.ts              # Export format generators
-│   │   ├── format.ts              # Color formatting utilities
-│   │   └── harmonies.ts           # Color harmony calculations
-│   │
-│   ├── workers/               # Web Workers
-│   │   ├── color-analysis.ts      # K-Means clustering for images
-│   │   └── color-name-search.ts   # Color name lookup
-│   │
-│   ├── data/
-│   │   └── colors.ts              # Color data/constants
-│   │
-│   ├── constants.ts           # Application constants
-│   └── context.ts             # Svelte context utilities
-```
+Access ~/Projects/Goat-Color-Picker-Palette/ to view.
 
 ## Development Commands
 
