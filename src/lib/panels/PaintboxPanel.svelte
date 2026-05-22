@@ -15,7 +15,8 @@ const app = getApp();
 const { paintbox } = app;
 
 const sortOptions: { label: string; value: PaintboxSortMode }[] = [
-    { label: 'Recent', value: 'recent' },
+    { label: 'New First', value: 'newest' },
+    { label: 'New Last', value: 'oldest' },
     { label: 'Hue', value: 'hue' },
     { label: 'Bright', value: 'lightness' },
     { label: 'Vivid', value: 'chroma' },
