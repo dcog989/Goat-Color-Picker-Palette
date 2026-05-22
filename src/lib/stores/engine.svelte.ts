@@ -1,5 +1,4 @@
-import { calcAPCA } from 'apca-w3';
-import type { Oklch } from 'culori/fn';
+import Color from 'colorjs.io';
 import { PRECISION } from '../constants';
 import { type GenerationMode, generateColors, isHarmonyMode } from '../utils/harmonies';
 import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
@@ -15,7 +14,6 @@ export class EngineStore {
     #maxWorkerRetries = 3;
     #workerRetryDelay = 1000;
 
-    // Palette generation configuration
     genSteps = $state(8);
     genAxis = $state<GenerationMode>('l');
 
@@ -24,13 +22,25 @@ export class EngineStore {
     }
 
     get contrastWhite(): string {
-        const raw = calcAPCA('#ffffff', this.#colorStore.hex);
-        return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(PRECISION.CONTRAST_DISPLAY);
+        try {
+            const current = new Color(this.#colorStore.hex);
+            const white = new Color('white');
+            const raw = white.contrastAPCA(current);
+            return Math.abs(raw).toFixed(PRECISION.CONTRAST_DISPLAY);
+        } catch {
+            return '0';
+        }
     }
 
     get contrastBlack(): string {
-        const raw = calcAPCA('#000000', this.#colorStore.hex);
-        return (typeof raw === 'number' ? Math.abs(raw) : 0).toFixed(PRECISION.CONTRAST_DISPLAY);
+        try {
+            const current = new Color(this.#colorStore.hex);
+            const black = new Color('black');
+            const raw = black.contrastAPCA(current);
+            return Math.abs(raw).toFixed(PRECISION.CONTRAST_DISPLAY);
+        } catch {
+            return '0';
+        }
     }
 
     get isHarmonyMode(): boolean {
@@ -45,20 +55,16 @@ export class EngineStore {
         if (this.#initialized) return;
         this.#initialized = true;
 
-        // Initialize the worker
         this.#initWorker();
 
-        // Reactive effect to trigger name search when color changes
         $effect(() => {
-            // Track dependencies
             const current = {
-                mode: 'oklch' as const,
                 l: this.#colorStore.l,
                 c: this.#colorStore.c,
                 h: this.#colorStore.h,
-            } as Oklch;
+                alpha: this.#colorStore.alpha,
+            };
 
-            // Debounce rapid color changes
             if (this.#debounceHandle !== null) {
                 clearTimeout(this.#debounceHandle);
             }
@@ -112,7 +118,7 @@ export class EngineStore {
         }
     }
 
-    #searchColorName(color: Oklch) {
+    #searchColorName(color: { l: number; c: number; h: number; alpha: number }) {
         if (!this.#searchWorker) {
             this.closestName = 'Custom Color';
             return;
@@ -145,10 +151,8 @@ export class EngineStore {
         this.#workerRetryCount = 0;
     }
 
-    // Get current base color as Oklch
-    #getBaseColor(): Oklch {
+    #getBaseColor(): { l: number; c: number; h: number; alpha: number } {
         return {
-            mode: 'oklch',
             l: this.#colorStore.l,
             c: this.#colorStore.c,
             h: this.#colorStore.h,

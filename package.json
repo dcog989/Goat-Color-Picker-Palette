@@ -26,9 +26,8 @@
     "repo:tool": "repomix -c .repomix/repomix.tool.json"
   },
   "dependencies": {
-    "apca-w3": "^0.1.9",
     "color-name-list": "^14.37.0",
-    "culori": "^4.0.2",
+    "colorjs.io": "^0.6.1",
     "jspdf": "^4.2.1",
     "lucide-svelte": "^1.0.1"
   },
@@ -40,7 +39,6 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/svelte": "^5.3.1",
     "@tsconfig/svelte": "^5.0.8",
-    "@types/apca-w3": "^0.1.3",
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.1.7",
     "esbuild": "^0.28.0",

@@ -1,10 +1,18 @@
-import { converter, type Oklch, parse } from 'culori/fn';
+import Color from 'colorjs.io';
 import { IMAGE_ANALYSIS } from '../constants';
 import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
 
-const toOklch = converter<Oklch>('oklch');
-
 export type SortMode = 'dominant' | 'vibrant' | 'bright' | 'dark';
+
+function getOklchValues(hex: string): { l: number; c: number; h: number; alpha: number } {
+    try {
+        const color = new Color(hex);
+        const oklch = color.oklch;
+        return { l: oklch[0] ?? 0, c: oklch[1] ?? 0, h: oklch[2] ?? 0, alpha: color.alpha ?? 1 };
+    } catch {
+        return { l: 0, c: 0, h: 0, alpha: 1 };
+    }
+}
 
 export class ImageStore {
     mosaicData = $state<{ color: string; pixels: number }[]>([]);
@@ -20,29 +28,19 @@ export class ImageStore {
         if (!this.mosaicData.length) return [];
 
         const candidates = [...this.mosaicData];
-        const getOklch = (() => {
-            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Internal computation cache, not reactive state
-            const cache = new Map<string, Oklch>();
-            return (hex: string) => {
-                if (!cache.has(hex)) {
-                    const parsed = parse(hex);
-                    const converted = parsed ? toOklch(parsed) : undefined;
-                    const val: Oklch = converted || { mode: 'oklch', l: 0, c: 0, h: 0 };
-                    cache.set(hex, val);
-                }
-                return cache.get(hex) as Oklch;
-            };
-        })();
+
+        const getL = (hex: string) => getOklchValues(hex).l;
+        const getC = (hex: string) => getOklchValues(hex).c;
 
         switch (this.sortMode) {
             case 'vibrant':
-                candidates.sort((a, b) => getOklch(b.color).c - getOklch(a.color).c);
+                candidates.sort((a, b) => getC(b.color) - getC(a.color));
                 break;
             case 'bright':
-                candidates.sort((a, b) => getOklch(b.color).l - getOklch(a.color).l);
+                candidates.sort((a, b) => getL(b.color) - getL(a.color));
                 break;
             case 'dark':
-                candidates.sort((a, b) => getOklch(a.color).l - getOklch(b.color).l);
+                candidates.sort((a, b) => getL(a.color) - getL(b.color));
                 break;
             default:
                 candidates.sort((a, b) => b.pixels - a.pixels);
@@ -53,8 +51,6 @@ export class ImageStore {
     });
 
     async analyze(file: File) {
-        // Validation
-        // File type validation from external source - file.type is validated against known MIME types
         if (
             !IMAGE_ANALYSIS.ALLOWED_TYPES.includes(
                 file.type as (typeof IMAGE_ANALYSIS.ALLOWED_TYPES)[number],
@@ -81,11 +77,8 @@ export class ImageStore {
         this.previewUrl = URL.createObjectURL(file);
 
         try {
-            // 1. Decode image (Async, off-main-thread usually)
             const bitmap = await createImageBitmap(file);
 
-            // 2. CONSTANT SIZE: Always scale to a small fixed size (256x256 = 65k pixels)
-            // This ensures performance O(1) regardless of input image megapixels.
             const width = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
             const height = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
 
@@ -97,18 +90,14 @@ export class ImageStore {
                 return;
             }
 
-            // 3. Draw and Scale (GPU/Hardware accelerated)
             ctx.drawImage(bitmap, 0, 0, width, height);
 
-            // 4. Read small buffer (Fast, ~65k pixels)
             const imageData = ctx.getImageData(0, 0, width, height);
 
-            // Cleanup bitmap immediately
             bitmap.close();
 
             this.#activeWorker = new ColorAnalysisWorker();
 
-            // 5. Zero-Copy Transfer
             this.#activeWorker.postMessage({ imageData, distance: 0.05 }, [imageData.data.buffer]);
 
             this.#activeWorker.onmessage = (
@@ -131,7 +120,6 @@ export class ImageStore {
             console.error('Image analysis error:', error);
             this.isProcessing = false;
             this.#terminateWorker();
-            // Re-throw to allow UI to notify user
             throw error;
         }
     }

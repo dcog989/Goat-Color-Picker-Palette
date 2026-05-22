@@ -1,10 +1,9 @@
 <script lang="ts">
-import { converter, type Oklch, parse } from 'culori/fn';
+import Color from 'colorjs.io';
 import { Copy, Plus } from 'lucide-svelte';
 import { getApp } from '../context';
 
 const { color, paintbox, toast } = getApp();
-const toOklch = converter<Oklch>('oklch');
 
 interface Props {
     color: string;
@@ -32,8 +31,13 @@ const getActionClass = () => {
     if (!dynamicClass) {
         return 'bg-white/30 hover:bg-white/50 text-white';
     }
-    const parsed = parse(swatchColor);
-    const l = parsed ? (toOklch(parsed)?.l ?? 0) : 0;
+    let l = 0;
+    try {
+        const parsed = new Color(swatchColor);
+        l = parsed.oklch[0] ?? 0;
+    } catch {
+        // fallback
+    }
     return l > 0.6
         ? 'bg-black/10 hover:bg-black/20 text-black'
         : 'bg-white/20 hover:bg-white/30 text-white';

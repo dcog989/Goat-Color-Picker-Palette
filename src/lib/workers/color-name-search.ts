@@ -1,25 +1,8 @@
-﻿import {
-    converter,
-    modeLrgb,
-    modeOklab,
-    modeOklch,
-    modeRgb,
-    modeXyz65,
-    type Oklab,
-    type Oklch,
-    parse,
-    useMode,
-} from 'culori/fn';
-
-useMode(modeRgb);
-useMode(modeLrgb);
-useMode(modeXyz65);
-useMode(modeOklch);
-useMode(modeOklab);
+﻿import Color from 'colorjs.io';
 
 interface WorkerMessage {
     type: 'search' | 'filter';
-    color?: Oklch;
+    color?: { l: number; c: number; h: number; alpha: number };
     query?: string;
     limit?: number;
 }
@@ -30,8 +13,6 @@ interface WorkerResponse {
     colors?: Array<{ name: string; hex: string }>;
 }
 
-const toOklab = converter<Oklab>('oklab');
-
 let coordinates: Float32Array | null = null;
 let names: string[] = [];
 let hexValues: string[] = [];
@@ -39,7 +20,7 @@ let hexValues: string[] = [];
 let isLoading = false;
 let loadError: Error | null = null;
 
-const messageQueue: Oklch[] = [];
+const messageQueue: { l: number; c: number; h: number; alpha: number }[] = [];
 
 async function prepareData(): Promise<void> {
     if (coordinates !== null || isLoading) return;
@@ -62,15 +43,16 @@ async function prepareData(): Promise<void> {
             names[i] = entry.name;
             hexValues[i] = entry.hex;
 
-            const color = parse(entry.hex);
-            if (color) {
-                const lab = toOklab(color);
+            try {
+                const color = new Color(entry.hex);
+                const oklab = color.to('oklab');
+                const coords = oklab.oklab;
                 const ptr = i * 3;
-                if (lab) {
-                    coordinates[ptr] = lab.l;
-                    coordinates[ptr + 1] = lab.a ?? 0;
-                    coordinates[ptr + 2] = lab.b ?? 0;
-                }
+                coordinates[ptr] = coords[0] ?? 0;
+                coordinates[ptr + 1] = coords[1] ?? 0;
+                coordinates[ptr + 2] = coords[2] ?? 0;
+            } catch {
+                // Skip colors that can't be parsed
             }
         }
 
@@ -119,17 +101,21 @@ async function waitForData(): Promise<void> {
     }
 }
 
-function findClosestName(current: Oklch): string {
+function findClosestName(current: { l: number; c: number; h: number; alpha: number }): string {
     if (loadError || !coordinates || !names.length) {
         return 'Custom Color';
     }
 
-    const target = toOklab(current);
-    if (!target) return 'Custom Color';
-
-    const tL = target.l;
-    const ta = target.a ?? 0;
-    const tb = target.b ?? 0;
+    let tL: number, ta: number, tb: number;
+    try {
+        const target = new Color('oklch', [current.l, current.c, current.h]).to('oklab');
+        const coords = target.oklab;
+        tL = coords[0] ?? 0;
+        ta = coords[1] ?? 0;
+        tb = coords[2] ?? 0;
+    } catch {
+        return 'Custom Color';
+    }
 
     let minDistSq = Infinity;
     let bestIndex = -1;
