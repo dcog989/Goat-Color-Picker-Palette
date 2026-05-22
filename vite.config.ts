@@ -9,9 +9,6 @@ export default defineConfig({
     worker: {
         format: 'es',
     },
-    optimizeDeps: {
-        include: ['culori', 'culori/all', 'culori/fn', 'apca-w3'],
-    },
     build: {
         target: 'esnext',
         minify: 'esbuild',
@@ -21,9 +18,6 @@ export default defineConfig({
             external: ['html2canvas', 'canvg', 'dompurify'],
             output: {
                 manualChunks(id: string) {
-                    if (id.includes('culori') || id.includes('apca-w3')) {
-                        return 'color-libs';
-                    }
                     if (id.includes('lucide-svelte')) {
                         return 'ui-libs';
                     }
