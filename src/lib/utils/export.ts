@@ -1,9 +1,8 @@
-import { converter, formatHex, formatHsl, formatRgb, type Oklch, parse } from 'culori/fn';
+import Color from 'colorjs.io';
 import { EXPORT } from '../constants';
 import type { RootStore } from '../stores/root.svelte';
 import { formatOklch } from './format';
 
-// Dynamically import jsPDF only when needed
 // biome-ignore lint/suspicious/noExplicitAny: jsPDF type is dynamic
 let jsPDFModule: any = null;
 async function getJsPDF() {
@@ -15,35 +14,49 @@ async function getJsPDF() {
 
 export type ExportFormat = 'hex' | 'rgb' | 'hsl' | 'oklch';
 
-const toOklch = converter<Oklch>('oklch');
+function safeColor(str: string): Color | null {
+    try {
+        return new Color(str);
+    } catch {
+        return null;
+    }
+}
 
-// ============================================================================
-// Color Formatting
-// ============================================================================
+function nn(v: number | null | undefined): number {
+    return v ?? 0;
+}
+
+function toHex(color: Color): string {
+    const srgb = color.to('srgb');
+    const sr = srgb.srgb;
+    const c = new Color('srgb', [nn(sr[0]), nn(sr[1]), nn(sr[2])], 1);
+    return c.toString({ format: 'hex' });
+}
+
+function toOklchValues(color: Color): { l: number; c: number; h: number; alpha: number } {
+    const [l, c, h] = color.oklch;
+    return { l: nn(l), c: nn(c), h: nn(h), alpha: color.alpha ?? 1 };
+}
 
 export function formatColor(color: string, format: ExportFormat): string {
-    const parsed = parse(color);
+    const parsed = safeColor(color);
     if (!parsed) return color;
 
     switch (format) {
         case 'hex':
-            return formatHex(parsed) ?? color;
+            return toHex(parsed);
         case 'rgb':
-            return formatRgb(parsed) ?? color;
+            return parsed.to('srgb').toString({ format: 'rgb' });
         case 'hsl':
-            return formatHsl(parsed) ?? color;
+            return parsed.to('hsl').toString({ format: 'hsl' });
         case 'oklch': {
-            const oklch = toOklch(parsed);
-            return oklch ? formatOklch(oklch.l, oklch.c, oklch.h || 0, oklch.alpha) : color;
+            const { l, c, h, alpha } = toOklchValues(parsed);
+            return formatOklch(l, c, h, alpha);
         }
         default:
             return color;
     }
 }
-
-// ============================================================================
-// Strategy Logic
-// ============================================================================
 
 interface ColorSource {
     colors: Array<{ css: string }>;
@@ -53,7 +66,6 @@ interface ColorSource {
 
 function getColorSource(root: RootStore): ColorSource {
     const hasColors = root.paintbox.items.length > 0;
-    // When multiple colors, use sort order from paintbox
     return {
         colors: hasColors ? root.paintbox.items : [{ css: root.color.hex }],
         isSingle: !hasColors,
@@ -104,12 +116,12 @@ class TailwindExportStrategy implements ExportStrategy {
 
 class AndroidXmlExportStrategy implements ExportStrategy {
     name = 'Android XML';
-    format(source: ColorSource, exportFormat: ExportFormat): string {
+    format(source: ColorSource, _exportFormat: ExportFormat): string {
         const lines = ['<?xml version="1.0" encoding="utf-8"?>', '<resources>'];
         source.colors.forEach((item, i) => {
             const name = generateColorName(i, source).replace(/-/g, '_');
-            const useFormat = exportFormat === 'rgb' ? 'hex' : exportFormat;
-            const hex = formatColor(item.css, useFormat).toUpperCase();
+            const parsed = safeColor(item.css);
+            const hex = (parsed ? toHex(parsed) : '#000000').toUpperCase();
             const androidHex = hex.length === 9 ? `#${hex.slice(7, 9)}${hex.slice(1, 7)}` : hex;
             lines.push(`  <color name="${name}">${androidHex}</color>`);
         });
@@ -158,10 +170,6 @@ export function exportCode(
     return strategy.format(getColorSource(root), format);
 }
 
-// ============================================================================
-// Image Export Helpers
-// ============================================================================
-
 function generateFilename(root: RootStore, extension: string): string {
     const safeName = root.engine.closestName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
     return `GoatColor-${safeName}.${extension}`;
@@ -193,7 +201,6 @@ export function exportPng(root: RootStore): void {
     ctx.textAlign = 'left';
 
     if (isSingle) {
-        // Single color export (existing behavior)
         ctx.fillStyle = colors[0]?.css ?? root.color.hex;
         ctx.fillRect(0, 0, EXPORT.PNG_WIDTH, EXPORT.PNG_HEIGHT);
 
@@ -211,7 +218,6 @@ export function exportPng(root: RootStore): void {
             ctx.fillText(`Alpha: ${(root.color.alpha * 100).toFixed(0)}%`, 60, 410);
         }
     } else {
-        // Multiple colors from paintbox - create a palette grid
         const cols = Math.min(colors.length, 6);
         const rows = Math.ceil(colors.length / cols);
         const swatchWidth = EXPORT.PNG_WIDTH / cols;
@@ -227,17 +233,16 @@ export function exportPng(root: RootStore): void {
                 ctx.fillStyle = item.css;
                 ctx.fillRect(x, y, swatchWidth, swatchHeight);
 
-                // Add color text if space allows
                 if (swatchHeight > 80) {
-                    const parsed = parse(item.css);
+                    const parsed = safeColor(item.css);
                     if (parsed) {
-                        const oklch = toOklch(parsed);
-                        const textColor = oklch && oklch.l > 0.5 ? '#000000' : '#ffffff';
+                        const oklchVal = toOklchValues(parsed);
+                        const textColor = oklchVal.l > 0.5 ? '#000000' : '#ffffff';
                         ctx.fillStyle = textColor;
                         ctx.font = `bold ${Math.min(swatchHeight / 4, 32)}px ui-monospace, monospace`;
                         ctx.textAlign = 'center';
                         ctx.fillText(
-                            formatHex(parsed)?.toUpperCase() ?? '',
+                            toHex(parsed).toUpperCase(),
                             x + swatchWidth / 2,
                             y + swatchHeight / 2 + 8,
                         );
@@ -246,7 +251,6 @@ export function exportPng(root: RootStore): void {
             }
         });
 
-        // Add title at bottom
         const titleHeight = 60;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillRect(0, EXPORT.PNG_HEIGHT - titleHeight, EXPORT.PNG_WIDTH, titleHeight);
@@ -274,7 +278,6 @@ export function exportSvg(root: RootStore): void {
     let svg: string;
 
     if (isSingle) {
-        // Single color export (existing behavior)
         const textFill = root.color.l > 0.5 ? '#000000' : '#ffffff';
         svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" viewBox="0 0 ${EXPORT.SVG_SIZE} ${EXPORT.SVG_SIZE}" xmlns="http://www.w3.org/2000/svg">
@@ -284,11 +287,10 @@ export function exportSvg(root: RootStore): void {
   ${root.color.alpha < 1 ? `<text x="20" y="90" font-family="monospace" font-size="12" fill="${textFill}">Alpha: ${(root.color.alpha * 100).toFixed(0)}%</text>` : ''}
 </svg>`;
     } else {
-        // Multiple colors from paintbox - create a palette
         const cols = Math.min(colors.length, 6);
         const rows = Math.ceil(colors.length / cols);
         const swatchWidth = EXPORT.SVG_SIZE / cols;
-        const swatchHeight = (EXPORT.SVG_SIZE - 50) / rows; // Reserve 50px for title
+        const swatchHeight = (EXPORT.SVG_SIZE - 50) / rows;
 
         const swatches = colors
             .map((item, i) => {
@@ -297,13 +299,13 @@ export function exportSvg(root: RootStore): void {
                 const x = col * swatchWidth;
                 const y = row * swatchHeight;
 
-                const parsed = parse(item.css);
-                const hexColor = (parsed ? formatHex(parsed) : item.css) ?? item.css;
+                const parsed = safeColor(item.css);
+                const hexColor = parsed ? toHex(parsed) : item.css;
 
                 let colorText = '';
-                if (swatchHeight > 50) {
-                    const oklch = parsed ? toOklch(parsed) : null;
-                    const textColor = oklch && oklch.l > 0.5 ? '#000000' : '#ffffff';
+                if (swatchHeight > 50 && parsed) {
+                    const oklchVal = toOklchValues(parsed);
+                    const textColor = oklchVal.l > 0.5 ? '#000000' : '#ffffff';
                     const fontSize = Math.min(swatchHeight / 5, 14);
                     colorText = `<text x="${x + swatchWidth / 2}" y="${y + swatchHeight / 2 + fontSize / 3}" font-family="monospace" font-size="${fontSize}" font-weight="bold" fill="${textColor}" text-anchor="middle">${hexColor.toUpperCase()}</text>`;
                 }
@@ -329,64 +331,54 @@ export async function exportPdf(root: RootStore): Promise<void> {
     const source = getColorSource(root);
     const colors = source.colors;
 
-    // Dynamically import jsPDF
     const jsPDF = await getJsPDF();
 
-    // A4 Portrait
     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
     const pageWidth = 210;
     const margin = 20;
     const contentWidth = pageWidth - margin * 2;
 
-    // Title
     doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
     doc.text('GOAT COLOR PALETTE', margin, 30);
 
-    // Grid Layout
     const cols = 4;
     const gap = 5;
     const swatchWidth = (contentWidth - (cols - 1) * gap) / cols;
-    const swatchHeight = swatchWidth; // Square swatches
+    const swatchHeight = swatchWidth;
 
     let x = margin;
     let y = 45;
 
     colors.forEach((item, i) => {
-        // New page check
         if (y + swatchHeight + 20 > 280) {
             doc.addPage();
             y = 30;
         }
 
-        const parsed = parse(item.css);
+        const parsed = safeColor(item.css);
         if (parsed) {
-            const hex = formatHex(parsed) || '#000000';
-            const oklch = toOklch(parsed);
+            const hex = toHex(parsed);
+            const oklchVal = toOklchValues(parsed);
 
-            // Draw Swatch
             doc.setFillColor(hex);
             doc.rect(x, y, swatchWidth, swatchHeight, 'F');
 
-            // Draw Info
             doc.setFontSize(12);
             doc.setTextColor(0);
             doc.setFont('courier', 'bold');
             doc.text(hex.toUpperCase(), x, y + swatchHeight + 5);
 
-            if (oklch) {
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(100);
-                doc.text(
-                    formatOklch(oklch.l, oklch.c, oklch.h || 0, oklch.alpha),
-                    x,
-                    y + swatchHeight + 10,
-                );
-            }
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(100);
+            doc.text(
+                formatOklch(oklchVal.l, oklchVal.c, oklchVal.h, oklchVal.alpha),
+                x,
+                y + swatchHeight + 10,
+            );
         }
 
-        // Advance Grid
         if ((i + 1) % cols === 0) {
             x = margin;
             y += swatchHeight + 25;

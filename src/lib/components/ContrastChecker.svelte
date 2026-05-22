@@ -1,6 +1,5 @@
 <script lang="ts">
-import { calcAPCA } from 'apca-w3';
-import { parse, type Rgb } from 'culori/fn';
+import Color from 'colorjs.io';
 import { ArrowRightLeft, Check, X } from 'lucide-svelte';
 import { getApp } from '../context';
 
@@ -11,22 +10,13 @@ type WcagLevel = 'AA Large' | 'AA' | 'AAA';
 
 let mode = $state<ContrastMode>('white');
 let customColor = $state('#888888');
-let isFg = $state(true); // Is Color0 the foreground?
+let isFg = $state(true);
 
-// Validate color string
-const isValidColor = (color: string): boolean => {
-    const parsed = parse(color);
-    return (
-        parsed !== undefined &&
-        (parsed.mode === 'rgb' || parsed.mode === 'oklch' || parsed.mode === 'hsl')
-    );
+const isValidColor = (colorStr: string): boolean => {
+    return Color.try(colorStr) !== null;
 };
 
 let customColorError = $derived(mode === 'custom' && !isValidColor(customColor));
-
-// ------------------------------------------------------------------------
-// Comparison Logic
-// ------------------------------------------------------------------------
 
 const getTargetColor = (m: ContrastMode): string => {
     switch (m) {
@@ -39,33 +29,11 @@ const getTargetColor = (m: ContrastMode): string => {
     }
 };
 
-// Calculate Relative Luminance for WCAG 2.1
-const getLuminance = (hex: string): number => {
-    const rgb = parse(hex) as Rgb;
-    if (!rgb || rgb.mode !== 'rgb') return 0;
-
-    const channel = (c: number) => {
-        const v = Math.max(0, Math.min(1, c));
-        return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
-    };
-
-    return 0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b);
-};
-
-const getWcagRatio = (c1: string, c2: string): number => {
-    const l1 = getLuminance(c1);
-    const l2 = getLuminance(c2);
-    const lighter = Math.max(l1, l2);
-    const darker = Math.min(l1, l2);
-    return (lighter + 0.05) / (darker + 0.05);
-};
-
 // Derived Stats
 let currentTarget = $derived(getTargetColor(mode));
 let fg = $derived(isFg ? color.hex : currentTarget);
 let bg = $derived(isFg ? currentTarget : color.hex);
 
-// Calculate stats for ALL modes to show in tabs
 let stats = $derived.by(() => {
     const isCustomValid = isValidColor(customColor);
 
@@ -86,23 +54,27 @@ let stats = $derived.by(() => {
         const f = isFg ? color.hex : t;
         const b = isFg ? t : color.hex;
 
-        const rawApca = calcAPCA(f, b);
-        const apcaValue =
-            typeof rawApca === 'number' && !Number.isNaN(rawApca) ? Math.abs(rawApca) : 0;
-        result[m].apca = Math.round(apcaValue);
+        try {
+            const fgColor = new Color(f);
+            const bgColor = new Color(b);
 
-        const ratio = getWcagRatio(f, b);
-        result[m].wcag = !Number.isNaN(ratio) && Number.isFinite(ratio) ? ratio : 0;
+            const rawApca = fgColor.contrastAPCA(bgColor);
+            result[m].apca = Math.round(Math.abs(rawApca));
+
+            const ratio = fgColor.contrastWCAG21(bgColor);
+            result[m].wcag = !Number.isNaN(ratio) && Number.isFinite(ratio) ? ratio : 0;
+        } catch {
+            result[m].apca = 0;
+            result[m].wcag = 0;
+        }
     });
 
     return result;
 });
 
-// Current Context Stats
 let currentWcag = $derived(stats[mode].wcag);
 let currentApca = $derived(stats[mode].apca);
 
-// Pass/Fail Logic
 const passes = (ratio: number, level: WcagLevel): boolean => {
     switch (level) {
         case 'AA Large':
@@ -114,7 +86,6 @@ const passes = (ratio: number, level: WcagLevel): boolean => {
     }
 };
 
-// Apca Rating Text
 const getApcaRating = (score: number) => {
     if (score >= 90) return 'Excellent for all.';
     if (score >= 75) return 'Good for all.';
@@ -230,7 +201,6 @@ const getApcaRating = (score: number) => {
     </div>
 
     <!-- 3. Preview Area -->
-    <!-- Intentionally has poor contrast to demonstrate the checker -->
     <div
         class="
           group relative flex aspect-2/1 w-full flex-col items-center

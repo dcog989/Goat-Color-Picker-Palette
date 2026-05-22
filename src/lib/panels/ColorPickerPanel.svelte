@@ -1,4 +1,5 @@
 <script lang="ts">
+import Color from 'colorjs.io';
 import { Copy, DecimalsArrowLeft, DecimalsArrowRight, Plus, TriangleAlert } from 'lucide-svelte';
 import { getApp } from '../context';
 
@@ -7,12 +8,9 @@ const { color, paintbox, toast } = app;
 
 let hasError = $state(false);
 
-// Local state for RGB sliders to prevent jitter from round-trip conversion
 let localRgb = $state({ r: 0, g: 0, b: 0 });
-// Local state for HSL sliders to prevent jitter from round-trip conversion
 let localHsl = $state({ h: 0, s: 0, l: 0 });
 
-// Sync local RGB state from store when RGB mode is active or values change externally
 $effect(() => {
     if (color.mode === 'rgb') {
         const rgb = color.rgbComp;
@@ -20,7 +18,6 @@ $effect(() => {
     }
 });
 
-// Sync local HSL state from store when HSL mode is active or values change externally
 $effect(() => {
     if (color.mode === 'hsl') {
         const hsl = color.hslComp;
@@ -28,10 +25,8 @@ $effect(() => {
     }
 });
 
-// Update store from local RGB state (called on input event)
 const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, localRgb.b);
 
-// Update store from local HSL state (called on input event)
 const updateHslFromLocal = () => color.setHslValues(localHsl.h, localHsl.s, localHsl.l);
 
 let inputVal = $derived.by(() => {
@@ -64,37 +59,24 @@ const handleInput = (e: Event) => {
     }
 };
 
-import type { Oklch, Rgb } from 'culori/fn';
-import { converter } from 'culori/fn';
-
-// Converter to check if colors are in gamut
-const toRgb = converter<Rgb>('rgb');
-
 // Calculate max chroma for current L/H within sRGB gamut
-// This gives us the practical limit for the gradient display
 const maxChromaForCurrentLH = $derived.by((): number => {
     const l = color.l;
     const h = color.h;
-
-    // Binary search for max chroma within sRGB gamut
     let min = 0;
     let max = 0.4;
     const epsilon = 0.001;
 
     while (max - min > epsilon) {
         const mid = (min + max) / 2;
-        const testColor: Oklch = { mode: 'oklch', l, c: mid, h, alpha: 1 };
-        const rgb = toRgb(testColor);
+        const testColor = new Color('oklch', [l, mid, h]);
+        const srgb = testColor.to('srgb');
+        const sr = srgb.srgb;
+        const r = sr[0] ?? 0;
+        const g = sr[1] ?? 0;
+        const b = sr[2] ?? 0;
 
-        if (
-            rgb &&
-            rgb.r >= -0.005 &&
-            rgb.r <= 1.005 &&
-            rgb.g >= -0.005 &&
-            rgb.g <= 1.005 &&
-            rgb.b >= -0.005 &&
-            rgb.b <= 1.005
-        ) {
+        if (r >= -0.005 && r <= 1.005 && g >= -0.005 && g <= 1.005 && b >= -0.005 && b <= 1.005) {
             min = mid;
         } else {
             max = mid;
@@ -104,9 +86,6 @@ const maxChromaForCurrentLH = $derived.by((): number => {
     return min;
 });
 
-// Get CSS class for gradient backgrounds
-// RGB gradients use inline styles (dynamic per-component)
-// OKLCH/HSL gradients use CSS classes with custom properties (browser-optimized)
 const getGradientClass = (type: string) => {
     switch (type) {
         case 'h':
@@ -126,7 +105,6 @@ const getGradientClass = (type: string) => {
     }
 };
 
-// Get inline gradient style for RGB and alpha gradients
 const getGradientStyle = (type: string) => {
     const { r, g, b } = color.rgbComp;
 
@@ -144,7 +122,6 @@ const getGradientStyle = (type: string) => {
     }
 };
 
-// Compute HSL values once for CSS custom properties
 const hslValues = $derived.by(() => {
     const hsl = color.hslComp;
     return {
@@ -249,7 +226,7 @@ const hslValues = $derived.by(() => {
                       whitespace-nowrap opacity-0 shadow-xl transition-opacity
                       group-hover:opacity-100
                     ">
-                    {app.precision === 'precise' ? 'Precise ? Practical' : 'Practical ? Precise'}
+                    {app.precision === 'precise' ? 'Precise → Practical' : 'Practical → Precise'}
                 </div>
             </button>
         </div>

@@ -1,11 +1,25 @@
-﻿import { converter, type Oklch, parse } from 'culori/fn';
+﻿import Color from 'colorjs.io';
 import { PAINTBOX } from '../constants';
 
-type SavedColor = { id: string; css: string; timestamp: number; oklch: Oklch };
+type SavedColor = {
+    id: string;
+    css: string;
+    timestamp: number;
+    oklch: { l: number; c: number; h: number; alpha: number };
+};
 export type PaintboxSortMode = 'recent' | 'hue' | 'lightness' | 'chroma';
 
-const toOklch = converter<Oklch>('oklch');
-const DEFAULT_OKLCH: Oklch = { mode: 'oklch', l: 0, c: 0, h: 0 };
+const DEFAULT_OKLCH = { l: 0, c: 0, h: 0, alpha: 1 };
+
+function parseToOklch(css: string): { l: number; c: number; h: number; alpha: number } {
+    try {
+        const color = new Color(css);
+        const oklch = color.oklch;
+        return { l: oklch[0] ?? 0, c: oklch[1] ?? 0, h: oklch[2] ?? 0, alpha: color.alpha ?? 1 };
+    } catch {
+        return DEFAULT_OKLCH;
+    }
+}
 
 export class PaintboxStore {
     #colors = $state<SavedColor[]>([]);
@@ -75,8 +89,7 @@ export class PaintboxStore {
         if (item.oklch) {
             return item as SavedColor;
         }
-        const parsed = parse(item.css ?? '');
-        const oklch = (parsed ? toOklch(parsed) : undefined) || DEFAULT_OKLCH;
+        const oklch = parseToOklch(item.css ?? '');
         return { ...item, oklch } as SavedColor;
     }
 
@@ -103,8 +116,7 @@ export class PaintboxStore {
             this.#colors.splice(existingIndex, 1);
         }
 
-        const parsed = parse(css);
-        const oklch = (parsed ? toOklch(parsed) : undefined) || DEFAULT_OKLCH;
+        const oklch = parseToOklch(css);
 
         this.#colors.push({
             id: crypto.randomUUID(),
