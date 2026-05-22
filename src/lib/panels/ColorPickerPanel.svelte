@@ -1,5 +1,4 @@
 <script lang="ts">
-import Color from 'colorjs.io';
 import { Copy, DecimalsArrowLeft, DecimalsArrowRight, Plus, TriangleAlert } from 'lucide-svelte';
 import { getApp } from '../context';
 
@@ -59,32 +58,8 @@ const handleInput = (e: Event) => {
     }
 };
 
-// Calculate max chroma for current L/H within sRGB gamut
-const maxChromaForCurrentLH = $derived.by((): number => {
-    const l = color.l;
-    const h = color.h;
-    let min = 0;
-    let max = 0.4;
-    const epsilon = 0.001;
-
-    while (max - min > epsilon) {
-        const mid = (min + max) / 2;
-        const testColor = new Color('oklch', [l, mid, h]);
-        const srgb = testColor.to('srgb');
-        const sr = srgb.srgb;
-        const r = sr[0] ?? 0;
-        const g = sr[1] ?? 0;
-        const b = sr[2] ?? 0;
-
-        if (r >= -0.005 && r <= 1.005 && g >= -0.005 && g <= 1.005 && b >= -0.005 && b <= 1.005) {
-            min = mid;
-        } else {
-            max = mid;
-        }
-    }
-
-    return min;
-});
+// Static max chroma — matches the chroma slider max="0.37" and the CSS gradient
+const maxChromaForCurrentLH = $derived(0.37);
 
 const getGradientClass = (type: string) => {
     switch (type) {
