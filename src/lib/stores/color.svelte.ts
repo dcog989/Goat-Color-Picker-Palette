@@ -6,11 +6,8 @@ import {
     formatOklab,
     formatOklch,
     formatRgb,
+    nn,
 } from '../utils/format';
-
-function nn(v: number | null | undefined): number {
-    return v ?? 0;
-}
 
 function toHexStr(color: Color): string {
     const srgb = color.to('srgb');

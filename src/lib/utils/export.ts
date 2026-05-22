@@ -1,7 +1,7 @@
 import Color from 'colorjs.io';
 import { EXPORT } from '../constants';
 import type { RootStore } from '../stores/root.svelte';
-import { formatOklch } from './format';
+import { formatOklch, nn, oklchFromColor } from './format';
 
 // biome-ignore lint/suspicious/noExplicitAny: jsPDF type is dynamic
 let jsPDFModule: any = null;
@@ -22,20 +22,11 @@ function safeColor(str: string): Color | null {
     }
 }
 
-function nn(v: number | null | undefined): number {
-    return v ?? 0;
-}
-
 function toHex(color: Color): string {
     const srgb = color.to('srgb');
     const sr = srgb.srgb;
     const c = new Color('srgb', [nn(sr[0]), nn(sr[1]), nn(sr[2])], 1);
     return c.toString({ format: 'hex' });
-}
-
-function toOklchValues(color: Color): { l: number; c: number; h: number; alpha: number } {
-    const [l, c, h] = color.oklch;
-    return { l: nn(l), c: nn(c), h: nn(h), alpha: color.alpha ?? 1 };
 }
 
 export function formatColor(color: string, format: ExportFormat): string {
@@ -50,7 +41,7 @@ export function formatColor(color: string, format: ExportFormat): string {
         case 'hsl':
             return parsed.to('hsl').toString({ format: 'hsl' });
         case 'oklch': {
-            const { l, c, h, alpha } = toOklchValues(parsed);
+            const { l, c, h, alpha } = oklchFromColor(parsed);
             return formatOklch(l, c, h, alpha);
         }
         default:
@@ -236,7 +227,7 @@ export function exportPng(root: RootStore): void {
                 if (swatchHeight > 80) {
                     const parsed = safeColor(item.css);
                     if (parsed) {
-                        const oklchVal = toOklchValues(parsed);
+                        const oklchVal = oklchFromColor(parsed);
                         const textColor = oklchVal.l > 0.5 ? '#000000' : '#ffffff';
                         ctx.fillStyle = textColor;
                         ctx.font = `bold ${Math.min(swatchHeight / 4, 32)}px ui-monospace, monospace`;
@@ -304,7 +295,7 @@ export function exportSvg(root: RootStore): void {
 
                 let colorText = '';
                 if (swatchHeight > 50 && parsed) {
-                    const oklchVal = toOklchValues(parsed);
+                    const oklchVal = oklchFromColor(parsed);
                     const textColor = oklchVal.l > 0.5 ? '#000000' : '#ffffff';
                     const fontSize = Math.min(swatchHeight / 5, 14);
                     colorText = `<text x="${x + swatchWidth / 2}" y="${y + swatchHeight / 2 + fontSize / 3}" font-family="monospace" font-size="${fontSize}" font-weight="bold" fill="${textColor}" text-anchor="middle">${hexColor.toUpperCase()}</text>`;
@@ -359,7 +350,7 @@ export async function exportPdf(root: RootStore): Promise<void> {
         const parsed = safeColor(item.css);
         if (parsed) {
             const hex = toHex(parsed);
-            const oklchVal = toOklchValues(parsed);
+            const oklchVal = oklchFromColor(parsed);
 
             doc.setFillColor(hex);
             doc.rect(x, y, swatchWidth, swatchHeight, 'F');

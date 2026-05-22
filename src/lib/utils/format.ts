@@ -1,4 +1,24 @@
+import Color from 'colorjs.io';
 import { PRECISION } from '../constants';
+
+export function nn(v: number | null | undefined): number {
+    return v ?? 0;
+}
+
+export function parseToOklch(css: string): { l: number; c: number; h: number; alpha: number } {
+    try {
+        const color = new Color(css);
+        const oklch = color.oklch;
+        return { l: oklch[0] ?? 0, c: oklch[1] ?? 0, h: oklch[2] ?? 0, alpha: color.alpha ?? 1 };
+    } catch {
+        return { l: 0, c: 0, h: 0, alpha: 1 };
+    }
+}
+
+export function oklchFromColor(color: Color): { l: number; c: number; h: number; alpha: number } {
+    const [l, c, h] = color.oklch;
+    return { l: nn(l), c: nn(c), h: nn(h), alpha: color.alpha ?? 1 };
+}
 
 function formatFloat(value: number, precision: number): number {
     return parseFloat(value.toFixed(precision));
