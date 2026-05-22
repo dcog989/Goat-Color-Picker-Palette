@@ -56,9 +56,9 @@ $effect(() => {
             query: searchQuery,
             limit: 500,
         });
-    } else if (!searchQuery.trim() && !isLoading) {
-        displayedColors = colorNameList.slice(0, INITIAL_DISPLAY_LIMIT);
     }
+    _scrollTop = 0;
+    throttledScrollTop = 0;
 });
 
 let filteredColors = $derived.by((): Array<{ name: string; hex: string }> => {
