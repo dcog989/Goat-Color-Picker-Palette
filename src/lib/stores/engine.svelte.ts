@@ -21,7 +21,7 @@ export class EngineStore {
         this.#colorStore = colorStore;
     }
 
-    get contrastWhite(): string {
+    #contrastWhite = $derived.by((): string => {
         try {
             const current = new Color(this.#colorStore.hex);
             const white = new Color('white');
@@ -30,9 +30,13 @@ export class EngineStore {
         } catch {
             return '0';
         }
+    });
+
+    get contrastWhite(): string {
+        return this.#contrastWhite;
     }
 
-    get contrastBlack(): string {
+    #contrastBlack = $derived.by((): string => {
         try {
             const current = new Color(this.#colorStore.hex);
             const black = new Color('black');
@@ -41,14 +45,24 @@ export class EngineStore {
         } catch {
             return '0';
         }
+    });
+
+    get contrastBlack(): string {
+        return this.#contrastBlack;
     }
+
+    #isHarmonyMode = $derived(isHarmonyMode(this.genAxis));
 
     get isHarmonyMode(): boolean {
-        return isHarmonyMode(this.genAxis);
+        return this.#isHarmonyMode;
     }
 
-    get generated(): string[] {
+    #generated = $derived.by((): string[] => {
         return generateColors(this.#getBaseColor(), this.genAxis, this.genSteps);
+    });
+
+    get generated(): string[] {
+        return this.#generated;
     }
 
     init() {
