@@ -98,8 +98,6 @@ export class ImageStore {
 
             this.#activeWorker = new ColorAnalysisWorker();
 
-            this.#activeWorker.postMessage({ imageData, distance: 0.05 }, [imageData.data.buffer]);
-
             this.#activeWorker.onmessage = (
                 e: MessageEvent<{
                     colors: string[];
@@ -110,6 +108,8 @@ export class ImageStore {
                 this.isProcessing = false;
                 this.#terminateWorker();
             };
+
+            this.#activeWorker.postMessage({ imageData, distance: 0.05 }, [imageData.data.buffer]);
 
             this.#activeWorker.onerror = (error) => {
                 console.error('Worker error:', error);
