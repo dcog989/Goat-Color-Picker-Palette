@@ -22,8 +22,8 @@ const exports = $derived.by(() =>
 
 <div
     class="
-      animate-fade-in fixed inset-0 z-50 flex items-center justify-center p-4
-      md:p-8
+      animate-fade-in fixed inset-0 z-50 flex items-start justify-center
+      p-4 pt-12 md:p-8 md:pt-16
     ">
     <button
         type="button"
