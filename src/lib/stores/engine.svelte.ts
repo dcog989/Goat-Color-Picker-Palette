@@ -83,10 +83,10 @@ export class EngineStore {
                 clearTimeout(this.#debounceHandle);
             }
 
-            this.#debounceHandle = setTimeout(() => {
+            this.#debounceHandle = window.setTimeout(() => {
                 this.#searchColorName(current);
                 this.#debounceHandle = null;
-            }, 150) as unknown as number;
+            }, 150);
         });
     }
 
