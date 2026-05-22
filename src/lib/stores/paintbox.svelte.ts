@@ -93,7 +93,7 @@ export class PaintboxStore {
         return { ...item, oklch } as SavedColor;
     }
 
-    get items() {
+    #items = $derived.by((): SavedColor[] => {
         const list = [...this.#colors];
 
         switch (this.sortMode) {
@@ -108,6 +108,10 @@ export class PaintboxStore {
             default:
                 return list.sort((a, b) => a.timestamp - b.timestamp);
         }
+    });
+
+    get items(): SavedColor[] {
+        return this.#items;
     }
 
     add(css: string) {
