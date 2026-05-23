@@ -1,116 +1,49 @@
 # Goat Color - Project Guidelines
 
-## Project Overview
-
-Goat Color is a modern, perceptually uniform color workspace built for the post-sRGB era. It's a sophisticated color picker and palette management tool that prioritizes OKLCH color space for perceptual uniformity.
-
 ## Tech Stack
 
-- **Framework:** Svelte 5 (using Runes API)
-- **Build Tool:** Vite 8
-- **Styling:** Tailwind CSS v4
-- **TypeScript:** v6
-- **Color Libraries:**
-  - `culori` v4.0 - Color manipulation and conversion
-  - `apca-w3` v0.1.9 - APCA contrast calculation
-  - `color-name-list` v14.17 - Named color database (3000+ colors)
-- **UI Icons:** lucide-svelte v0.562.0
-- **PDF Export:** jspdf v4.0
+- **Framework:** Svelte 5 (Runes API)
+- **Build:** Vite 8, TypeScript 6 (strict), Tailwind CSS v4
+- **Color:** `colorjs.io` ^0.6.1 (conversion, manipulation, APCA contrast)
+- **Data:** `color-name-list` ^14.37.0 (short version - 3000+ named colors)
+- **UI:** `lucide-svelte` ^1.0.1, `jspdf` ^4.2.1 (PDF export)
+- **Lint/Format:** Biome 2 (lefthook pre-commit hook)
+- **Test:** Vitest 4 + Testing Library (jsdom)
 
-## Key Features
+## Scripts
 
-1. **OKLCH-First Color Picker** - Design with perceptual uniformity
-2. **Palette Engine** - Generate harmonies (split-complementary, triadic) and variable scales
-3. **Image Analysis** - Extract dominant and vibrant palettes using local K-Means clustering
-4. **Accessibility Tools** - Real-time APCA (Lc) and WCAG 2.1 contrast checking
-5. **Smart Paintbox** - Persistent storage with multi-format export
-6. **Color Library** - Search 3000+ named colors
-7. **Export Formats** - Tailwind, CSS, SVG, PDF
+| Command             | Action                          |
+|---------------------|---------------------------------|
+| `bun run dev`       | Start dev server                |
+| `bun run build`     | Production build                |
+| `bun run preview`   | Preview build                   |
+| `bun run check`     | Biome lint + svelte-check + tsc |
+| `bun run lint`      | Biome check only                |
+| `bun run fix`       | Biome auto-fix                  |
+| `bun run format`    | Biome format                    |
+| `bun run test`      | Vitest                          |
 
-## Project Structure
+## Architecture
 
-Access ~/Projects/Goat-Color-Picker-Palette/ to view.
-
-## Development Commands
-
-- `bun install` - Install dependencies
-- `bun update` - Update dependencies
-- `bun run dev` - Start development server
-- `bun run build` - Build for production
-- `bun run preview` - Preview production build
-- `bun run check` - Run type checking
-
-## Architecture Notes
-
-### State Management
-
-- Uses Svelte 5's Runes API (`$state`, `$derived`, `$effect`)
-- State organized in separate store files under `lib/stores/`
-- Each store manages a specific domain (colors, palettes, images, etc.)
-
-### Color Processing
-
-- Primary color space: OKLCH (perceptually uniform)
-- Supports conversion between multiple color spaces via Culori
-- Web Workers handle computationally intensive tasks (image analysis, search)
-
-### Accessibility
-
-- Implements APCA (Accessible Perceptual Contrast Algorithm)
-- Also supports WCAG 2.1 contrast ratios
-- Real-time contrast checking against background colors
-
-### Data Persistence
-
-- Paintbox (saved colors) persists to localStorage
-- Export functionality generates multiple format outputs
-
-## Key Dependencies Explained
-
-- **culori** - Comprehensive color library supporting multiple color spaces and conversions
-- **apca-w3** - Modern contrast algorithm more accurate than WCAG 2.1
-- **color-name-list** - Database of named colors with metadata
-- **lucide-svelte** - Icon library with Svelte components
-- **jspdf** - PDF generation for color palette exports
+- **State:** Svelte 5 runes (`$state`, `$derived`, `$effect`) in `src/lib/stores/` (7 stores: color, engine, image, paintbox, root, theme, toast)
+- **Workers:** `src/lib/workers/` — color name search, image analysis (K-Means)
+- **Color:** OKLCH primary; `colorjs.io` handles all conversions and APCA (`contrastAPCA()`) + WCAG 2.1
+- **Persistence:** Paintbox saves to localStorage
 
 ## Coding Principles
 
-- Use current coding standards and patterns (Svelte 5 runes, modern TS)
-- KISS, Occam's razor, DRY, YAGNI
-- Optimize for actual and perceived performance
-- Self-documenting code via clear naming
-- Comments only for workarounds/complex logic - do NOT add comments as running dev commentary.
+- Modern Svelte 5 runes, strict TS, KISS/DRY/YAGNI
+- Self-documenting code via clear naming; comments only for workarounds/complex logic
+- 4-space indent, single quotes, semicolons always, trailing commas all, bracket same line
+- Split files >400 lines into separate concerns
 - No magic numbers
-- Split files of 400+ lines in to separate distinct functions
-- **Do NOT create docs files** (summary, reference, testing, etc.) unless explicitly requested
+- **Do not create docs files** (README, summary, reference, etc.) unless requested
 
 ## File System Access
 
-### Allowed Directories
-
-- `.agents/`, `.github/`, `.husky/`, `.svelte-kit/`, `.vscode/`
-- `scripts/`, `src/`, `static/`
-- Root config files: `.editorconfig`, `.gitignore`, `*.config.*`, `package.json`, `tsconfig.json`, etc.
+Root: `/home/bubba/Projects/Goat-Color-Picker-Palette/`
 
 ### Disallowed
 
-- `.context/`, `.assets/`, `.docs/`, `.git/`, `node_modules/`, `.repomix/`
-- `repomix.config.json`, `bun.lock`, `.repomixignore`
-
-## Development Notes
-
-This project leverages modern web APIs and the latest Svelte features. Key considerations:
-
-1. **Svelte 5 Runes** - Uses the new reactivity system instead of stores
-2. **Tailwind v4** - Latest version with Vite plugin
-3. **Web Workers** - Offloads heavy computation to prevent UI blocking
-4. **OKLCH Color Space** - Modern, perceptually uniform alternative to HSL/RGB
-
-## Future Enhancement Ideas
-
-- [ ] Color blindness simulation modes
-- [ ] Additional harmony algorithms
-- [ ] Gradient generator
-- [ ] Color palette sharing/import
-- [ ] Browser extension version
-- [ ] Mobile app version
+- `.agents/`, `.archive/`, `.assets/`, `.context/`, `.docs/`, `.git/`, `.repomix/`, `.repomixignore`
+- `node_modules/`, `dist/`, `build/`, `.svelte-kit/`, `bun.lock`, `repomix.*.json`
