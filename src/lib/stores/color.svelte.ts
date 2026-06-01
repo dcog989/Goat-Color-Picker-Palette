@@ -111,7 +111,14 @@ export class ColorStore {
     }
 
     setHslValues(h: number, s: number, l: number) {
-        this.#setCurrent(colordx({ h: Math.min(h, 359.999), s, l, alpha: this.alpha }));
+        this.#setCurrent(
+            colordx({
+                h: Math.min(h, 359.999),
+                s: Math.max(0, Math.min(s, 100)),
+                l: Math.max(0, Math.min(l, 100)),
+                alpha: this.alpha,
+            }),
+        );
     }
 
     get hslComp() {
@@ -121,8 +128,8 @@ export class ColorStore {
     setHsl(channel: 'h' | 's' | 'l', value: number) {
         const hsl = this.#current.toHsl();
         const newH = channel === 'h' ? Math.min(value, 359.999) : hsl.h;
-        const newS = channel === 's' ? value : hsl.s;
-        const newL = channel === 'l' ? value : hsl.l;
+        const newS = channel === 's' ? Math.max(0, Math.min(value, 100)) : hsl.s;
+        const newL = channel === 'l' ? Math.max(0, Math.min(value, 100)) : hsl.l;
         this.#setCurrent(colordx({ h: newH, s: newS, l: newL, alpha: this.alpha }));
     }
 
