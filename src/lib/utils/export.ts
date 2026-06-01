@@ -77,7 +77,7 @@ class CssExportStrategy implements ExportStrategy {
     format(source: ColorSource, exportFormat: ExportFormat): string {
         const lines: string[] = [':root {'];
         source.colors.forEach((item, i) => {
-            const name = source.isSingle ? 'color-primary' : `color-${i + 1}`;
+            const name = generateColorName(i, source);
             lines.push(`  --${name}: ${formatColor(item.css, exportFormat)};`);
         });
         lines.push('}');
