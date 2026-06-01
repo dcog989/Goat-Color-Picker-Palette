@@ -143,6 +143,7 @@ const hslValues = $derived.by(() => {
                     value={inputVal}
                     id="inputColor"
                     onchange={handleInput}
+                    onfocus={(e) => (e.target as HTMLInputElement).select()}
                     class="
                       w-full rounded-md border bg-(--ui-bg) py-2 pr-8 pl-3
                       font-mono text-base uppercase transition-shadow duration-200 outline-none
