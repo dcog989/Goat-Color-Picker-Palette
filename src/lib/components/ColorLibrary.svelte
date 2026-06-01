@@ -1,5 +1,5 @@
 ﻿<script lang="ts">
-import type { ColorName } from 'color-name-list';
+import type { ColorName } from 'color-name-list/short';
 import { CircleAlert } from 'lucide-svelte';
 import { onDestroy, onMount } from 'svelte';
 import { getApp } from '../context';
