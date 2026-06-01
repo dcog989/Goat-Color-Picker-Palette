@@ -4,6 +4,13 @@ import { type GenerationMode, generatePalette, isHarmonyMode } from '../utils/pa
 import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
 import type { ColorStore } from './color.svelte';
 
+export type WorkerMessageData = {
+    type: string;
+    name?: string;
+    colors?: Array<{ name: string; hex: string }>;
+    total?: number;
+};
+
 export class EngineStore {
     closestName = $state('Searching...');
     #searchWorker: Worker | null = null;
@@ -13,6 +20,7 @@ export class EngineStore {
     #workerRetryCount = 0;
     #maxWorkerRetries = 3;
     #workerRetryDelay = 1000;
+    #workerSubscribers: Array<(msg: WorkerMessageData) => void> = [];
 
     genSteps = $state(8);
     genAxis = $state<GenerationMode>('l');
@@ -98,11 +106,14 @@ export class EngineStore {
         try {
             this.#searchWorker = new ColorNameSearchWorker();
 
-            this.#searchWorker.onmessage = (e: MessageEvent<{ type: string; name: string }>) => {
+            this.#searchWorker.onmessage = (e: MessageEvent<WorkerMessageData>) => {
                 if (e.data.type === 'result') {
-                    this.closestName = e.data.name;
+                    this.closestName = e.data.name ?? 'Custom Color';
                     this.#workerRetryCount = 0;
                 }
+                this.#workerSubscribers.forEach((h) => {
+                    h(e.data);
+                });
             };
 
             this.#searchWorker.onerror = (error) => {
@@ -110,11 +121,17 @@ export class EngineStore {
                 this.closestName = 'Custom Color';
                 this.#terminateWorker();
                 this.#retryWorker('Color name search worker');
+                this.#workerSubscribers.forEach((h) => {
+                    h({ type: 'error' });
+                });
             };
         } catch (error) {
             console.error('Failed to initialize color name search worker:', error);
             this.closestName = 'Custom Color';
             this.#retryWorker('Color name search worker');
+            this.#workerSubscribers.forEach((h) => {
+                h({ type: 'error' });
+            });
         }
     }
 
@@ -161,6 +178,17 @@ export class EngineStore {
         }
         this.#terminateWorker();
         this.#workerRetryCount = 0;
+    }
+
+    subscribeToWorker(handler: (msg: WorkerMessageData) => void): () => void {
+        this.#workerSubscribers.push(handler);
+        return () => {
+            this.#workerSubscribers = this.#workerSubscribers.filter((h) => h !== handler);
+        };
+    }
+
+    postToWorker(data: Record<string, unknown>): void {
+        this.#searchWorker?.postMessage(data);
     }
 
     #getBaseColor(): { l: number; c: number; h: number; alpha: number } {
