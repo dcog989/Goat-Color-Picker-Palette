@@ -510,9 +510,9 @@ const hslValues = $derived.by(() => {
                 <div
                     class="
                       absolute inset-0 flex flex-col items-center justify-center
-                      gap-2 bg-black/10 opacity-0 backdrop-blur-[2px]
-                      transition-opacity duration-200
-                      group-hover:opacity-100
+                      gap-2 bg-black/10 backdrop-blur-[2px]
+                      translate-y-8 opacity-0 transition-all duration-300
+                      group-hover:translate-y-0 group-hover:opacity-100
                     ">
                     <button
                         onclick={(e) => app.copy(inputVal, e)}
@@ -520,7 +520,7 @@ const hslValues = $derived.by(() => {
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
                           shadow-lg backdrop-blur-md
                           transition-transform duration-200
-                          will-change-transform hover:scale-115
+                          will-change-transform hover:scale-110
                           hover:bg-white/40
                         "
                         title="Copy {color.mode.toUpperCase()}">
@@ -532,7 +532,7 @@ const hslValues = $derived.by(() => {
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
                           shadow-lg backdrop-blur-md
                           transition-transform duration-200
-                          will-change-transform hover:scale-115
+                          will-change-transform hover:scale-110
                           hover:bg-white/40
                         "
                         title="Add to Paintbox">
