@@ -145,10 +145,13 @@ const hslValues = $derived(color.hslComp);
                         class="
                       group absolute top-1/2 right-2 -translate-y-1/2
                     ">
-                        <TriangleAlert
+                        <button
+                            onclick={() => color.mapToSrgb()}
                             class="
-                          size-4 cursor-help text-amber-500
-                        " />
+                          cursor-pointer text-amber-500
+                        ">
+                            <TriangleAlert class="size-4" />
+                        </button>
                         <div
                             class="
                               pointer-events-none absolute top-full right-0 mt-2
@@ -157,7 +160,7 @@ const hslValues = $derived(color.hslComp);
                               opacity-0 shadow-xl transition-opacity
                               group-hover:opacity-100
                             ">
-                            Color is outside sRGB gamut. Converted color values are approximate.
+                            Color is outside sRGB gamut. Converted color values are approximate.<br><br>Click to map to nearest sRGB.
                         </div>
                     </div>
                 {/if}

@@ -94,6 +94,10 @@ export class ColorStore {
         return this.#displayColor.toRgb();
     }
 
+    mapToSrgb() {
+        this.#setCurrent(this.#current.mapSrgb());
+    }
+
     setRgb(channel: 'r' | 'g' | 'b', value: number) {
         const sr = this.#current.toRgb();
         const newR = channel === 'r' ? value : sr.r;
