@@ -1,5 +1,9 @@
 # Goat Color - Project Guidelines
 
+## Dev Environment
+
+Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate text editor, Zed code editor, fish shell with Ghostty + Fresh editor. paru and bun package managers. All software is updated as of today.
+
 ## Tech Stack
 
 - **Framework:** Svelte 5 (Runes API)
