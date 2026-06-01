@@ -92,11 +92,21 @@ const exports = $derived.by(() =>
                         <button
                             onclick={(e) => app.copy(exportItem.content, e)}
                             class="
-                              text-brand cursor-pointer rounded-sm px-3 py-1
-                              text-xs font-bold uppercase transition-colors
-                              hover:bg-(--ui-bg) hover:underline
+                              group flex cursor-pointer items-center overflow-hidden
+                              rounded-md border border-transparent px-3 py-1
+                              text-xs font-bold uppercase transition-all
+                              duration-200
+                              hover:border-(--ui-border) hover:bg-(--ui-bg)
                             ">
-                            Copy
+                            <span class="shrink-0 text-brand">Copy</span>
+                            <span
+                                class="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-hover:grid-cols-[1fr]">
+                                <span
+                                    class="overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                <span
+                                    class="ml-2 max-w-40 truncate text-(--ui-text-muted) font-mono font-normal normal-case">{exportItem.content}</span>
+                                </span>
+                            </span>
                         </button>
                     </div>
                     <pre

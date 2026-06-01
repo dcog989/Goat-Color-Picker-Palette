@@ -549,29 +549,25 @@ const hslValues = $derived.by(() => {
             <button
                 onclick={(e) => app.copy(format.value, e)}
                 class="
-                  group flex max-w-25 cursor-pointer items-center
-                  overflow-hidden rounded-full border border-(--ui-border)
-                  bg-(--ui-bg) px-4 py-2 text-xs
-                  transition duration-200
-                  will-change-transform hover:max-w-75
+                  group flex cursor-pointer items-center overflow-hidden
+                  rounded-full border border-(--ui-border) bg-(--ui-bg)
+                  px-4 py-2 text-xs transition-all duration-200
                   hover:bg-(--current-color)
                 ">
                 <span
                     class="
-                      group-hover:text-on-current
-                      mr-2 font-bold text-(--ui-text-muted) transition-colors
+                      group-hover:text-on-current mr-2 shrink-0 font-bold
+                      text-(--ui-text-muted) whitespace-nowrap transition-colors
                     ">{format.label}</span>
                 <span
-                    class="
-                      text-on-current w-0 font-mono whitespace-nowrap opacity-0
-                      transition duration-300
-                      group-hover:w-auto group-hover:opacity-100
-                    ">{format.value}</span>
-                <Copy
-                    class="
-                      text-on-current ml-2 size-3 opacity-0 transition-opacity
-                      group-hover:opacity-100
-                    " />
+                    class="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-hover:grid-cols-[1fr]">
+                    <span
+                        class="flex items-center gap-1.5 overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                        <span
+                            class="text-on-current font-mono whitespace-nowrap">{format.value}</span>
+                        <Copy class="text-on-current size-3 shrink-0" />
+                    </span>
+                </span>
             </button>
         {/each}
     </div>

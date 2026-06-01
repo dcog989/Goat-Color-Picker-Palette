@@ -1,4 +1,5 @@
 <script lang="ts">
+import { fly } from 'svelte/transition';
 import { getApp } from '../context';
 
 const { toast } = getApp();
@@ -16,10 +17,14 @@ const isCursor = $derived(toast.active?.x !== undefined && toast.active?.y !== u
         style:left={isCursor ? `${toast.active.x}px` : undefined}
         style:transform={isCursor ? 'translate(-50%, -100%) translateY(-12px)' : undefined}>
         <div
+            transition:fly={{
+                y: isCursor ? 0 : 16,
+                duration: 200,
+                opacity: 0,
+            }}
             class="
               rounded-lg border border-(--ui-border) bg-(--ui-card) p-4 text-xs
-              font-bold tracking-wider text-(--ui-text) uppercase shadow-xl
-              {isCursor ? 'animate-scale-in' : 'animate-slide-up'}">
+              font-bold tracking-wider text-(--ui-text) uppercase shadow-xl">
             {toast.active.message}
         </div>
     </div>

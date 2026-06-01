@@ -61,40 +61,47 @@ const getActionClass = () => {
     aria-label="Select swatch {index + 1}">
     <div
         class="
-          absolute inset-0 flex items-center justify-center gap-2
-          opacity-0 transition-opacity
-          group-hover:opacity-100
+          absolute inset-0 flex items-center justify-center
+          overflow-hidden
         ">
-        <button
-            onclick={(e) => {
-                e.stopPropagation();
-                paintbox.add(swatchColor);
-                toast.show('Added', e);
-            }}
-            class="{getActionClass()}
-              cursor-pointer rounded-full p-3 shadow-sm
-              transition-transform duration-200
-              will-change-transform
-              hover:scale-110
-            "
-            title="Add to paintbox"
-            type="button">
-            <Plus class="pointer-events-none size-4" />
-        </button>
-        <button
-            onclick={(e) => {
-                e.stopPropagation();
-                copy(e);
-            }}
-            class="{getActionClass()}
-              cursor-pointer rounded-full p-3 shadow-sm
-              transition-transform duration-200
-              will-change-transform
-              hover:scale-110
-            "
-            title="Copy"
-            type="button">
-            <Copy class="pointer-events-none size-4" />
-        </button>
+        <div
+            class="
+              flex items-center justify-center gap-2
+              translate-y-8 opacity-0
+              transition-all duration-300
+              group-hover:translate-y-0 group-hover:opacity-100
+            ">
+            <button
+                onclick={(e) => {
+                    e.stopPropagation();
+                    paintbox.add(swatchColor);
+                    toast.show('Added', e);
+                }}
+                class="{getActionClass()}
+                  cursor-pointer rounded-full p-3 shadow-sm
+                  transition-transform duration-200
+                  will-change-transform
+                  hover:scale-110
+                "
+                title="Add to paintbox"
+                type="button">
+                <Plus class="pointer-events-none size-4" />
+            </button>
+            <button
+                onclick={(e) => {
+                    e.stopPropagation();
+                    copy(e);
+                }}
+                class="{getActionClass()}
+                  cursor-pointer rounded-full p-3 shadow-sm
+                  transition-transform duration-200
+                  will-change-transform
+                  hover:scale-110
+                "
+                title="Copy"
+                type="button">
+                <Copy class="pointer-events-none size-4" />
+            </button>
+        </div>
     </div>
 </div>
