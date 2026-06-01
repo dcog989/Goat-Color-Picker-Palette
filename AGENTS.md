@@ -8,7 +8,7 @@ Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate t
 
 - **Framework:** Svelte 5 (Runes API)
 - **Build:** Vite 8, TypeScript 6 (strict), Tailwind CSS v4
-- **Color:** `colorjs.io` ^0.6.1 (conversion, manipulation, APCA contrast)
+- **Color:** `colordx` ^5.4 (conversion, manipulation, APCA contrast)
 - **Data:** `color-name-list` ^14.37.0 (short version - 3000+ named colors)
 - **UI:** `lucide-svelte` ^1.0.1, `jspdf` ^4.2.1 (PDF export)
 - **Lint/Format:** Biome 2 (lefthook pre-commit hook)
@@ -31,7 +31,7 @@ Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate t
 
 - **State:** Svelte 5 runes (`$state`, `$derived`, `$effect`) in `src/lib/stores/` (7 stores: color, engine, image, paintbox, root, theme, toast)
 - **Workers:** `src/lib/workers/` — color name search, image analysis (K-Means)
-- **Color:** OKLCH primary; `colorjs.io` handles all conversions and APCA (`contrastAPCA()`) + WCAG 2.1
+- **Color:** OKLCH primary; `colordx` handles all conversions and APCA (`contrastAPCA()`) + WCAG 2.1
 - **Persistence:** Paintbox saves to localStorage
 
 ## Coding Principles
