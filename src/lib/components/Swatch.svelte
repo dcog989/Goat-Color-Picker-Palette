@@ -1,5 +1,5 @@
 <script lang="ts">
-import Color from 'colorjs.io';
+import { colordx } from '@colordx/core';
 import { Copy, Plus } from 'lucide-svelte';
 import { getApp } from '../context';
 
@@ -33,8 +33,8 @@ const getActionClass = () => {
     }
     let l = 0;
     try {
-        const parsed = new Color(swatchColor);
-        l = parsed.oklch[0] ?? 0;
+        const parsed = colordx(swatchColor);
+        l = parsed.toOklch().l;
     } catch {
         // fallback
     }

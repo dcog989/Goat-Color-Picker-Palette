@@ -1,6 +1,6 @@
-import Color from 'colorjs.io';
+import { colordx } from '@colordx/core';
 import { PRECISION } from '../constants';
-import { type GenerationMode, generateColors, isHarmonyMode } from '../utils/harmonies';
+import { type GenerationMode, generatePalette, isHarmonyMode } from '../utils/palette';
 import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
 import type { ColorStore } from './color.svelte';
 
@@ -23,9 +23,8 @@ export class EngineStore {
 
     #contrastWhite = $derived.by((): string => {
         try {
-            const current = new Color(this.#colorStore.hex);
-            const white = new Color('white');
-            const raw = white.contrastAPCA(current);
+            const current = colordx(this.#colorStore.hex);
+            const raw = current.apcaContrast('#fff');
             return Math.abs(raw).toFixed(PRECISION.CONTRAST_DISPLAY);
         } catch {
             return '0';
@@ -38,9 +37,8 @@ export class EngineStore {
 
     #contrastBlack = $derived.by((): string => {
         try {
-            const current = new Color(this.#colorStore.hex);
-            const black = new Color('black');
-            const raw = black.contrastAPCA(current);
+            const current = colordx(this.#colorStore.hex);
+            const raw = current.apcaContrast('#000');
             return Math.abs(raw).toFixed(PRECISION.CONTRAST_DISPLAY);
         } catch {
             return '0';
@@ -58,7 +56,13 @@ export class EngineStore {
     }
 
     #generated = $derived.by((): string[] => {
-        return generateColors(this.#getBaseColor(), this.genAxis, this.genSteps);
+        if (isHarmonyMode(this.genAxis)) {
+            const base = this.#getBaseColor();
+            return colordx({ l: base.l, c: base.c, h: base.h })
+                .harmonies(this.genAxis)
+                .map((c) => c.toHex());
+        }
+        return generatePalette(this.#getBaseColor(), this.genAxis, this.genSteps);
     });
 
     get generated(): string[] {

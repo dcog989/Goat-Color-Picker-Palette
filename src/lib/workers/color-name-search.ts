@@ -1,4 +1,4 @@
-﻿import Color from 'colorjs.io';
+﻿import { colordx } from '@colordx/core';
 
 interface WorkerMessage {
     type: 'search' | 'filter';
@@ -44,13 +44,11 @@ async function prepareData(): Promise<void> {
             hexValues[i] = entry.hex;
 
             try {
-                const color = new Color(entry.hex);
-                const oklab = color.to('oklab');
-                const coords = oklab.oklab;
+                const oklab = colordx(entry.hex).toOklab();
                 const ptr = i * 3;
-                coordinates[ptr] = coords[0] ?? 0;
-                coordinates[ptr + 1] = coords[1] ?? 0;
-                coordinates[ptr + 2] = coords[2] ?? 0;
+                coordinates[ptr] = oklab.l;
+                coordinates[ptr + 1] = oklab.a;
+                coordinates[ptr + 2] = oklab.b;
             } catch {
                 // Skip colors that can't be parsed
             }
@@ -108,11 +106,10 @@ function findClosestName(current: { l: number; c: number; h: number; alpha: numb
 
     let tL: number, ta: number, tb: number;
     try {
-        const target = new Color('oklch', [current.l, current.c, current.h]).to('oklab');
-        const coords = target.oklab;
-        tL = coords[0] ?? 0;
-        ta = coords[1] ?? 0;
-        tb = coords[2] ?? 0;
+        const target = colordx({ l: current.l, c: current.c, h: current.h }).toOklab();
+        tL = target.l;
+        ta = target.a;
+        tb = target.b;
     } catch {
         return 'Custom Color';
     }

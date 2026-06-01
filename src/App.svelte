@@ -35,6 +35,9 @@ onDestroy(() => {
     app.destroy();
 });
 
+// Achromatic hue fix — preserve previous hue for near-neutral colors
+let prevHue = 0;
+
 // Global CSS variable sync with optimized batching
 let rafId: number | null = null;
 $effect(() => {
@@ -42,6 +45,7 @@ $effect(() => {
     const cssVar = color.cssVar;
     const hStr = color.h.toString();
     const l = color.l;
+    const c = color.c;
 
     // Cancel pending update
     if (rafId !== null) {
@@ -55,7 +59,12 @@ $effect(() => {
 
         // Batch all style changes together to minimize reflows
         root.style.setProperty('--current-color', cssVar);
-        root.style.setProperty('--current-hue', hStr);
+        if (c > 0.001) {
+            root.style.setProperty('--current-hue', hStr);
+            prevHue = color.h;
+        } else {
+            root.style.setProperty('--current-hue', prevHue.toString());
+        }
         body.style.backgroundColor = cssVar;
 
         // Set data attribute for contrast-dependent styling
