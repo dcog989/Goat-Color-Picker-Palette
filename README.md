@@ -16,9 +16,9 @@ A modern, perceptually uniform color workspace built for the post-sRGB era.
 ## Tech Stack
 
 - **Framework:** Svelte 5 (Runes)
-- **Styling:** Tailwind CSS v4
+- **Styling:** Tailwind CSS
 - **Build:** Vite
-- **Math:** Culori & APCA-W3
+- **Math:** colordx
 
 ## Development
 
