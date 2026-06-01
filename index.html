@@ -8,9 +8,15 @@
             content="Complete color toolbox for color picking, palette generation and export, image color extract, contrast checker (WCAG / APCA)." />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta property="og:title" content="Color Picker Palette Image Contrast" />
+        <meta property="og:description" content="Complete color toolbox for color picking, palette generation and export, image color extract, contrast checker (WCAG / APCA)." />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://goatcolor.app/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="theme-color" content="#444444" />
         <script>
             // Block rendering to apply theme class before any content appears
-            (function () {
+            (() => {
                 try {
                     // Check localStorage for saved theme preference
                     const savedTheme = localStorage.getItem('theme');
