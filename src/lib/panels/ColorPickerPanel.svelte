@@ -1,7 +1,6 @@
 <script lang="ts">
 import { Copy, DecimalsArrowLeft, DecimalsArrowRight, Plus, TriangleAlert } from 'lucide-svelte';
 import { getApp } from '../context';
-import { maxChromaForLH } from '../utils/gamut';
 
 const app = getApp();
 const { color, paintbox, toast } = app;
@@ -59,8 +58,6 @@ const handleInput = (e: Event) => {
     }
 };
 
-const maxChromaForCurrentLH = $derived(maxChromaForLH(color.l, color.h));
-
 const getGradientClass = (type: string) => {
     switch (type) {
         case 'h':
@@ -115,7 +112,7 @@ const hslValues = $derived.by(() => {
     style:--picker-l={color.l}
     style:--picker-c={color.c}
     style:--picker-h={color.h}
-    style:--picker-max-c={maxChromaForCurrentLH}
+    style:--picker-max-c={0.33}
     style:--picker-hsl-h={hslValues.h}
     style:--picker-hsl-s={hslValues.s + '%'}
     style:--picker-hsl-l={hslValues.l + '%'}>
@@ -273,7 +270,7 @@ const hslValues = $derived.by(() => {
                         <input
                             type="range"
                             min="0"
-                            max={maxChromaForCurrentLH}
+                            max={0.33}
                             step="0.001"
                             bind:value={color.c}
                             aria-label="Chroma"
