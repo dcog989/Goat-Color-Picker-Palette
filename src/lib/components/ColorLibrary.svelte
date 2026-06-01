@@ -2,9 +2,8 @@
 import { CircleAlert } from 'lucide-svelte';
 import { onDestroy, onMount } from 'svelte';
 import { getApp } from '../context';
-import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
 
-const { color: colorStore } = getApp();
+const { color: colorStore, engine } = getApp();
 
 let searchQuery = $state('');
 let searchInput = $state<HTMLInputElement>();
@@ -16,7 +15,7 @@ let isLoading = $state(true);
 let isFiltering = $state(false);
 let loadError = $state<string | null>(null);
 
-let filterWorker: Worker | null = null;
+let unsubscribe: (() => void) | null = null;
 let searchDebounceTimeout: number | null = null;
 let debouncedQuery = $state('');
 let hasLoadedInitialPage = false;
@@ -25,14 +24,12 @@ const INITIAL_DISPLAY_LIMIT = 100;
 let displayedColors = $state<Array<{ name: string; hex: string }>>([]);
 
 onMount(() => {
-    filterWorker = new ColorNameSearchWorker();
-
-    filterWorker.onmessage = (e) => {
-        if (e.data.type === 'filterResult') {
-            workerFilteredColors = e.data.colors || [];
+    unsubscribe = engine.subscribeToWorker((msg) => {
+        if (msg.type === 'filterResult') {
+            workerFilteredColors = msg.colors || [];
             isFiltering = false;
-        } else if (e.data.type === 'pageResult') {
-            const colors = e.data.colors || [];
+        } else if (msg.type === 'pageResult') {
+            const colors = msg.colors || [];
             if (!hasLoadedInitialPage) {
                 hasLoadedInitialPage = true;
                 if (colors.length === 0) {
@@ -41,18 +38,16 @@ onMount(() => {
                 isLoading = false;
             }
             displayedColors = [...displayedColors, ...colors];
-            if (e.data.total !== undefined) {
-                totalColors = e.data.total;
+            if (msg.total !== undefined) {
+                totalColors = msg.total;
             }
+        } else if (msg.type === 'error') {
+            loadError = 'Failed to load color library. Please refresh the page.';
+            isLoading = false;
         }
-    };
+    });
 
-    filterWorker.onerror = () => {
-        loadError = 'Failed to load color library. Please refresh the page.';
-        isLoading = false;
-    };
-
-    filterWorker.postMessage({
+    engine.postToWorker({
         type: 'get-page',
         offset: 0,
         limit: INITIAL_DISPLAY_LIMIT,
@@ -63,7 +58,7 @@ onDestroy(() => {
     if (searchDebounceTimeout !== null) {
         clearTimeout(searchDebounceTimeout);
     }
-    filterWorker?.terminate();
+    unsubscribe?.();
 });
 
 $effect(() => {
@@ -87,8 +82,8 @@ $effect(() => {
 });
 
 $effect(() => {
-    if (filterWorker && debouncedQuery) {
-        filterWorker.postMessage({
+    if (debouncedQuery) {
+        engine.postToWorker({
             type: 'filter',
             query: debouncedQuery,
             limit: 500,
@@ -120,11 +115,11 @@ function handleScroll(e: Event) {
         throttledScrollTop = _scrollTop;
         scrollThrottleTimeout = null;
 
-        if (!searchQuery.trim() && !isLoading && filterWorker) {
+        if (!searchQuery.trim() && !isLoading) {
             const scrolledNearBottom =
                 _scrollTop + viewportHeight > displayedColors.length * itemHeight - 500;
             if (scrolledNearBottom && displayedColors.length < totalColors) {
-                filterWorker.postMessage({
+                engine.postToWorker({
                     type: 'get-page',
                     offset: displayedColors.length,
                     limit: 100,
