@@ -94,14 +94,7 @@ const getGradientStyle = (type: string) => {
     }
 };
 
-const hslValues = $derived.by(() => {
-    const hsl = color.hslComp;
-    return {
-        h: Math.round(hsl.h),
-        s: Math.round(hsl.s),
-        l: Math.round(hsl.l),
-    };
-});
+const hslValues = $derived(color.hslComp);
 </script>
 
 <section
