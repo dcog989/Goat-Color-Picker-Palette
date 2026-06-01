@@ -1,5 +1,5 @@
 <script lang="ts">
-import Color from 'colorjs.io';
+import { colordx, getFormat } from '@colordx/core';
 import { ArrowRightLeft, Check, X } from 'lucide-svelte';
 import { getApp } from '../context';
 
@@ -13,7 +13,7 @@ let customColor = $state('#888888');
 let isFg = $state(true);
 
 const isValidColor = (colorStr: string): boolean => {
-    return Color.try(colorStr) !== null;
+    return getFormat(colorStr) !== undefined;
 };
 
 let customColorError = $derived(mode === 'custom' && !isValidColor(customColor));
@@ -55,13 +55,12 @@ let stats = $derived.by(() => {
         const b = isFg ? t : color.hex;
 
         try {
-            const fgColor = new Color(f);
-            const bgColor = new Color(b);
+            const fgColor = colordx(f);
 
-            const rawApca = fgColor.contrastAPCA(bgColor);
+            const rawApca = fgColor.apcaContrast(b);
             result[m].apca = Math.round(Math.abs(rawApca));
 
-            const ratio = fgColor.contrastWCAG21(bgColor);
+            const ratio = fgColor.contrast(b);
             result[m].wcag = !Number.isNaN(ratio) && Number.isFinite(ratio) ? ratio : 0;
         } catch {
             result[m].apca = 0;

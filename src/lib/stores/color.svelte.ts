@@ -1,34 +1,15 @@
-import Color from 'colorjs.io';
-import {
-    formatCmyk,
-    formatHsl,
-    formatLab,
-    formatOklab,
-    formatOklch,
-    formatRgb,
-    nn,
-} from '../utils/format';
+import type { Colordx } from '@colordx/core';
+import { colordx, inGamutSrgb } from '@colordx/core';
 
-function toHexStr(color: Color): string {
-    const srgb = color.to('srgb');
-    const sr = srgb.srgb;
-    const toHex = (n: number) =>
-        Math.max(0, Math.min(255, Math.round(n * 255)))
-            .toString(16)
-            .padStart(2, '0');
-    return `#${toHex(nn(sr[0]))}${toHex(nn(sr[1]))}${toHex(nn(sr[2]))}`;
-}
-
-function getDisplayColor(color: Color): Color {
-    const srgb = color.to('srgb');
-    if (srgb.inGamut()) {
-        return srgb;
+function getDisplayColor(color: Colordx): Colordx {
+    if (inGamutSrgb(color.toOklch())) {
+        return color;
     }
-    return srgb.toGamut({ method: 'css' });
+    return color.mapSrgb();
 }
 
 export class ColorStore {
-    #current = $state<Color>(ColorStore.#getRandomColor());
+    #current = $state<Colordx>(colordx(ColorStore.#getRandomColor()));
     mode = $state<'oklch' | 'rgb' | 'hsl'>('oklch');
     #precisionMode: () => 'precise' | 'practical';
 
@@ -36,16 +17,18 @@ export class ColorStore {
         this.#precisionMode = precisionGetter;
     }
 
-    static #getRandomColor(): Color {
+    static #getRandomColor(): string {
         const h = Math.random() * 360;
         const s = 0.4 + Math.random() * 0.5;
         const l = 0.4 + Math.random() * 0.3;
-        return new Color('hsl', [h, s * 100, l * 100]).to('oklch');
+        return `hsl(${h}, ${s * 100}%, ${l * 100}%)`;
     }
 
     set(value: string): boolean {
         try {
-            this.#current = new Color(value).to('oklch');
+            const parsed = colordx(value);
+            if (!parsed.isValid()) return false;
+            this.#current = parsed;
             return true;
         } catch {
             return false;
@@ -53,40 +36,40 @@ export class ColorStore {
     }
 
     get l() {
-        return nn(this.#current.oklch[0]);
+        return this.#current.toOklch().l;
     }
     set l(v: number) {
-        const c = nn(this.#current.oklch[1]);
-        const h = nn(this.#current.oklch[2]);
-        this.#current = new Color('oklch', [v, c, h], this.#current.alpha);
+        const { c, h, alpha } = this.#current.toOklch();
+        this.#current = colordx({ l: v, c, h, alpha });
     }
 
     get c() {
-        return nn(this.#current.oklch[1]);
+        return this.#current.toOklch().c;
     }
     set c(v: number) {
-        const l = nn(this.#current.oklch[0]);
-        const h = nn(this.#current.oklch[2]);
-        this.#current = new Color('oklch', [l, v, h], this.#current.alpha);
+        const { l, h, alpha } = this.#current.toOklch();
+        this.#current = colordx({ l, c: v, h, alpha });
     }
 
     get h() {
-        return nn(this.#current.oklch[2]);
+        return this.#current.toOklch().h;
     }
     set h(v: number) {
-        const l = nn(this.#current.oklch[0]);
-        const c = nn(this.#current.oklch[1]);
-        this.#current = new Color('oklch', [l, c, v], this.#current.alpha);
+        const { l, c, alpha } = this.#current.toOklch();
+        this.#current = colordx({ l, c, h: v, alpha });
     }
 
     get alpha() {
-        return this.#current.alpha ?? 1;
+        return this.#current.alpha();
     }
     set alpha(v: number) {
-        this.#current = new Color('oklch', [this.l, this.c, this.h], v);
+        this.#current = this.#current.alpha(v);
     }
 
-    #isOutOfGamut = $derived(!this.#current.inGamut('srgb'));
+    #isOutOfGamut = $derived.by(() => {
+        const oklch = this.#current.toOklch();
+        return !inGamutSrgb({ l: oklch.l, c: oklch.c, h: oklch.h });
+    });
 
     get isOutOfGamut() {
         return this.#isOutOfGamut;
@@ -95,148 +78,103 @@ export class ColorStore {
     #displayColor = $derived.by(() => getDisplayColor(this.#current));
 
     get rgbComp() {
-        const sr = this.#displayColor.srgb;
-        return {
-            r: Math.round(nn(sr[0]) * 255),
-            g: Math.round(nn(sr[1]) * 255),
-            b: Math.round(nn(sr[2]) * 255),
-        };
+        return this.#displayColor.toRgb();
     }
 
     setRgb(channel: 'r' | 'g' | 'b', value: number) {
-        const sr = this.#current.to('srgb').srgb;
-        const newR = channel === 'r' ? value / 255 : nn(sr[0]);
-        const newG = channel === 'g' ? value / 255 : nn(sr[1]);
-        const newB = channel === 'b' ? value / 255 : nn(sr[2]);
-        this.#current = new Color('srgb', [newR, newG, newB], this.alpha).to('oklch');
+        const sr = this.#current.toRgb();
+        const newR = channel === 'r' ? value : sr.r;
+        const newG = channel === 'g' ? value : sr.g;
+        const newB = channel === 'b' ? value : sr.b;
+        this.#current = colordx({ r: newR, g: newG, b: newB, alpha: this.alpha });
     }
 
     setRgbValues(r: number, g: number, b: number) {
-        this.#current = new Color('srgb', [r / 255, g / 255, b / 255], this.alpha).to('oklch');
+        this.#current = colordx({ r, g, b, alpha: this.alpha });
     }
 
     setHslValues(h: number, s: number, l: number) {
-        this.#current = new Color('hsl', [h, s, l], this.alpha).to('oklch');
+        this.#current = colordx({ h, s, l, alpha: this.alpha });
     }
 
     get hslComp() {
-        const hsl = this.#displayColor.to('hsl');
-        const [h, s, l] = hsl.hsl;
-        return {
-            h: nn(h),
-            s: nn(s),
-            l: nn(l),
-        };
+        return this.#displayColor.toHsl();
     }
 
     setHsl(channel: 'h' | 's' | 'l', value: number) {
-        const [h, s, l] = this.#current.to('hsl').hsl;
-        const newH = channel === 'h' ? value : nn(h);
-        const newS = channel === 's' ? value : nn(s);
-        const newL = channel === 'l' ? value : nn(l);
-        this.#current = new Color('hsl', [newH, newS, newL], this.alpha).to('oklch');
+        const hsl = this.#current.toHsl();
+        const newH = channel === 'h' ? value : hsl.h;
+        const newS = channel === 's' ? value : hsl.s;
+        const newL = channel === 'l' ? value : hsl.l;
+        this.#current = colordx({ h: newH, s: newS, l: newL, alpha: this.alpha });
     }
 
     get hslValues() {
-        const [h, s, l] = this.#current.to('hsl').hsl;
-        return {
-            h: nn(h),
-            s: nn(s),
-            l: nn(l),
-        };
+        return this.#current.toHsl();
     }
 
     formatColor(css: string): string {
-        let parsed: Color;
+        let parsed: Colordx;
         try {
-            parsed = new Color(css);
+            parsed = colordx(css);
         } catch {
             return css;
         }
 
-        const alpha = parsed.alpha ?? 1;
-        const mode = this.#precisionMode();
+        if (!parsed.isValid()) {
+            return css;
+        }
+
+        const precision = this.#precisionMode() === 'precise' ? 4 : undefined;
 
         if (this.mode === 'rgb') {
-            const sr = parsed.to('srgb').srgb;
-            return formatRgb(nn(sr[0]) * 255, nn(sr[1]) * 255, nn(sr[2]) * 255, alpha, mode);
+            return parsed.toRgbString();
         } else if (this.mode === 'hsl') {
-            const [h, s, l] = parsed.to('hsl').hsl;
-            return formatHsl(nn(h), nn(s) / 100, nn(l) / 100, alpha, mode);
+            return parsed.toHslString(precision);
         } else {
-            const [l, c, h] = parsed.oklch;
-            return formatOklch(nn(l), nn(c), nn(h), alpha, mode);
+            return parsed.toOklchString(precision);
         }
     }
 
     display = $derived.by(() => {
-        return formatOklch(this.l, this.c, this.h, this.alpha, this.#precisionMode());
-    });
-
-    hex = $derived(toHexStr(this.#displayColor));
-
-    hexa = $derived.by(() => {
-        const base = toHexStr(this.#displayColor);
-        if (this.alpha < 1) {
-            const alphaHex = Math.round(this.alpha * 255)
-                .toString(16)
-                .padStart(2, '0');
-            return base + alphaHex;
+        if (this.#precisionMode() === 'precise') {
+            return this.#current.toOklchString();
         }
-        return base;
+        const { l, c, h, alpha } = this.#current.toOklch();
+        const lPct = Math.round(l * 100);
+        const cStr = parseFloat(c.toFixed(2));
+        const hStr = Math.round(h || 0);
+        return alpha < 1
+            ? `oklch(${lPct}% ${cStr} ${hStr} / ${parseFloat(alpha.toFixed(1))})`
+            : `oklch(${lPct}% ${cStr} ${hStr})`;
     });
 
-    rgb = $derived.by(() => {
-        const sr = this.#displayColor.srgb;
-        return formatRgb(
-            nn(sr[0]) * 255,
-            nn(sr[1]) * 255,
-            nn(sr[2]) * 255,
-            this.alpha,
-            this.#precisionMode(),
-        );
-    });
+    hex = $derived(this.#displayColor.alpha(1).toHex());
 
-    hsl = $derived.by(() => {
-        const [h, s, l] = this.#displayColor.to('hsl').hsl;
-        return formatHsl(nn(h), nn(s) / 100, nn(l) / 100, this.alpha, this.#precisionMode());
-    });
+    hexa = $derived(this.#displayColor.toHex());
 
-    lab = $derived.by(() => {
-        const [labL, labA, labB] = this.#current.to('lab').lab;
-        return formatLab(nn(labL), nn(labA), nn(labB), this.alpha, this.#precisionMode());
-    });
+    rgb = $derived(this.#displayColor.toRgbString());
 
-    oklab = $derived.by(() => {
-        const [okl, oka, okb] = this.#current.to('oklab').oklab;
-        return formatOklab(nn(okl), nn(oka), nn(okb), this.alpha, this.#precisionMode());
-    });
+    hsl = $derived(this.#displayColor.toHslString());
 
-    cmyk = $derived.by(() => {
-        const sr = this.#displayColor.srgb;
-        const r = nn(sr[0]),
-            g = nn(sr[1]),
-            b = nn(sr[2]);
-        const k = 1 - Math.max(r, g, b);
-        let c = 0,
-            m = 0,
-            y = 0;
-        if (k < 1) {
-            c = (1 - r - k) / (1 - k);
-            m = (1 - g - k) / (1 - k);
-            y = (1 - b - k) / (1 - k);
-        }
-        return formatCmyk(c, m, y, k, this.alpha, this.#precisionMode());
-    });
+    lab = $derived(this.#current.toLabString());
+
+    oklab = $derived(this.#current.toOklabString());
+
+    cmyk = $derived(this.#displayColor.toCmykString());
 
     cssVar = $derived.by(() => {
-        const alphaStr = this.alpha < 1 ? ` / ${this.alpha}` : '';
-        return `oklch(${this.l * 100}% ${this.c} ${this.h}${alphaStr})`;
+        const oklch = this.#current.toOklch();
+        const alphaStr = oklch.alpha < 1 ? ` / ${oklch.alpha}` : '';
+        return `oklch(${oklch.l * 100}% ${oklch.c} ${oklch.h}${alphaStr})`;
     });
 
-    cssVarOpaque = $derived(`oklch(${this.l * 100}% ${this.c} ${this.h})`);
+    cssVarOpaque = $derived.by(() => {
+        const oklch = this.#current.toOklch();
+        return `oklch(${oklch.l * 100}% ${oklch.c} ${oklch.h})`;
+    });
 
     randomize() {
-        this.#current = ColorStore.#getRandomColor();
+        this.#current = colordx(ColorStore.#getRandomColor());
     }
 }

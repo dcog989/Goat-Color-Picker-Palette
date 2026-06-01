@@ -67,7 +67,7 @@ const removeRow = () => {
                     <option value="analogous">Analogous</option>
                     <option value="triadic">Triadic</option>
                     <option value="tetradic">Tetradic</option>
-                    <option value="square">Square</option>
+                    <option value="rectangle">Rectangle</option>
                 </optgroup>
             </select>
 

@@ -1,7 +1,6 @@
-import Color from 'colorjs.io';
+import { colordx, getFormat } from '@colordx/core';
 import { EXPORT } from '../constants';
 import type { RootStore } from '../stores/root.svelte';
-import { formatOklch, nn, oklchFromColor } from './format';
 
 // biome-ignore lint/suspicious/noExplicitAny: jsPDF type is dynamic
 let jsPDFModule: any = null;
@@ -14,19 +13,15 @@ async function getJsPDF() {
 
 export type ExportFormat = 'hex' | 'rgb' | 'hsl' | 'oklch';
 
-function safeColor(str: string): Color | null {
-    try {
-        return new Color(str);
-    } catch {
-        return null;
+function safeColor(str: string) {
+    if (getFormat(str) !== undefined) {
+        try {
+            return colordx(str);
+        } catch {
+            return null;
+        }
     }
-}
-
-function toHex(color: Color): string {
-    const srgb = color.to('srgb');
-    const sr = srgb.srgb;
-    const c = new Color('srgb', [nn(sr[0]), nn(sr[1]), nn(sr[2])], 1);
-    return c.toString({ format: 'hex' });
+    return null;
 }
 
 export function formatColor(color: string, format: ExportFormat): string {
@@ -35,15 +30,13 @@ export function formatColor(color: string, format: ExportFormat): string {
 
     switch (format) {
         case 'hex':
-            return toHex(parsed);
+            return parsed.toHex();
         case 'rgb':
-            return parsed.to('srgb').toString({ format: 'rgb' });
+            return parsed.toRgbString();
         case 'hsl':
-            return parsed.to('hsl').toString({ format: 'hsl' });
-        case 'oklch': {
-            const { l, c, h, alpha } = oklchFromColor(parsed);
-            return formatOklch(l, c, h, alpha);
-        }
+            return parsed.toHslString();
+        case 'oklch':
+            return parsed.toOklchString();
         default:
             return color;
     }
@@ -112,7 +105,7 @@ class AndroidXmlExportStrategy implements ExportStrategy {
         source.colors.forEach((item, i) => {
             const name = generateColorName(i, source).replace(/-/g, '_');
             const parsed = safeColor(item.css);
-            const hex = (parsed ? toHex(parsed) : '#000000').toUpperCase();
+            const hex = (parsed ? parsed.toHex() : '#000000').toUpperCase();
             const androidHex = hex.length === 9 ? `#${hex.slice(7, 9)}${hex.slice(1, 7)}` : hex;
             lines.push(`  <color name="${name}">${androidHex}</color>`);
         });
@@ -227,13 +220,13 @@ export function exportPng(root: RootStore): void {
                 if (swatchHeight > 80) {
                     const parsed = safeColor(item.css);
                     if (parsed) {
-                        const oklchVal = oklchFromColor(parsed);
+                        const oklchVal = parsed.toOklch();
                         const textColor = oklchVal.l > 0.5 ? '#000000' : '#ffffff';
                         ctx.fillStyle = textColor;
                         ctx.font = `bold ${Math.min(swatchHeight / 4, 32)}px ui-monospace, monospace`;
                         ctx.textAlign = 'center';
                         ctx.fillText(
-                            toHex(parsed).toUpperCase(),
+                            parsed.toHex().toUpperCase(),
                             x + swatchWidth / 2,
                             y + swatchHeight / 2 + 8,
                         );
@@ -291,11 +284,11 @@ export function exportSvg(root: RootStore): void {
                 const y = row * swatchHeight;
 
                 const parsed = safeColor(item.css);
-                const hexColor = parsed ? toHex(parsed) : item.css;
+                const hexColor = parsed ? parsed.toHex() : item.css;
 
                 let colorText = '';
                 if (swatchHeight > 50 && parsed) {
-                    const oklchVal = oklchFromColor(parsed);
+                    const oklchVal = parsed.toOklch();
                     const textColor = oklchVal.l > 0.5 ? '#000000' : '#ffffff';
                     const fontSize = Math.min(swatchHeight / 5, 14);
                     colorText = `<text x="${x + swatchWidth / 2}" y="${y + swatchHeight / 2 + fontSize / 3}" font-family="monospace" font-size="${fontSize}" font-weight="bold" fill="${textColor}" text-anchor="middle">${hexColor.toUpperCase()}</text>`;
@@ -349,8 +342,7 @@ export async function exportPdf(root: RootStore): Promise<void> {
 
         const parsed = safeColor(item.css);
         if (parsed) {
-            const hex = toHex(parsed);
-            const oklchVal = oklchFromColor(parsed);
+            const hex = parsed.toHex();
 
             doc.setFillColor(hex);
             doc.rect(x, y, swatchWidth, swatchHeight, 'F');
@@ -363,11 +355,7 @@ export async function exportPdf(root: RootStore): Promise<void> {
             doc.setFontSize(9);
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(100);
-            doc.text(
-                formatOklch(oklchVal.l, oklchVal.c, oklchVal.h, oklchVal.alpha),
-                x,
-                y + swatchHeight + 10,
-            );
+            doc.text(parsed.toOklchString(), x, y + swatchHeight + 10);
         }
 
         if ((i + 1) % cols === 0) {

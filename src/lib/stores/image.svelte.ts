@@ -1,5 +1,5 @@
+import { colordx } from '@colordx/core';
 import { IMAGE_ANALYSIS } from '../constants';
-import { parseToOklch } from '../utils/format';
 import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
 
 export type SortMode = 'dominant' | 'vibrant' | 'bright' | 'dark';
@@ -19,8 +19,14 @@ export class ImageStore {
 
         const candidates = [...this.mosaicData];
 
-        const getL = (hex: string) => parseToOklch(hex).l;
-        const getC = (hex: string) => parseToOklch(hex).c;
+        const getL = (hex: string) => {
+            const parsed = colordx(hex);
+            return parsed.isValid() ? parsed.toOklch().l : 0;
+        };
+        const getC = (hex: string) => {
+            const parsed = colordx(hex);
+            return parsed.isValid() ? parsed.toOklch().c : 0;
+        };
 
         switch (this.sortMode) {
             case 'vibrant':

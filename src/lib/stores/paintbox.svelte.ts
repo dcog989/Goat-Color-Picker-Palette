@@ -1,5 +1,5 @@
-﻿import { PAINTBOX } from '../constants';
-import { parseToOklch } from '../utils/format';
+﻿import { colordx } from '@colordx/core';
+import { PAINTBOX } from '../constants';
 
 type SavedColor = {
     id: string;
@@ -77,7 +77,8 @@ export class PaintboxStore {
         if (item.oklch) {
             return item as SavedColor;
         }
-        const oklch = parseToOklch(item.css ?? '');
+        const parsed = colordx(item.css ?? '');
+        const oklch = parsed.isValid() ? parsed.toOklch() : { l: 0, c: 0, h: 0, alpha: 1 };
         return { ...item, oklch } as SavedColor;
     }
 
@@ -110,7 +111,8 @@ export class PaintboxStore {
             this.#colors.splice(existingIndex, 1);
         }
 
-        const oklch = parseToOklch(css);
+        const parsed = colordx(css);
+        const oklch = parsed.isValid() ? parsed.toOklch() : { l: 0, c: 0, h: 0, alpha: 1 };
 
         this.#colors.push({
             id: crypto.randomUUID(),

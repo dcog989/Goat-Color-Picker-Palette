@@ -1,53 +1,38 @@
+import { colordx, getFormat } from '@colordx/core';
 import { describe, expect, it } from 'vitest';
-import { formatCmyk, formatHsl, formatLab, formatOklab, formatOklch, formatRgb } from './format';
 
-describe('format utilities', () => {
-    describe('formatOklch', () => {
-        it('should format OKLCH color string in practical mode', () => {
-            expect(formatOklch(0.5, 0.2, 180)).toBe('oklch(50% 0.2 180)');
-        });
-
-        it('should format OKLCH color string with full opacity', () => {
-            expect(formatOklch(1, 0.4, 360, 1, 'practical')).toBe('oklch(100% 0.4 360)');
+describe('colordx formatting', () => {
+    describe('toOklchString', () => {
+        it('should format OKLCH color string', () => {
+            const c = colordx({ l: 0.5, c: 0.2, h: 270 });
+            expect(c.toOklchString()).toMatch(/^oklch\(0\.5 0\.2 27\d+\.?\d*\)$/);
         });
 
         it('should include alpha channel when less than 1', () => {
-            expect(formatOklch(0.5, 0.2, 180, 0.5)).toBe('oklch(50% 0.2 180 / 0.5)');
+            const c = colordx({ l: 0.5, c: 0.2, h: 270, alpha: 0.5 });
+            expect(c.toOklchString()).toMatch(/oklch\(0\.5 0\.2 27\d+\.?\d* \/ 0\.5\)/);
         });
     });
 
-    describe('formatRgb', () => {
+    describe('toRgbString', () => {
         it('should format RGB color string', () => {
-            expect(formatRgb(255, 128, 64)).toBe('rgb(255 128 64)');
-            expect(formatRgb(0, 0, 0, 0.5)).toBe('rgb(0 0 0 / 0.5)');
+            expect(colordx('#ff8040').toRgbString()).toBe('rgb(255 128 64)');
         });
     });
 
-    describe('formatHsl', () => {
+    describe('toHslString', () => {
         it('should format HSL color string', () => {
-            expect(formatHsl(180, 0.5, 0.5)).toBe('hsl(180 50% 50%)');
-            expect(formatHsl(0, 1, 0.5, 0.8)).toBe('hsl(0 100% 50% / 0.8)');
+            const hsl = colordx({ h: 180, s: 50, l: 50 }).toHslString();
+            expect(hsl).toMatch(/hsl\(180 50% 50%\)/);
         });
     });
 
-    describe('formatLab', () => {
-        it('should format Lab color string', () => {
-            expect(formatLab(50, 20, -30)).toBe('lab(50% 20 -30)');
-            expect(formatLab(50, 20, -30, 0.9)).toBe('lab(50% 20 -30 / 0.9)');
-        });
-    });
-
-    describe('formatOklab', () => {
-        it('should format Oklab color string', () => {
-            expect(formatOklab(0.5, 0.2, -0.3)).toBe('oklab(0.5 0.2 -0.3)');
-            expect(formatOklab(0.5, 0.2, -0.3, 0.9)).toBe('oklab(0.5 0.2 -0.3 / 0.9)');
-        });
-    });
-
-    describe('formatCmyk', () => {
-        it('should format CMYK color string', () => {
-            expect(formatCmyk(0, 0.5, 1, 0)).toBe('device-cmyk(0% 50% 100% 0%)');
-            expect(formatCmyk(0.2, 0.4, 0.6, 0.8, 0.9)).toBe('device-cmyk(20% 40% 60% 80% / 0.9)');
+    describe('getFormat', () => {
+        it('should detect valid color formats', () => {
+            expect(getFormat('#ff0000')).toBe('hex');
+            expect(getFormat('rgb(255 0 0)')).toBe('rgb');
+            expect(getFormat('hsl(0 100% 50%)')).toBe('hsl');
+            expect(getFormat('not-a-color')).toBeUndefined();
         });
     });
 });
