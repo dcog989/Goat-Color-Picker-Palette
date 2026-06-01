@@ -1,6 +1,7 @@
 <script lang="ts">
 import { Copy, DecimalsArrowLeft, DecimalsArrowRight, Plus, TriangleAlert } from 'lucide-svelte';
 import { getApp } from '../context';
+import { maxChromaForLH } from '../utils/gamut';
 
 const app = getApp();
 const { color, paintbox, toast } = app;
@@ -58,8 +59,7 @@ const handleInput = (e: Event) => {
     }
 };
 
-// Static max chroma — matches the chroma slider max="0.37" and the CSS gradient
-const maxChromaForCurrentLH = $derived(0.37);
+const maxChromaForCurrentLH = $derived(maxChromaForLH(color.l, color.h));
 
 const getGradientClass = (type: string) => {
     switch (type) {
@@ -273,7 +273,7 @@ const hslValues = $derived.by(() => {
                         <input
                             type="range"
                             min="0"
-                            max="0.37"
+                            max={maxChromaForCurrentLH}
                             step="0.001"
                             bind:value={color.c}
                             aria-label="Chroma"
