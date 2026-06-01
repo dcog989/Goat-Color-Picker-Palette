@@ -62,8 +62,10 @@ $effect(() => {
         if (c > 0.001) {
             root.style.setProperty('--current-hue', hStr);
             prevHue = color.h;
+            root.removeAttribute('data-achromatic');
         } else {
             root.style.setProperty('--current-hue', prevHue.toString());
+            root.setAttribute('data-achromatic', '');
         }
         body.style.backgroundColor = cssVar;
 

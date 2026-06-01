@@ -10,11 +10,15 @@ function getDisplayColor(color: Colordx): Colordx {
 
 export class ColorStore {
     #current = $state<Colordx>(colordx(ColorStore.#getRandomColor()));
+    #lastMeaningfulHue = 0;
     mode = $state<'oklch' | 'rgb' | 'hsl'>('oklch');
     #precisionMode: () => 'precise' | 'practical';
 
     constructor(precisionGetter: () => 'precise' | 'practical' = () => 'practical') {
         this.#precisionMode = precisionGetter;
+        // Capture initial hue if meaningful
+        const init = this.#current.toOklch();
+        if (init.c > 0.001) this.#lastMeaningfulHue = init.h;
     }
 
     static #getRandomColor(): string {
@@ -24,11 +28,19 @@ export class ColorStore {
         return `hsl(${h}, ${s * 100}%, ${l * 100}%)`;
     }
 
+    #setCurrent(color: Colordx) {
+        const oklch = color.toOklch();
+        if (oklch.c > 0.001) {
+            this.#lastMeaningfulHue = oklch.h;
+        }
+        this.#current = color;
+    }
+
     set(value: string): boolean {
         try {
             const parsed = colordx(value);
             if (!parsed.isValid()) return false;
-            this.#current = parsed;
+            this.#setCurrent(parsed);
             return true;
         } catch {
             return false;
@@ -39,31 +51,32 @@ export class ColorStore {
         return this.#current.toOklch().l;
     }
     set l(v: number) {
-        const { c, h, alpha } = this.#current.toOklch();
-        this.#current = colordx({ l: v, c, h, alpha });
+        const { c, alpha } = this.#current.toOklch();
+        this.#setCurrent(colordx({ l: v, c, h: this.h, alpha }));
     }
 
     get c() {
         return this.#current.toOklch().c;
     }
     set c(v: number) {
-        const { l, h, alpha } = this.#current.toOklch();
-        this.#current = colordx({ l, c: v, h, alpha });
+        const { l, alpha } = this.#current.toOklch();
+        this.#setCurrent(colordx({ l, c: v, h: this.h, alpha }));
     }
 
     get h() {
-        return this.#current.toOklch().h;
+        const { c, h } = this.#current.toOklch();
+        return c > 0.001 ? h : this.#lastMeaningfulHue;
     }
     set h(v: number) {
         const { l, c, alpha } = this.#current.toOklch();
-        this.#current = colordx({ l, c, h: v, alpha });
+        this.#setCurrent(colordx({ l, c, h: v, alpha }));
     }
 
     get alpha() {
         return this.#current.alpha();
     }
     set alpha(v: number) {
-        this.#current = this.#current.alpha(v);
+        this.#setCurrent(this.#current.alpha(v));
     }
 
     #isOutOfGamut = $derived.by(() => {
@@ -86,15 +99,15 @@ export class ColorStore {
         const newR = channel === 'r' ? value : sr.r;
         const newG = channel === 'g' ? value : sr.g;
         const newB = channel === 'b' ? value : sr.b;
-        this.#current = colordx({ r: newR, g: newG, b: newB, alpha: this.alpha });
+        this.#setCurrent(colordx({ r: newR, g: newG, b: newB, alpha: this.alpha }));
     }
 
     setRgbValues(r: number, g: number, b: number) {
-        this.#current = colordx({ r, g, b, alpha: this.alpha });
+        this.#setCurrent(colordx({ r, g, b, alpha: this.alpha }));
     }
 
     setHslValues(h: number, s: number, l: number) {
-        this.#current = colordx({ h, s, l, alpha: this.alpha });
+        this.#setCurrent(colordx({ h, s, l, alpha: this.alpha }));
     }
 
     get hslComp() {
@@ -106,7 +119,7 @@ export class ColorStore {
         const newH = channel === 'h' ? value : hsl.h;
         const newS = channel === 's' ? value : hsl.s;
         const newL = channel === 'l' ? value : hsl.l;
-        this.#current = colordx({ h: newH, s: newS, l: newL, alpha: this.alpha });
+        this.#setCurrent(colordx({ h: newH, s: newS, l: newL, alpha: this.alpha }));
     }
 
     get hslValues() {
@@ -175,6 +188,6 @@ export class ColorStore {
     });
 
     randomize() {
-        this.#current = colordx(ColorStore.#getRandomColor());
+        this.#setCurrent(colordx(ColorStore.#getRandomColor()));
     }
 }
