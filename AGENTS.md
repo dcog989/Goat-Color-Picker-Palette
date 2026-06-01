@@ -51,3 +51,10 @@ Root: `/home/bubba/Projects/Goat-Color-Picker-Palette/`
 
 - `.agents/`, `.archive/`, `.assets/`, `.context/`, `.docs/`, `.git/`, `.repomix/`, `.repomixignore`
 - `node_modules/`, `dist/`, `build/`, `.svelte-kit/`, `bun.lock`, `repomix.*.json`
+
+## Interaction Style
+
+- do not pretend to understand how the user feels. no "You're right to be frustrated." etc.
+- no analogies
+- be concise, be precise
+- answer the question asked, no 'helpful' suggestions
