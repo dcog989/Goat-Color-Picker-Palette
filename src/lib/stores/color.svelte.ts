@@ -162,19 +162,34 @@ export class ColorStore {
             : `oklch(${lPct}% ${cStr} ${hStr})`;
     });
 
+    get #precision(): number {
+        return this.#precisionMode() === 'precise' ? 4 : 0;
+    }
+
     hex = $derived(this.#displayColor.alpha(1).toHex());
 
     hexa = $derived(this.#displayColor.toHex());
 
-    rgb = $derived(this.#displayColor.toRgbString());
+    rgb = $derived.by(() => {
+        const { r, g, b, alpha } = this.#displayColor.toRgb();
+        const p = this.#precision;
+        if (p) {
+            return alpha < 1
+                ? `rgb(${parseFloat(r.toFixed(p))} ${parseFloat(g.toFixed(p))} ${parseFloat(b.toFixed(p))} / ${alpha})`
+                : `rgb(${parseFloat(r.toFixed(p))} ${parseFloat(g.toFixed(p))} ${parseFloat(b.toFixed(p))})`;
+        }
+        return this.#displayColor.toRgbString();
+    });
 
-    hsl = $derived(this.#displayColor.toHslString());
+    hsl = $derived(this.#displayColor.toHslString(this.#precision));
 
-    lab = $derived(this.#current.toLabString());
+    lab = $derived(this.#current.toLabString(this.#precision));
 
-    oklab = $derived(this.#current.toOklabString());
+    oklab = $derived.by(() =>
+        this.#current.toOklabString(this.#precisionMode() === 'precise' ? 4 : 2),
+    );
 
-    cmyk = $derived(this.#displayColor.toCmykString());
+    cmyk = $derived(this.#displayColor.toCmykString(this.#precision));
 
     cssVar = $derived.by(() => {
         const oklch = this.#current.toOklch();
