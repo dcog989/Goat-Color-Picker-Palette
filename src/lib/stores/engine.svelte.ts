@@ -109,30 +109,12 @@ export class EngineStore {
                 console.error('Color name search worker error:', error);
                 this.closestName = 'Custom Color';
                 this.#terminateWorker();
-
-                if (this.#workerRetryCount < this.#maxWorkerRetries) {
-                    this.#workerRetryCount++;
-                    const delay = this.#workerRetryDelay * this.#workerRetryCount;
-                    setTimeout(() => {
-                        this.#initWorker();
-                    }, delay);
-                } else {
-                    console.error('Max worker retry attempts reached. Giving up.');
-                }
+                this.#retryWorker('Color name search worker');
             };
         } catch (error) {
             console.error('Failed to initialize color name search worker:', error);
             this.closestName = 'Custom Color';
-
-            if (this.#workerRetryCount < this.#maxWorkerRetries) {
-                this.#workerRetryCount++;
-                const delay = this.#workerRetryDelay * this.#workerRetryCount;
-                setTimeout(() => {
-                    this.#initWorker();
-                }, delay);
-            } else {
-                console.error('Max worker initialization attempts reached. Giving up.');
-            }
+            this.#retryWorker('Color name search worker');
         }
     }
 
@@ -150,6 +132,18 @@ export class EngineStore {
         } catch (error) {
             console.error('Failed to send message to worker:', error);
             this.closestName = 'Custom Color';
+        }
+    }
+
+    #retryWorker(context: string) {
+        if (this.#workerRetryCount < this.#maxWorkerRetries) {
+            this.#workerRetryCount++;
+            const delay = this.#workerRetryDelay * this.#workerRetryCount;
+            setTimeout(() => {
+                this.#initWorker();
+            }, delay);
+        } else {
+            console.error(`Max ${context} retry attempts reached. Giving up.`);
         }
     }
 
