@@ -1,16 +1,18 @@
 ﻿import { colordx } from '@colordx/core';
 
 interface WorkerMessage {
-    type: 'search' | 'filter';
+    type: 'search' | 'filter' | 'get-page';
     color?: { l: number; c: number; h: number; alpha: number };
     query?: string;
     limit?: number;
+    offset?: number;
 }
 
 interface WorkerResponse {
-    type: 'result' | 'filterResult';
+    type: 'result' | 'filterResult' | 'pageResult';
     name?: string;
     colors?: Array<{ name: string; hex: string }>;
+    total?: number;
 }
 
 let coordinates: Float32Array | null = null;
@@ -90,6 +92,17 @@ self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
 
         const results = filterColors(e.data.query || '', e.data.limit || 500);
         self.postMessage({ type: 'filterResult', colors: results } as WorkerResponse);
+    } else if (e.data.type === 'get-page') {
+        if (coordinates === null || isLoading) {
+            await waitForData();
+        }
+
+        const results = getPage(e.data.offset || 0, e.data.limit || 100);
+        self.postMessage({
+            type: 'pageResult',
+            colors: results,
+            total: names.length,
+        } as WorkerResponse);
     }
 };
 
@@ -163,6 +176,21 @@ function filterColors(query: string, limit: number): Array<{ name: string; hex: 
         if (name?.toLowerCase().includes(q)) {
             results.push({ name, hex: hexValues[i] as string });
         }
+    }
+
+    return results;
+}
+
+function getPage(offset: number, limit: number): Array<{ name: string; hex: string }> {
+    if (loadError || !names.length || !hexValues.length) {
+        return [];
+    }
+
+    const results: Array<{ name: string; hex: string }> = [];
+    const end = Math.min(offset + limit, names.length);
+
+    for (let i = offset; i < end; i++) {
+        results.push({ name: names[i] as string, hex: hexValues[i] as string });
     }
 
     return results;
