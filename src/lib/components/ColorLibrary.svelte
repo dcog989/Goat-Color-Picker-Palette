@@ -1,5 +1,5 @@
 ﻿<script lang="ts">
-import type { ColorName } from 'color-name-list/short';
+import type { ColorName } from 'color-name-list';
 import { CircleAlert } from 'lucide-svelte';
 import { onDestroy, onMount } from 'svelte';
 import { getApp } from '../context';
@@ -185,7 +185,7 @@ $effect(() => {
                 bind:this={searchInput}
                 type="text"
                 bind:value={searchQuery}
-                placeholder="Search 3000+ colors..."
+                placeholder="Search 30,000+ colors..."
                 class="
                   focus:ring-brand/20 mb-4 w-full shrink-0 rounded-md border
                   border-(--ui-border) bg-(--ui-card) p-4 font-mono text-sm shadow-inner
@@ -206,7 +206,7 @@ $effect(() => {
                         <div class="text-sm opacity-60">
                             Loading color library...
                         </div>
-                        <div class="mt-1 text-xs opacity-40">3000+ colors</div>
+                        <div class="mt-1 text-xs opacity-40">30,000+ colors</div>
                     </div>
                 </div>
             {:else if isFiltering}

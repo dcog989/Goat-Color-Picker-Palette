@@ -1,5 +1,5 @@
 // Color name list module types
-declare module 'color-name-list/short' {
+declare module 'color-name-list' {
     export interface ColorName {
         name: string;
         hex: string;

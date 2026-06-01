@@ -9,7 +9,7 @@ Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate t
 - **Framework:** Svelte 5 (Runes API)
 - **Build:** Vite 8, TypeScript 6 (strict), Tailwind CSS v4
 - **Color:** `colordx` ^5.4 (conversion, manipulation, APCA contrast)
-- **Data:** `color-name-list` ^14.37.0 (short version - 3000+ named colors)
+- **Data:** `color-name-list` ^14.37.0 (30,000+ named colors)
 - **UI:** `lucide-svelte` ^1.0.1, `jspdf` ^4.2.1 (PDF export)
 - **Lint/Format:** Biome 2 (lefthook pre-commit hook)
 - **Test:** Vitest 4 + Testing Library (jsdom)

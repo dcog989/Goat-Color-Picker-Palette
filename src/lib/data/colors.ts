@@ -1,7 +1,7 @@
 // Lazy-loaded color name list to improve initial bundle size
-// Uses the 'short' subset (~3k entries, ~112KB) instead of the full ~32k entry list
+// The full color-name-list package contains ~32k color entries (~750KB minified)
 
-import type { ColorName } from 'color-name-list/short';
+import type { ColorName } from 'color-name-list';
 
 let cachedList: ColorName[] | null = null;
 let loadPromise: Promise<ColorName[]> | null = null;
@@ -21,7 +21,7 @@ export async function loadColorNames(): Promise<ColorName[]> {
 
     loadPromise = (async () => {
         try {
-            const { colornames } = (await import('color-name-list/short')) as unknown as {
+            const { colornames } = (await import('color-name-list')) as unknown as {
                 colornames: ColorName[];
             };
             cachedList = colornames;
