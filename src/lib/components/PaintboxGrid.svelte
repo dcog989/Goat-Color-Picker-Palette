@@ -3,7 +3,7 @@ import { getApp } from '../context';
 
 const { color, paintbox } = getApp();
 
-const desktopCols = 6;
+const desktopCols = 5;
 const mobileCols = 4;
 const minRows = 2;
 
@@ -21,7 +21,7 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
 <div
     class="
       grid grid-cols-4 gap-3
-      md:grid-cols-6
+      md:grid-cols-5
     ">
     {#each items as item (item.id)}
         <div class="group relative aspect-square">
