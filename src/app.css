@@ -363,8 +363,6 @@ select {
     );
 }
 
-
-
 .gradient-hsl-l {
     background: linear-gradient(
         to right,
@@ -383,7 +381,7 @@ select {
         grid-column: 1;
         grid-row: 1;
     }
-    .main-grid > .row-2 {
+    .main-grid > .mid-group {
         grid-column: 2 / span 2;
         grid-row: 1;
     }
