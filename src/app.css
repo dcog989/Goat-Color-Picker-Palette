@@ -363,6 +363,8 @@ select {
     );
 }
 
+
+
 .gradient-hsl-l {
     background: linear-gradient(
         to right,
@@ -370,4 +372,23 @@ select {
         hsl(var(--picker-hsl-h) var(--picker-hsl-s) 50%),
         hsl(var(--picker-hsl-h) var(--picker-hsl-s) 100%)
     );
+}
+
+@media (min-width: 1920px) {
+    .main-grid {
+        grid-template-columns: 1fr 500px 500px;
+        grid-template-rows: auto auto;
+    }
+    .main-grid > .picker {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .main-grid > .row-2 {
+        grid-column: 2 / span 2;
+        grid-row: 1;
+    }
+    .main-grid > .full-row {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
 }

@@ -23,18 +23,21 @@ const removeRow = () => {
 
 <section
     class="
-      h-full rounded-xl border border-(--ui-border) bg-(--ui-card) p-8 shadow-xl
+      h-full overflow-y-auto rounded-xl border border-(--ui-border)
+      bg-(--ui-card) p-4 shadow-xl
+      sm:p-6
+      md:p-8
     ">
     <div
         class="
           mb-6 flex flex-col items-center justify-between gap-4
-          xl:flex-row
+          md:flex-row
         ">
         <h2
             class="
               shrink-0 self-start text-xs font-black tracking-widest
               text-(--ui-text-muted) uppercase
-              xl:self-center
+              md:self-center
             ">
             Palette
         </h2>
@@ -42,19 +45,18 @@ const removeRow = () => {
         <div
             class="
               flex w-full flex-wrap items-center justify-end gap-2
-              xl:w-auto
+              md:w-auto
             ">
-            <select
-                id="paletteVariable"
-                bind:value={engine.genAxis}
-                aria-label="Palette generation variable"
-                class="
-                  min-w-35 flex-1 cursor-pointer rounded-lg border
-                  border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs
-                  font-bold uppercase transition-all outline-none
-                  focus:border-(--current-color)
-                  xl:flex-none
-                ">
+                <select
+                    id="paletteVariable"
+                    bind:value={engine.genAxis}
+                    aria-label="Palette generation variable"
+                    class="
+                      cursor-pointer rounded-lg border
+                      border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs
+                      font-bold uppercase transition-all outline-none
+                      focus:border-(--current-color)
+                    ">
                 <optgroup label="Variables">
                     <option value="l">Lightness</option>
                     <option value="c">Chroma</option>

@@ -183,9 +183,11 @@ const getApcaRating = (score: number) => {
     <!-- 3. Preview Area -->
     <div
         class="
-          group relative flex aspect-2/1 w-full flex-col items-center
+          group relative flex aspect-3/1 w-full flex-col items-center
           justify-center overflow-hidden rounded-xl border border-(--ui-border)
-          p-6 text-center transition-colors duration-300
+          p-2 text-center transition-colors duration-300
+          sm:p-3
+          md:p-4
         "
         style:background-color={bg}
         style:color={fg}
@@ -193,15 +195,18 @@ const getApcaRating = (score: number) => {
         aria-hidden="true">
         <h3
             class="
-              mb-2 text-3xl font-black
-              md:text-4xl
+              mb-1 font-black
+              text-base
+              sm:text-lg
+              md:text-2xl
             ">
             Sample Contrast
         </h3>
         <p
             class="
-              max-w-[80%] text-sm font-medium opacity-90
-              md:text-base
+              max-w-[80%] text-[0.65rem] font-medium leading-tight opacity-90
+              sm:text-xs
+              md:text-sm
             ">
             How quickly the cunning brown foxes vexed the daft jumping zebras. 1 2 3 4 5 6 7 8 9 0.
         </p>

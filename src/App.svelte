@@ -145,25 +145,52 @@ const showInfo = (key: keyof typeof infoContent) => {
 
     <main
         class="
-          mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-8 p-8
-          lg:grid-cols-2
+          main-grid grid w-full flex-1 grid-cols-1 gap-4 p-4
+          sm:gap-6 sm:p-6
+          md:grid-cols-2 md:gap-8 md:p-8
+          min-[1920px]:px-16
         ">
-        <div class="lg:col-span-2">
+        <div
+            class="
+              picker min-h-0 min-w-64 w-full max-h-[48rem]
+              md:col-span-2
+            ">
             <ColorPickerPanel />
         </div>
 
-        <PalettePanel />
-        <PaintboxPanel onExport={() => (showExport = true)} />
+        <div class="row-2 min-h-0 md:col-span-2 flex flex-col gap-4 items-center justify-center sm:gap-6 md:flex-row md:items-stretch md:gap-8">
+            <div class="palette min-h-0 min-w-64 w-full max-w-[500px] max-h-[48rem]">
+                <PalettePanel />
+            </div>
 
-        <ImagePanel />
-        <ContrastPanel />
+            <div class="paintbox min-h-0 min-w-0 w-full max-w-[500px] max-h-[48rem]">
+                <PaintboxPanel onExport={() => (showExport = true)} />
+            </div>
+        </div>
+
+        <div
+            class="
+              full-row min-h-0 md:col-span-2
+              flex flex-col gap-4 items-center justify-center
+              sm:gap-6
+              md:gap-8 md:flex-row md:items-stretch
+            ">
+            <div class="min-h-0 min-w-0 w-full max-w-2xl max-h-[42.5rem] flex-1">
+                <ImagePanel />
+            </div>
+
+            <div class="min-h-[36rem] min-w-0 w-full max-w-2xl max-h-[42.5rem] flex-1">
+                <ContrastPanel />
+            </div>
+        </div>
     </main>
 
     <footer
         class="
-          text-on-current mx-auto flex w-full max-w-7xl flex-wrap items-center
-          justify-between gap-4 px-8 py-6 opacity-80 transition-opacity
+          text-on-current mx-auto flex w-full flex-wrap items-center
+          justify-between gap-4 px-4 py-6 opacity-80 transition-opacity
           hover:opacity-100
+          sm:px-8
         ">
         <div
             class="
