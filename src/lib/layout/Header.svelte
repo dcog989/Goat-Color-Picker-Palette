@@ -45,7 +45,7 @@ const { color, engine, theme } = getApp();
                 " />
         </button>
 
-        <div class="grid grid-cols-1 place-items-center overflow-hidden">
+        <div class="grid grid-cols-1 place-items-center min-w-0 overflow-hidden">
             {#key engine.closestName}
                 <div
                     class="col-start-1 row-start-1 flex w-full justify-center"
