@@ -1,6 +1,7 @@
 <script lang="ts">
 import { Keyboard } from 'lucide-svelte';
 import { onDestroy } from 'svelte';
+import { version } from '../package.json';
 import Toast from './lib/components/Toast.svelte';
 import { setApp } from './lib/context';
 import Header from './lib/layout/Header.svelte';
@@ -220,6 +221,12 @@ const showInfo = (key: keyof typeof infoContent) => {
                   sm:inline
                 ">|</span>
             <a href="https://github.com/dcog989/Goat-Color-Picker-Palette">Github</a>
+            <span
+                class="
+                  hidden opacity-30
+                  sm:inline
+                ">|</span>
+            <span class="opacity-30">v{version}</span>
         </div>
 
         <button
