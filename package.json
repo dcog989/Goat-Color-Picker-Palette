@@ -45,7 +45,7 @@
     "esbuild": "^0.28.0",
     "jsdom": "^29.1.1",
     "lefthook": "^2.1.9",
-    "svelte": "^5.56.0",
+    "svelte": "^5.56.1",
     "svelte-check": "^4.5.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
