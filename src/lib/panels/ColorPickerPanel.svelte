@@ -99,7 +99,7 @@ const hslValues = $derived(color.hslComp);
 
 <section
     class="
-      h-full overflow-y-auto space-y-4 rounded-xl border border-(--ui-border)
+      h-full overflow-y-auto overflow-x-hidden space-y-4 rounded-xl border border-(--ui-border)
       bg-(--ui-card) p-4 shadow-xl
       sm:space-y-6 sm:p-6
       md:space-y-8 md:p-8
