@@ -34,45 +34,24 @@ let currentTarget = $derived(getTargetColor(mode));
 let fg = $derived(isFg ? color.hex : currentTarget);
 let bg = $derived(isFg ? currentTarget : color.hex);
 
-let stats = $derived.by(() => {
-    const isCustomValid = isValidColor(customColor);
-
-    const targets: Record<ContrastMode, string> = {
-        white: '#ffffff',
-        black: '#000000',
-        custom: isCustomValid ? customColor : '#888888',
-    };
-
-    const result: Record<ContrastMode, { apca: number; wcag: number; valid: boolean }> = {
-        white: { apca: 0, wcag: 0, valid: true },
-        black: { apca: 0, wcag: 0, valid: true },
-        custom: { apca: 0, wcag: 0, valid: isCustomValid },
-    };
-
-    (Object.keys(targets) as ContrastMode[]).forEach((m) => {
-        const t = targets[m];
-        const f = isFg ? color.hex : t;
-        const b = isFg ? t : color.hex;
-
-        try {
-            const fgColor = colordx(f);
-
-            const rawApca = fgColor.apcaContrast(b);
-            result[m].apca = Math.round(Math.abs(rawApca));
-
-            const ratio = fgColor.contrast(b);
-            result[m].wcag = !Number.isNaN(ratio) && Number.isFinite(ratio) ? ratio : 0;
-        } catch {
-            result[m].apca = 0;
-            result[m].wcag = 0;
-        }
-    });
-
-    return result;
+let currentApca = $derived.by((): number => {
+    if (mode === 'custom' && !isValidColor(customColor)) return 0;
+    try {
+        return Math.round(Math.abs(colordx(fg).apcaContrast(bg)));
+    } catch {
+        return 0;
+    }
 });
 
-let currentWcag = $derived(stats[mode].wcag);
-let currentApca = $derived(stats[mode].apca);
+let currentWcag = $derived.by((): number => {
+    if (mode === 'custom' && !isValidColor(customColor)) return 0;
+    try {
+        const ratio = colordx(fg).contrast(bg);
+        return !Number.isNaN(ratio) && Number.isFinite(ratio) ? ratio : 0;
+    } catch {
+        return 0;
+    }
+});
 
 const passes = (ratio: number, level: WcagLevel): boolean => {
     switch (level) {
@@ -120,15 +99,17 @@ const getApcaRating = (score: number) => {
                       text-xs font-black tracking-wider text-(--ui-text-muted)
                       uppercase
                     ">{m}</span>
-                <div class="flex items-baseline gap-1">
-                    {#if m === 'custom' && !stats[m as ContrastMode].valid}
-                        <span class="text-lg font-black text-red-500">--</span>
-                        <span class="font-mono text-xs text-red-500/70">!</span>
-                    {:else}
-                        <span class="text-lg font-black">{stats[m as ContrastMode].apca}</span>
-                        <span class="font-mono text-xs opacity-50">Lc</span>
-                    {/if}
-                </div>
+                {#if mode === m}
+                    <div class="flex items-baseline gap-1">
+                        {#if m === 'custom' && !isValidColor(customColor)}
+                            <span class="text-lg font-black text-red-500">--</span>
+                            <span class="font-mono text-xs text-red-500/70">!</span>
+                        {:else}
+                            <span class="text-lg font-black">{currentApca}</span>
+                            <span class="font-mono text-xs opacity-50">Lc</span>
+                        {/if}
+                    </div>
+                {/if}
                 <!-- Active Indicator -->
                 {#if mode === m}
                     <div
