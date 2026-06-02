@@ -503,7 +503,7 @@ const hslValues = $derived(color.hslComp);
                 <div
                     class="
                       absolute inset-0 flex flex-col items-center justify-center
-                      gap-2 bg-black/10 backdrop-blur-[2px]
+                      gap-2
                       translate-y-8 opacity-0 transition-all duration-300
                       group-hover:translate-y-0 group-hover:opacity-100
                     ">
