@@ -13,24 +13,6 @@ let { onSearch }: Props = $props();
 const { color, engine, theme } = getApp();
 </script>
 
-<button
-    onclick={() => theme.toggle()}
-    class="
-      hover:text-on-current
-      fixed top-6 right-6 z-60 cursor-pointer rounded-full border
-      border-(--ui-border) bg-(--ui-card) p-3 shadow-lg
-      transition duration-300
-      hover:scale-110 hover:bg-(--current-color)
-    "
-    aria-label="Toggle Theme"
-    title="Toggle Light/Dark Mode">
-    {#if theme.current === 'dark'}
-        <Moon class="size-5" />
-    {:else}
-        <Sun class="size-5" />
-    {/if}
-</button>
-
 <header
     class="
       sticky top-0 z-50
@@ -40,7 +22,7 @@ const { color, engine, theme } = getApp();
     style="mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
     <div
         class="
-          mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4
+          grid w-full grid-cols-[auto_1fr_auto_auto] items-center gap-2 sm:gap-4
           p-4 pb-12
           sm:px-8 sm:py-6
         ">
@@ -90,6 +72,24 @@ const { color, engine, theme } = getApp();
                   size-5
                   sm:size-6
                 " />
+        </button>
+        <button
+            onclick={() => theme.toggle()}
+            class="
+              hover:text-on-current
+              cursor-pointer rounded-full border border-(--ui-border)
+              bg-(--ui-card) p-2 shadow-lg
+              transition duration-300
+              hover:scale-110 hover:bg-(--current-color)
+              sm:p-3
+            "
+            aria-label="Toggle Theme"
+            title="Toggle Light/Dark Mode">
+            {#if theme.current === 'dark'}
+                <Moon class="size-5 sm:size-6" />
+            {:else}
+                <Sun class="size-5 sm:size-6" />
+            {/if}
         </button>
     </div>
 </header>

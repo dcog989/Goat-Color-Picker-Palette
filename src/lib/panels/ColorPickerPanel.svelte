@@ -99,8 +99,10 @@ const hslValues = $derived(color.hslComp);
 
 <section
     class="
-      space-y-8 rounded-xl border border-(--ui-border) bg-(--ui-card) p-8
-      shadow-xl
+      h-full overflow-y-auto space-y-4 rounded-xl border border-(--ui-border)
+      bg-(--ui-card) p-4 shadow-xl
+      sm:space-y-6 sm:p-6
+      md:space-y-8 md:p-8
     "
     style:--picker-l={color.l}
     style:--picker-c={color.c}

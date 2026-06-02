@@ -68,8 +68,11 @@ onDestroy(() => {
 
 <section
     class="
-      flex h-full flex-col rounded-xl border border-(--ui-border) bg-(--ui-card)
-      p-8 shadow-xl
+      flex h-full flex-col overflow-y-auto rounded-xl border
+      border-(--ui-border) bg-(--ui-card)
+      p-4 shadow-xl
+      sm:p-6
+      md:p-8
     ">
     <div class="mb-6 flex shrink-0 items-center justify-between">
         <h2
