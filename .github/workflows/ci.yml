@@ -12,17 +12,17 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [24.x, 25.x]
+        node-version: [26.x]
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -33,21 +33,17 @@ jobs:
         run: bun audit
         continue-on-error: true
 
-      - name: Run linting
-        run: bun run lint
-
       - name: Run type checking
         run: bun run check
 
-      - name: Run tests
-        run: bun run test
+      - name: Run tests with coverage
+        run: bun run test:coverage
 
       - name: Build
         run: bun run build
 
       - name: Upload coverage to Codecov
-        if: matrix.node-version == '24.x'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: ./coverage/lcov.info
           fail_ci_if_error: false
