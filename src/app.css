@@ -18,34 +18,35 @@
 
   --current-color: oklch(0.6 0.15 250);
   --current-hue: 250;
+  --current-ui-chroma-scale: 1;
 
   /* Light Mode */
-  --ui-card: oklch(0.96 0.02 var(--current-hue));
-  --ui-bg: oklch(0.92 0.025 var(--current-hue));
-  --ui-text: oklch(0.3 0.12 var(--current-hue));
-  --ui-text-muted: oklch(0.5 0.08 var(--current-hue));
-  --ui-border: oklch(0.85 0.03 var(--current-hue));
-  --ui-on-current: oklch(0.98 0.02 var(--current-hue));
+  --ui-card: oklch(0.96 calc(0.02 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-bg: oklch(0.92 calc(0.025 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-text: oklch(0.3 calc(0.12 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-text-muted: oklch(0.5 calc(0.08 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-border: oklch(0.85 calc(0.03 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-on-current: oklch(0.98 calc(0.02 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
 :root.dark {
   /* Dark Mode */
-  --ui-card: oklch(0.24 0.06 var(--current-hue));
-  --ui-bg: oklch(0.28 0.06 var(--current-hue));
-  --ui-text: oklch(0.85 0.18 var(--current-hue));
-  --ui-text-muted: oklch(0.8 0.06 var(--current-hue));
-  --ui-border: oklch(0.48 0.06 var(--current-hue));
-  --ui-on-current: oklch(0.96 0.06 var(--current-hue));
+  --ui-card: oklch(0.24 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-bg: oklch(0.28 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-text: oklch(0.85 calc(0.18 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-text-muted: oklch(0.8 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-border: oklch(0.48 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
+  --ui-on-current: oklch(0.96 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    --ui-card: oklch(0.24 0.06 var(--current-hue));
-    --ui-bg: oklch(0.28 0.06 var(--current-hue));
-    --ui-text: oklch(0.85 0.18 var(--current-hue));
-    --ui-text-muted: oklch(0.8 0.06 var(--current-hue));
-    --ui-border: oklch(0.48 0.06 var(--current-hue));
-    --ui-on-current: oklch(0.96 0.06 var(--current-hue));
+    --ui-card: oklch(0.24 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
+    --ui-bg: oklch(0.28 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
+    --ui-text: oklch(0.85 calc(0.18 * var(--current-ui-chroma-scale)) var(--current-hue));
+    --ui-text-muted: oklch(0.8 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
+    --ui-border: oklch(0.48 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
+    --ui-on-current: oklch(0.96 calc(0.06 * var(--current-ui-chroma-scale)) var(--current-hue));
   }
 }
 
@@ -285,19 +286,19 @@ select {
 }
 
 .text-on-current {
-  color: oklch(0.95 0.03 var(--current-hue));
+  color: oklch(0.95 calc(0.03 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
 :root[data-color-contrast="dark"] .text-on-current {
-  color: oklch(0.2 0.08 var(--current-hue));
+  color: oklch(0.2 calc(0.08 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
 .group:hover .group-hover\:text-on-current {
-  color: oklch(0.95 0.03 var(--current-hue)) !important;
+  color: oklch(0.95 calc(0.03 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
 :root[data-color-contrast="dark"] .group:hover .group-hover\:text-on-current {
-  color: oklch(0.2 0.08 var(--current-hue)) !important;
+  color: oklch(0.2 calc(0.08 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
 .gradient-oklch-h {
