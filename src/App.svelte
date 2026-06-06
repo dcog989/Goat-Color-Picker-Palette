@@ -60,6 +60,10 @@ $effect(() => {
 
         // Batch all style changes together to minimize reflows
         root.style.setProperty('--current-color', cssVar);
+        root.style.setProperty(
+            '--current-ui-chroma-scale',
+            String(Math.min(1, c / 0.06)),
+        );
         if (c > 0.001) {
             root.style.setProperty('--current-hue', hStr);
             prevHue = color.h;
@@ -189,6 +193,7 @@ const showInfo = (key: keyof typeof infoContent) => {
             ">
             <button
                 onclick={() => showInfo('oklch')}
+                type="button"
                 class="
                   cursor-pointer
                   hover:underline
@@ -200,6 +205,7 @@ const showInfo = (key: keyof typeof infoContent) => {
                 ">|</span>
             <button
                 onclick={() => showInfo('analysis')}
+                type="button"
                 class="
                   cursor-pointer
                   hover:underline
@@ -211,6 +217,7 @@ const showInfo = (key: keyof typeof infoContent) => {
                 ">|</span>
             <button
                 onclick={() => showInfo('contrast')}
+                type="button"
                 class="
                   cursor-pointer
                   hover:underline
@@ -231,6 +238,7 @@ const showInfo = (key: keyof typeof infoContent) => {
 
         <button
             onclick={() => showInfo('shortcuts')}
+            type="button"
             class="
               rounded-lg p-2 transition-colors
               hover:bg-black/10
