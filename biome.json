@@ -13,6 +13,11 @@
       "quoteStyle": "single"
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "html": {
     "experimentalFullSupportEnabled": true
   },

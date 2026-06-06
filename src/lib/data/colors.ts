@@ -11,27 +11,27 @@ let loadPromise: Promise<ColorName[]> | null = null;
  * @returns Promise that resolves to the color name list
  */
 export async function loadColorNames(): Promise<ColorName[]> {
-    if (cachedList !== null) {
-        return cachedList;
-    }
+  if (cachedList !== null) {
+    return cachedList;
+  }
 
-    if (loadPromise !== null) {
-        return loadPromise;
-    }
-
-    loadPromise = (async () => {
-        try {
-            const { colornames } = (await import('color-name-list')) as unknown as {
-                colornames: ColorName[];
-            };
-            cachedList = colornames;
-            return colornames;
-        } catch (error) {
-            console.error('Failed to load color-name-list:', error);
-            loadPromise = null;
-            throw error;
-        }
-    })();
-
+  if (loadPromise !== null) {
     return loadPromise;
+  }
+
+  loadPromise = (async () => {
+    try {
+      const { colornames } = (await import('color-name-list')) as unknown as {
+        colornames: ColorName[];
+      };
+      cachedList = colornames;
+      return colornames;
+    } catch (error) {
+      console.error('Failed to load color-name-list:', error);
+      loadPromise = null;
+      throw error;
+    }
+  })();
+
+  return loadPromise;
 }

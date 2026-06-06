@@ -14,34 +14,34 @@ import { ToastStore } from './toast.svelte';
 extend([a11y, harmonies, cmyk, lab]);
 
 export class RootStore {
-    precision = $state<'precise' | 'practical'>('practical');
-    color: ColorStore;
-    toast = new ToastStore();
-    paintbox = new PaintboxStore();
-    image = new ImageStore();
-    theme = new ThemeStore();
-    engine: EngineStore;
+  precision = $state<'precise' | 'practical'>('practical');
+  color: ColorStore;
+  toast = new ToastStore();
+  paintbox = new PaintboxStore();
+  image = new ImageStore();
+  theme = new ThemeStore();
+  engine: EngineStore;
 
-    constructor() {
-        // ColorStore depends on precision getter
-        this.color = new ColorStore(() => this.precision);
-        // Engine depends on Color
-        this.engine = new EngineStore(this.color);
-    }
+  constructor() {
+    // ColorStore depends on precision getter
+    this.color = new ColorStore(() => this.precision);
+    // Engine depends on Color
+    this.engine = new EngineStore(this.color);
+  }
 
-    init() {
-        this.theme.init();
-        this.paintbox.init();
-        this.engine.init();
-    }
+  init() {
+    this.theme.init();
+    this.paintbox.init();
+    this.engine.init();
+  }
 
-    destroy() {
-        this.engine.destroy();
-        this.image.destroy();
-    }
+  destroy() {
+    this.engine.destroy();
+    this.image.destroy();
+  }
 
-    copy(text: string, e?: MouseEvent) {
-        navigator.clipboard.writeText(text);
-        this.toast.show('Copied', e);
-    }
+  copy(text: string, e?: MouseEvent) {
+    navigator.clipboard.writeText(text);
+    this.toast.show('Copied', e);
+  }
 }
