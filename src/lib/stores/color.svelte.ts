@@ -5,7 +5,7 @@ function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
     return color;
   }
-  return color.mapSrgb();
+  return color.clampSrgb();
 }
 
 export class ColorStore {
