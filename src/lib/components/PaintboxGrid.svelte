@@ -26,6 +26,7 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
     {#each items as item (item.id)}
         <div class="group relative aspect-square">
             <button
+                type="button"
                 class="
                   block size-full cursor-pointer rounded-full border
                   border-white/10 p-0 shadow-lg transition-transform
@@ -37,6 +38,7 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
                 title={color.formatColor(item.css)}
                 aria-label="Select saved color"></button>
             <button
+                type="button"
                 onclick={(e) => {
                     e.stopPropagation();
                     paintbox.remove(item.id);

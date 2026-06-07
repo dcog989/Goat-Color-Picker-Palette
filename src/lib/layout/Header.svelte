@@ -27,6 +27,7 @@ const { color, engine, theme } = getApp();
           sm:px-8 sm:py-6
         ">
         <button
+            type="button"
             onclick={onSearch}
             class="
               hover:text-on-current
@@ -56,6 +57,7 @@ const { color, engine, theme } = getApp();
         </div>
 
         <button
+            type="button"
             onclick={() => color.randomize()}
             class="
               hover:text-on-current
@@ -74,6 +76,7 @@ const { color, engine, theme } = getApp();
                 " />
         </button>
         <button
+            type="button"
             onclick={() => theme.toggle()}
             class="
               hover:text-on-current

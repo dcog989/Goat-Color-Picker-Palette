@@ -83,6 +83,7 @@ const getApcaRating = (score: number) => {
         ">
         {#each ['white', 'black', 'custom'] as m (m)}
             <button
+                type="button"
                 onclick={() => (mode = m as ContrastMode)}
                 class="
                   relative flex flex-col items-center gap-1 rounded-lg px-2 py-3
@@ -168,6 +169,7 @@ const getApcaRating = (score: number) => {
         {/if}
 
         <button
+            type="button"
             onclick={() => (isFg = !isFg)}
             class="
               shrink-0 rounded-lg border border-transparent p-2

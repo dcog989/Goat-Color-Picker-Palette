@@ -69,6 +69,7 @@ const exports = $derived.by(() =>
                     <option value="rgb">RGB</option>
                 </select>
                 <button
+                    type="button"
                     onclick={onClose}
                     class="
                       cursor-pointer text-3xl opacity-50 transition-opacity
@@ -90,6 +91,7 @@ const exports = $derived.by(() =>
                               opacity-50
                             ">{exportItem.name}</span>
                         <button
+                            type="button"
                             onclick={(e) => app.copy(exportItem.content, e)}
                             class="
                               group flex cursor-pointer items-center overflow-hidden
