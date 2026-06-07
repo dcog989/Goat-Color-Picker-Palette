@@ -80,6 +80,7 @@ const removeRow = () => {
                       border-(--ui-border) bg-(--ui-bg) p-1
                     ">
                     <button
+                        type="button"
                         onclick={removeRow}
                         disabled={engine.genSteps <= 4}
                         class="
@@ -92,6 +93,7 @@ const removeRow = () => {
                         <ListMinus class="size-4" />
                     </button>
                     <button
+                        type="button"
                         onclick={addRow}
                         class="
                           rounded-md p-1.5 text-(--ui-text-muted)
@@ -105,6 +107,7 @@ const removeRow = () => {
             {/if}
 
             <button
+                type="button"
                 onclick={(e) => addAll(e)}
                 class="
                   shrink-0 rounded-lg border border-(--ui-border) bg-(--ui-bg)

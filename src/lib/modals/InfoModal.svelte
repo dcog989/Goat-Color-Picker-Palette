@@ -39,6 +39,7 @@ let { title, content, onClose }: Props = $props();
                 {title}
             </h2>
             <button
+                type="button"
                 onclick={onClose}
                 class="
                   cursor-pointer text-2xl opacity-50 transition-opacity

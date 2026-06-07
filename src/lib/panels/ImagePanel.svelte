@@ -145,6 +145,7 @@ onDestroy(() => {
                         " />
 
                     <button
+                        type="button"
                         onclick={() => imageAnalyzer.clear()}
                         class="
                           absolute inset-0 flex cursor-pointer items-center
@@ -175,6 +176,7 @@ onDestroy(() => {
                     <div class="flex flex-col gap-2" role="radiogroup" aria-label="Sort Mode">
                         {#each sortOptions as option (option.value)}
                             <button
+                                type="button"
                                 class="
                                   flex items-center justify-between rounded-md
                                   border px-4 py-3 text-left text-xs font-bold
@@ -218,6 +220,7 @@ onDestroy(() => {
                     <div class="flex items-center gap-3">
                         <span class="font-mono text-xs text-(--ui-text-muted)">Top 24</span>
                         <button
+                            type="button"
                             onclick={(e) => addAll(e)}
                             class="
                               shrink-0 rounded-lg border border-(--ui-border)

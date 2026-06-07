@@ -169,6 +169,7 @@ $effect(() => {
                 Color Library
             </h3>
             <button
+                type="button"
                 onclick={() => (isExpanded = !isExpanded)}
                 class="
                   text-xs font-bold uppercase opacity-40 transition-opacity
@@ -255,6 +256,7 @@ $effect(() => {
                         >
                             {#each visibleItems as color (color.hex + color.name)}
                                 <button
+                                    type="button"
                                     onclick={() => selectColor(color.hex)}
                                     class="
                                       group mb-1 box-border flex h-14 w-full

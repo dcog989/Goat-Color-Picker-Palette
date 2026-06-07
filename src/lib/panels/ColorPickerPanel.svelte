@@ -109,8 +109,8 @@ const hslValues = $derived(color.hslComp);
     style:--picker-h={color.h}
     style:--picker-max-c={0.33}
     style:--picker-hsl-h={hslValues.h}
-    style:--picker-hsl-s={hslValues.s + '%'}
-    style:--picker-hsl-l={hslValues.l + '%'}>
+    style:--picker-hsl-s={`${hslValues.s}%`}
+    style:--picker-hsl-l={`${hslValues.l}%`}>
     <!-- Top Row: Input and Mode Switch -->
     <div
         class="
@@ -148,6 +148,7 @@ const hslValues = $derived(color.hslComp);
                       group absolute top-1/2 right-2 -translate-y-1/2
                     ">
                         <button
+                            type="button"
                             onclick={() => color.mapToSrgb()}
                             class="
                           cursor-pointer text-amber-500
@@ -168,6 +169,7 @@ const hslValues = $derived(color.hslComp);
                 {/if}
             </div>
             <button
+                type="button"
                 onclick={togglePrecision}
                 class="
                       group relative shrink-0 rounded-md border border-(--ui-border)
@@ -209,6 +211,7 @@ const hslValues = $derived(color.hslComp);
             ">
             {#each ['oklch', 'rgb', 'hsl'] as m (m)}
                 <button
+                    type="button"
                     onclick={() => (color.mode = m as 'oklch' | 'rgb' | 'hsl')}
                     class="
                       rounded-sm px-4 py-2 text-xs font-black uppercase
@@ -510,6 +513,7 @@ const hslValues = $derived(color.hslComp);
                       group-hover:translate-y-0 group-hover:opacity-100
                     ">
                     <button
+                        type="button"
                         onclick={(e) => app.copy(inputVal, e)}
                         class="
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
@@ -522,6 +526,7 @@ const hslValues = $derived(color.hslComp);
                         <Copy class="size-4" />
                     </button>
                     <button
+                        type="button"
                         onclick={(e) => addToPaintbox(e)}
                         class="
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
@@ -542,6 +547,7 @@ const hslValues = $derived(color.hslComp);
     <div class="flex flex-wrap gap-2 border-t border-(--ui-border) pt-4">
         {#each [{ label: 'OKLCH', value: color.display }, { label: 'HEX', value: color.hexa }, { label: 'RGB', value: color.rgb }, { label: 'HSL', value: color.hsl }, { label: 'OKLAB', value: color.oklab }, { label: 'LAB', value: color.lab }, { label: 'CMYK', value: color.cmyk }] as format (format.label)}
             <button
+                type="button"
                 onclick={(e) => app.copy(format.value, e)}
                 class="
                   group flex cursor-pointer items-center overflow-hidden

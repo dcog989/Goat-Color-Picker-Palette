@@ -66,6 +66,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                 </select>
 
                 <button
+                    type="button"
                     onclick={() => paintbox.clear()}
                     disabled={paintbox.items.length === 0}
                     class="
@@ -97,6 +98,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
         </h3>
         <div class="grid grid-cols-4 gap-3">
             <button
+                type="button"
                 onclick={() => exportPng(app)}
                 class="
                   hover:text-on-current
@@ -107,6 +109,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                   hover:bg-(--current-color)
                 ">PNG</button>
             <button
+                type="button"
                 onclick={() => exportSvg(app)}
                 class="
                   hover:text-on-current
@@ -117,6 +120,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                   hover:bg-(--current-color)
                 ">SVG</button>
             <button
+                type="button"
                 onclick={async () => {
                     const btn = document.activeElement as HTMLButtonElement;
                     const originalText = btn?.textContent ?? 'PDF';
@@ -136,6 +140,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                   hover:bg-(--current-color)
                 ">PDF</button>
             <button
+                type="button"
                 onclick={onExport}
                 class="
                   hover:text-on-current
