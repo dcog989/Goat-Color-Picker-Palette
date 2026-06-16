@@ -1,5 +1,6 @@
 import type { Colordx } from '@colordx/core';
 import { colordx, inGamutSrgb } from '@colordx/core';
+import { resolveNamedColor } from '$lib/utils/named-colors';
 
 function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
@@ -38,7 +39,8 @@ export class ColorStore {
 
   set(value: string): boolean {
     try {
-      const parsed = colordx(value);
+      const hex = resolveNamedColor(value);
+      const parsed = colordx(hex ?? value);
       if (!parsed.isValid()) return false;
       this.#setCurrent(parsed);
       return true;
@@ -140,7 +142,8 @@ export class ColorStore {
   formatColor(css: string): string {
     let parsed: Colordx;
     try {
-      parsed = colordx(css);
+      const hex = resolveNamedColor(css);
+      parsed = colordx(hex ?? css);
     } catch {
       return css;
     }
