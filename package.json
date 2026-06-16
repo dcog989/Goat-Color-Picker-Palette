@@ -7,7 +7,7 @@
   "scripts": {
     "build": "vite build",
     "check": "biome check src/ && svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
-    "clean": "rm -rf build dist .context .svelte-kit node_modules .vitest bun.lock",
+    "clean": "rm -rf .context node_modules .vitest bun.lock",
     "dev": "vite",
     "fix": "biome check --write src/",
     "format": "biome format --write src/",
