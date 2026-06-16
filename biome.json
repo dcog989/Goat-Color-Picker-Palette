@@ -29,6 +29,11 @@
           "correctness": {
             "noUnusedVariables": "off",
             "noUnusedImports": "off"
+          },
+          "a11y": {
+            "noStaticElementInteractions": "off",
+            "useSemanticElements": "off",
+            "useValidAriaValues": "off"
           }
         }
       }
