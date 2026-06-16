@@ -190,7 +190,7 @@ onDestroy(() => {
                                       border-(--ui-border) bg-(--ui-card)
                                       hover:border-(--current-color)
                                     `}"
-                                onclick={() => (imageAnalyzer.sortMode = option.value)}
+                                 onclick={() => (imageAnalyzer.sortMode = option.value)}
                                 aria-checked={imageAnalyzer.sortMode === option.value}
                                 role="radio">
                                 {option.label}
