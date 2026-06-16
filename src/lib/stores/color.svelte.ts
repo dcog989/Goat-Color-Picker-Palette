@@ -1,6 +1,6 @@
 import type { Colordx } from '@colordx/core';
 import { colordx, inGamutSrgb } from '@colordx/core';
-import { resolveNamedColor } from '$lib/utils/named-colors';
+import { resolveNamedColor } from '../utils/named-colors';
 
 function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
