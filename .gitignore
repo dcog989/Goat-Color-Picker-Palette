@@ -4,8 +4,8 @@
 .git/
 .repomix/
 .repomixignore
+.svelte-kit/
 [Dd]ist/
-/.svelte-kit
 bun.lock
 node_modules/
 repomix.*.json
