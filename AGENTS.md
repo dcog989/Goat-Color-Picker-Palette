@@ -49,7 +49,7 @@ Root: `/home/bubba/Projects/Goat-Color-Picker-Palette/`
 
 ### Disallowed
 
-- `.agents/`, `.archive/`, `.assets/`, `.context/`, `.docs/`, `.git/`, `.repomix/`, `.repomixignore`
+- `.assets/`, `.context/`, `.docs/`, `.git/`, `.repomix/`, `.repomixignore`
 - `node_modules/`, `dist/`, `build/`, `.svelte-kit/`, `bun.lock`, `repomix.*.json`
 
 ## Interaction Style
