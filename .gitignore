@@ -1,7 +1,6 @@
 .assets/
 .context/
 .docs/
-.git/
 .repomix/
 .repomixignore
 .svelte-kit/
