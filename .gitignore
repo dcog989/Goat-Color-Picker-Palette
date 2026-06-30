@@ -3,8 +3,6 @@
 .docs/
 .repomix/
 .repomixignore
-.svelte-kit/
 [Dd]ist/
-bun.lock
 node_modules/
 repomix.*.json
