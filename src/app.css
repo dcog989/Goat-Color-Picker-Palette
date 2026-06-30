@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-brand: var(--current-color);
@@ -99,26 +99,26 @@ body {
 }
 
 /* Custom range inputs */
-input[type="range"] {
+input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
   cursor: pointer;
 }
 
-input[type="range"]::-webkit-slider-track {
+input[type='range']::-webkit-slider-track {
   height: 16px;
   border-radius: 9999px;
   background: transparent;
 }
 
-input[type="range"]::-moz-range-track {
+input[type='range']::-moz-range-track {
   height: 16px;
   border-radius: 9999px;
   background: transparent;
 }
 
-input[type="range"]::-webkit-slider-thumb {
+input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 24px;
@@ -130,7 +130,7 @@ input[type="range"]::-webkit-slider-thumb {
   margin-top: -4px;
 }
 
-input[type="range"]::-moz-range-thumb {
+input[type='range']::-moz-range-thumb {
   width: 24px;
   height: 24px;
   background: transparent;
@@ -139,17 +139,17 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 2px 6px oklch(0 0 0 / 0.3);
 }
 
-input[type="range"]:focus {
+input[type='range']:focus {
   outline: none;
 }
 
-input[type="number"] {
+input[type='number'] {
   appearance: auto;
   -moz-appearance: auto;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: auto;
   opacity: 1;
 }
@@ -192,7 +192,7 @@ select {
 }
 
 /* Optimize animations for GPU compositing */
-[class*="hover:scale-"],
+[class*='hover:scale-'],
 .animate-fade-in,
 .animate-scale-in,
 .animate-slide-up {
@@ -289,7 +289,7 @@ select {
   color: oklch(0.95 calc(0.03 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
-:root[data-color-contrast="dark"] .text-on-current {
+:root[data-color-contrast='dark'] .text-on-current {
   color: oklch(0.2 calc(0.08 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
@@ -297,7 +297,7 @@ select {
   color: oklch(0.95 calc(0.03 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
-:root[data-color-contrast="dark"] .group:hover .group-hover\:text-on-current {
+:root[data-color-contrast='dark'] .group:hover .group-hover\:text-on-current {
   color: oklch(0.2 calc(0.08 * var(--current-ui-chroma-scale)) var(--current-hue));
 }
 
