@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Image, LayersPlus, X } from 'lucide-svelte';
+import { Image, LayersPlus, X } from '@lucide/svelte';
 import { onDestroy } from 'svelte';
 import Swatch from '../components/Swatch.svelte';
 import { IMAGE_ANALYSIS } from '../constants';

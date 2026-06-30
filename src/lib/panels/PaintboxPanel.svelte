@@ -1,5 +1,5 @@
 <script lang="ts">
-import { CircleX } from 'lucide-svelte';
+import { CircleX } from '@lucide/svelte';
 import PaintboxGrid from '../components/PaintboxGrid.svelte';
 import { getApp } from '../context';
 import type { PaintboxSortMode } from '../stores/paintbox.svelte';
