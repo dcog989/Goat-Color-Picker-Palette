@@ -1,5 +1,7 @@
 <script lang="ts">
-import { LayersPlus, ListMinus, ListPlus } from '@lucide/svelte';
+import LayersPlus from '@lucide/svelte/icons/layers-plus';
+import ListMinus from '@lucide/svelte/icons/list-minus';
+import ListPlus from '@lucide/svelte/icons/list-plus';
 import Swatch from '../components/Swatch.svelte';
 import { getApp } from '../context';
 

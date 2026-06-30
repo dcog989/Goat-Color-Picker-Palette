@@ -1,5 +1,9 @@
 <script lang="ts">
-import { Copy, DecimalsArrowLeft, DecimalsArrowRight, Plus, TriangleAlert } from '@lucide/svelte';
+import Copy from '@lucide/svelte/icons/copy';
+import DecimalsArrowLeft from '@lucide/svelte/icons/decimals-arrow-left';
+import DecimalsArrowRight from '@lucide/svelte/icons/decimals-arrow-right';
+import Plus from '@lucide/svelte/icons/plus';
+import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 import { getApp } from '../context';
 
 const app = getApp();

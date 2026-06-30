@@ -1,6 +1,8 @@
 <script lang="ts">
 import { colordx, getFormat } from '@colordx/core';
-import { ArrowRightLeft, Check, X } from '@lucide/svelte';
+import ArrowRightLeft from '@lucide/svelte/icons/arrow-right-left';
+import Check from '@lucide/svelte/icons/check';
+import X from '@lucide/svelte/icons/x';
 import { getApp } from '../context';
 
 const { color } = getApp();

@@ -6,9 +6,6 @@ export default defineConfig({
   // Use relative paths so the app works on any base URL (e.g. /repo-name/)
   base: './',
   plugins: [tailwindcss(), svelte()],
-  optimizeDeps: {
-    exclude: ['@lucide/svelte'],
-  },
   worker: {
     format: 'es',
   },
@@ -20,11 +17,6 @@ export default defineConfig({
     rollupOptions: {
       external: ['html2canvas', 'canvg', 'dompurify'],
       output: {
-        manualChunks(id: string) {
-          if (id.includes('@lucide/svelte') || id.includes('lucide-svelte')) {
-            return 'ui-libs';
-          }
-        },
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',

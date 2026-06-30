@@ -1,5 +1,8 @@
 <script lang="ts">
-import { Moon, RefreshCw, Search, Sun } from '@lucide/svelte';
+import Moon from '@lucide/svelte/icons/moon';
+import RefreshCw from '@lucide/svelte/icons/refresh-cw';
+import Search from '@lucide/svelte/icons/search';
+import Sun from '@lucide/svelte/icons/sun';
 import { fade } from 'svelte/transition';
 import Title from '../components/Title.svelte';
 import { getApp } from '../context';
