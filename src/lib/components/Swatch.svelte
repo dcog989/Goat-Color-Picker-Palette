@@ -1,6 +1,6 @@
 <script lang="ts">
 import { colordx } from '@colordx/core';
-import { Copy, Plus } from 'lucide-svelte';
+import { Copy, Plus } from '@lucide/svelte';
 import { getApp } from '../context';
 
 const { color, paintbox, toast } = getApp();

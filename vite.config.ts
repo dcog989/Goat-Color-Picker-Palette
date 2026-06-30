@@ -7,7 +7,7 @@ export default defineConfig({
   base: './',
   plugins: [tailwindcss(), svelte()],
   optimizeDeps: {
-    exclude: ['lucide-svelte'],
+    exclude: ['@lucide/svelte'],
   },
   worker: {
     format: 'es',
@@ -15,13 +15,13 @@ export default defineConfig({
   build: {
     target: 'esnext',
     minify: 'esbuild',
-    sourcemap: true, // Add for debugging
+    sourcemap: process.env.NODE_ENV !== 'production',
     cssMinify: true,
     rollupOptions: {
       external: ['html2canvas', 'canvg', 'dompurify'],
       output: {
         manualChunks(id: string) {
-          if (id.includes('lucide-svelte')) {
+          if (id.includes('@lucide/svelte') || id.includes('lucide-svelte')) {
             return 'ui-libs';
           }
         },

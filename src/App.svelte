@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Keyboard } from 'lucide-svelte';
+import { Keyboard } from '@lucide/svelte';
 import { onDestroy } from 'svelte';
 import { version } from '../package.json';
 import Toast from './lib/components/Toast.svelte';

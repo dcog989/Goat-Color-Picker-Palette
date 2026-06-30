@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Copy, DecimalsArrowLeft, DecimalsArrowRight, Plus, TriangleAlert } from 'lucide-svelte';
+import { Copy, DecimalsArrowLeft, DecimalsArrowRight, Plus, TriangleAlert } from '@lucide/svelte';
 import { getApp } from '../context';
 
 const app = getApp();

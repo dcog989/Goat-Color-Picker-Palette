@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "check": "biome check src/ && svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+    "check": "bun run lint && bun run typecheck",
     "clean": "rm -rf .context node_modules .vitest bun.lock",
     "dev": "vite",
     "fix": "biome check --write src/",
@@ -24,13 +24,14 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
     "update": "bun update --latest"
   },
   "dependencies": {
     "@colordx/core": "^5.5.0",
     "color-name-list": "^14.44.0",
     "jspdf": "^4.2.1",
-    "lucide-svelte": "^1.0.1"
+    "@lucide/svelte": "^1.22.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",
