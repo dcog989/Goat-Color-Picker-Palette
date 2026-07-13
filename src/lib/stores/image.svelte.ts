@@ -1,8 +1,14 @@
 import { colordx } from '@colordx/core';
 import { IMAGE_ANALYSIS } from '../constants';
+import { WorkerManager } from '../utils/worker-manager';
 import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
 
 export type SortMode = 'dominant' | 'vibrant' | 'bright' | 'dark';
+
+type ImageWorkerMessage = {
+  colors: string[];
+  clusters: { color: string; pixels: number }[];
+};
 
 export class ImageStore {
   mosaicData = $state<{ color: string; pixels: number }[]>([]);
@@ -12,7 +18,7 @@ export class ImageStore {
   previewUrl = $state<string>('');
   currentFile = $state<File | null>(null);
 
-  #activeWorker: Worker | null = null;
+  #workerManager = new WorkerManager<ImageWorkerMessage>();
 
   extractedPalette = $derived.by(() => {
     if (!this.mosaicData.length) return [];
@@ -56,7 +62,7 @@ export class ImageStore {
       throw new Error(`Image too large (${sizeMb}MB). Max size is ${maxMb}MB.`);
     }
 
-    this.#terminateWorker();
+    this.#workerManager.terminate();
 
     this.isProcessing = true;
     this.currentFile = file;
@@ -86,30 +92,26 @@ export class ImageStore {
 
       bitmap.close();
 
-      this.#activeWorker = new ColorAnalysisWorker();
+      this.#workerManager.init(
+        () => new ColorAnalysisWorker(),
+        {
+          onMessage: (data) => {
+            this.mosaicData = data.clusters;
+            this.isProcessing = false;
+            this.#workerManager.terminate();
+          },
+          onError: () => {
+            this.isProcessing = false;
+          },
+        },
+        'Image analysis worker',
+      );
 
-      this.#activeWorker.onmessage = (
-        e: MessageEvent<{
-          colors: string[];
-          clusters: { color: string; pixels: number }[];
-        }>,
-      ) => {
-        this.mosaicData = e.data.clusters;
-        this.isProcessing = false;
-        this.#terminateWorker();
-      };
-
-      this.#activeWorker.postMessage({ imageData, distance: 0.05 }, [imageData.data.buffer]);
-
-      this.#activeWorker.onerror = (error) => {
-        console.error('Worker error:', error);
-        this.isProcessing = false;
-        this.#terminateWorker();
-      };
+      this.#workerManager.post({ imageData, distance: 0.05 }, [imageData.data.buffer]);
     } catch (error) {
       console.error('Image analysis error:', error);
       this.isProcessing = false;
-      this.#terminateWorker();
+      this.#workerManager.terminate();
       throw error;
     }
   }
@@ -121,18 +123,11 @@ export class ImageStore {
       URL.revokeObjectURL(this.previewUrl);
       this.previewUrl = '';
     }
-    this.#terminateWorker();
-  }
-
-  #terminateWorker() {
-    if (this.#activeWorker) {
-      this.#activeWorker.terminate();
-      this.#activeWorker = null;
-    }
+    this.#workerManager.terminate();
   }
 
   destroy() {
     this.clear();
-    this.#terminateWorker();
+    this.#workerManager.destroy();
   }
 }
