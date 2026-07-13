@@ -4,6 +4,7 @@ import DecimalsArrowLeft from '@lucide/svelte/icons/decimals-arrow-left';
 import DecimalsArrowRight from '@lucide/svelte/icons/decimals-arrow-right';
 import Plus from '@lucide/svelte/icons/plus';
 import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
+import Slider from '../components/Slider.svelte';
 import { getApp } from '../context';
 
 const app = getApp();
@@ -239,261 +240,20 @@ const hslValues = $derived(color.hslComp);
         <!-- Sliders -->
         <div class="space-y-6">
             {#if color.mode === 'oklch'}
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Lightness</span> <span>{(color.l * 100).toFixed(0)}%</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div class="absolute inset-0 rounded-full {getGradientClass('l')}"></div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            bind:value={color.l}
-                            aria-label="Lightness"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Chroma</span> <span>{color.c.toFixed(3)}</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div class="absolute inset-0 rounded-full {getGradientClass('c')}"></div>
-                        <input
-                            type="range"
-                            min="0"
-                            max={0.33}
-                            step="0.001"
-                            bind:value={color.c}
-                            aria-label="Chroma"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Hue</span> <span>{color.h.toFixed(0)}°</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div class="absolute inset-0 rounded-full {getGradientClass('h')}"></div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="360"
-                            step="0.1"
-                            bind:value={color.h}
-                            aria-label="Hue"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
+                <Slider label="Lightness" bind:value={color.l} displayValue={`${(color.l * 100).toFixed(0)}%`} min={0} max={1} step={0.01} gradientClass={getGradientClass('l')} />
+                <Slider label="Chroma" bind:value={color.c} displayValue={color.c.toFixed(3)} min={0} max={0.33} step={0.001} gradientClass={getGradientClass('c')} />
+                <Slider label="Hue" bind:value={color.h} displayValue={`${color.h.toFixed(0)}°`} min={0} max={360} step={0.1} gradientClass={getGradientClass('h')} />
             {:else if color.mode === 'rgb'}
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Red</span> <span>{localRgb.r}</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
-                            style:--slider-grad={getGradientStyle('r')}>
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="255"
-                            bind:value={localRgb.r}
-                            oninput={updateRgbFromLocal}
-                            aria-label="Red"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Green</span> <span>{localRgb.g}</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
-                            style:--slider-grad={getGradientStyle('g')}>
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="255"
-                            bind:value={localRgb.g}
-                            oninput={updateRgbFromLocal}
-                            aria-label="Green"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Blue</span> <span>{localRgb.b}</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div
-                            class="absolute inset-0 rounded-full [background:var(--slider-grad)]"
-                            style:--slider-grad={getGradientStyle('b')}>
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="255"
-                            bind:value={localRgb.b}
-                            oninput={updateRgbFromLocal}
-                            aria-label="Blue"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
+                <Slider label="Red" bind:value={localRgb.r} displayValue={String(localRgb.r)} min={0} max={255} step={1} gradientStyle={getGradientStyle('r')} oninput={updateRgbFromLocal} />
+                <Slider label="Green" bind:value={localRgb.g} displayValue={String(localRgb.g)} min={0} max={255} step={1} gradientStyle={getGradientStyle('g')} oninput={updateRgbFromLocal} />
+                <Slider label="Blue" bind:value={localRgb.b} displayValue={String(localRgb.b)} min={0} max={255} step={1} gradientStyle={getGradientStyle('b')} oninput={updateRgbFromLocal} />
             {:else if color.mode === 'hsl'}
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Hue</span> <span>{localHsl.h.toFixed(0)}°</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div class="absolute inset-0 rounded-full {getGradientClass('hsl-h')}">
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="360"
-                            bind:value={localHsl.h}
-                            oninput={updateHslFromLocal}
-                            aria-label="HSL Hue"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Saturation</span> <span>{localHsl.s.toFixed(0)}%</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div class="absolute inset-0 rounded-full {getGradientClass('hsl-s')}">
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            bind:value={localHsl.s}
-                            oninput={updateHslFromLocal}
-                            aria-label="Saturation"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <div
-                        class="
-                          flex justify-between text-xs font-bold
-                          text-(--ui-text-muted) uppercase
-                        ">
-                        <span>Lightness</span> <span>{localHsl.l.toFixed(0)}%</span>
-                    </div>
-                    <div class="relative h-4 rounded-full">
-                        <div class="absolute inset-0 rounded-full {getGradientClass('hsl-l')}">
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            bind:value={localHsl.l}
-                            oninput={updateHslFromLocal}
-                            aria-label="HSL Lightness"
-                            class="
-                              absolute inset-0 z-10 size-full rounded-full
-                              bg-transparent
-                            " />
-                    </div>
-                </div>
+                <Slider label="Hue" bind:value={localHsl.h} displayValue={`${localHsl.h.toFixed(0)}°`} min={0} max={360} step={1} gradientClass={getGradientClass('hsl-h')} oninput={updateHslFromLocal} />
+                <Slider label="Saturation" bind:value={localHsl.s} displayValue={`${localHsl.s.toFixed(0)}%`} min={0} max={100} step={1} gradientClass={getGradientClass('hsl-s')} oninput={updateHslFromLocal} />
+                <Slider label="Lightness" bind:value={localHsl.l} displayValue={`${localHsl.l.toFixed(0)}%`} min={0} max={100} step={1} gradientClass={getGradientClass('hsl-l')} oninput={updateHslFromLocal} />
             {/if}
 
-            <!-- Alpha (Shared) -->
-            <div class="space-y-1">
-                <div
-                    class="
-                      flex justify-between text-xs font-bold
-                      text-(--ui-text-muted) uppercase
-                    ">
-                    <span>Alpha</span> <span>{(color.alpha * 100).toFixed(0)}%</span>
-                </div>
-                <div class="relative h-4">
-                    <div
-                        class="
-                          checkerboard absolute inset-0 overflow-hidden rounded-full
-                        ">
-                    </div>
-                    <div
-                        class="pointer-events-none absolute inset-0 overflow-hidden rounded-full [background:var(--alpha-grad)]"
-                        style:--alpha-grad={getGradientStyle('alpha')}>
-                    </div>
-                    <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.01"
-                        bind:value={color.alpha}
-                        aria-label="Alpha"
-                        class="
-                          absolute inset-0 z-10 size-full cursor-ew-resize
-                          rounded-full bg-transparent
-                        " />
-                </div>
-            </div>
+            <Slider label="Alpha" bind:value={color.alpha} displayValue={`${(color.alpha * 100).toFixed(0)}%`} min={0} max={1} step={0.01} gradientStyle={getGradientStyle('alpha')} showCheckerboard />
         </div>
 
         <!-- Large Swatch -->
