@@ -11,7 +11,7 @@ const addAll = (e?: MouseEvent) => {
     engine.generated.forEach((c: string) => {
         paintbox.add(c);
     });
-    toast.show('Added All to Paintbox', e);
+    toast.showAt('Added All to Paintbox', e);
 };
 
 const addRow = () => {

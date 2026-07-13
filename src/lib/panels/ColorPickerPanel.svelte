@@ -45,7 +45,7 @@ let inputVal = $derived.by(() => {
 
 const addToPaintbox = (e?: MouseEvent) => {
     paintbox.add(color.hexa);
-    toast.show('Added to Paintbox', e);
+    toast.showAt('Added to Paintbox', e);
 };
 
 const togglePrecision = () => {
