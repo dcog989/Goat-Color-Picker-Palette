@@ -2,6 +2,7 @@
 import CircleAlert from '@lucide/svelte/icons/circle-alert';
 import { onDestroy, onMount } from 'svelte';
 import { getApp } from '../context';
+import LoadingSpinner from './LoadingSpinner.svelte';
 
 const { color: colorStore, engine } = getApp();
 
@@ -203,34 +204,9 @@ $effect(() => {
             />
 
             {#if isLoading}
-                <div class="flex flex-1 items-center justify-center">
-                    <div class="text-center">
-                        <div
-                            class="
-                              mx-auto mb-4 size-12 animate-spin rounded-full
-                              border-4 border-(--ui-border)
-                              border-t-(--current-color)
-                            "
-                        ></div>
-                        <div class="text-sm opacity-60">
-                            Loading color library...
-                        </div>
-                        <div class="mt-1 text-xs opacity-40">30,000+ colors</div>
-                    </div>
-                </div>
+                <LoadingSpinner message="Loading color library..." subtitle="30,000+ colors" />
             {:else if isFiltering}
-                <div class="flex flex-1 items-center justify-center">
-                    <div class="text-center">
-                        <div
-                            class="
-                              mx-auto mb-4 size-12 animate-spin rounded-full
-                              border-4 border-(--ui-border)
-                              border-t-(--current-color)
-                            "
-                        ></div>
-                        <div class="text-sm opacity-60">Searching...</div>
-                    </div>
-                </div>
+                <LoadingSpinner message="Searching..." />
             {:else if loadError}
                 <div class="flex flex-1 items-center justify-center">
                     <div class="text-center text-red-500">
