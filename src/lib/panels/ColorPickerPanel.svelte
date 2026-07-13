@@ -4,34 +4,17 @@ import DecimalsArrowLeft from '@lucide/svelte/icons/decimals-arrow-left';
 import DecimalsArrowRight from '@lucide/svelte/icons/decimals-arrow-right';
 import Plus from '@lucide/svelte/icons/plus';
 import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
+import HslSliders from '../components/HslSliders.svelte';
+import OklchSliders from '../components/OklchSliders.svelte';
+import RgbSliders from '../components/RgbSliders.svelte';
 import Slider from '../components/Slider.svelte';
 import { getApp } from '../context';
+import { getGradient } from '../utils/gradients';
 
 const app = getApp();
 const { color, paintbox, toast } = app;
 
 let hasError = $state(false);
-
-let localRgb = $state({ r: 0, g: 0, b: 0 });
-let localHsl = $state({ h: 0, s: 0, l: 0 });
-
-$effect(() => {
-    if (color.mode === 'rgb') {
-        const rgb = color.rgbComp;
-        localRgb = { r: rgb.r, g: rgb.g, b: rgb.b };
-    }
-});
-
-$effect(() => {
-    if (color.mode === 'hsl') {
-        const hsl = color.hslComp;
-        localHsl = { h: hsl.h, s: hsl.s, l: hsl.l };
-    }
-});
-
-const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, localRgb.b);
-
-const updateHslFromLocal = () => color.setHslValues(localHsl.h, localHsl.s, localHsl.l);
 
 let inputVal = $derived.by(() => {
     switch (color.mode) {
@@ -60,38 +43,6 @@ const handleInput = (e: Event) => {
     } else {
         hasError = true;
         toast.show('Invalid color format');
-    }
-};
-
-const getGradient = (channel: string) => {
-    switch (channel) {
-        case 'l':
-            return { gradientClass: 'gradient-oklch-l' };
-        case 'c':
-            return { gradientClass: 'gradient-oklch-c' };
-        case 'h':
-            return { gradientClass: 'gradient-oklch-h' };
-        case 'hsl-h':
-            return { gradientClass: 'gradient-hsl-h' };
-        case 'hsl-s':
-            return { gradientClass: 'gradient-hsl-s' };
-        case 'hsl-l':
-            return { gradientClass: 'gradient-hsl-l' };
-    }
-
-    const { r, g, b } = color.rgbComp;
-
-    switch (channel) {
-        case 'r':
-            return { gradientStyle: `linear-gradient(to right, rgb(0,${g},${b}), rgb(255,${g},${b}))` };
-        case 'g':
-            return { gradientStyle: `linear-gradient(to right, rgb(${r},0,${b}), rgb(${r},255,${b}))` };
-        case 'b':
-            return { gradientStyle: `linear-gradient(to right, rgb(${r},${g},0), rgb(${r},${g},255))` };
-        case 'alpha':
-            return { gradientStyle: `linear-gradient(to right, rgba(${r},${g},${b},0), rgba(${r},${g},${b},1))` };
-        default:
-            return {};
     }
 };
 
@@ -236,20 +187,14 @@ const hslValues = $derived(color.hslComp);
         <!-- Sliders -->
         <div class="space-y-6">
             {#if color.mode === 'oklch'}
-                <Slider label="Lightness" bind:value={color.l} displayValue={`${(color.l * 100).toFixed(0)}%`} min={0} max={1} step={0.01} {...getGradient('l')} />
-                <Slider label="Chroma" bind:value={color.c} displayValue={color.c.toFixed(3)} min={0} max={0.33} step={0.001} {...getGradient('c')} />
-                <Slider label="Hue" bind:value={color.h} displayValue={`${color.h.toFixed(0)}°`} min={0} max={360} step={0.1} {...getGradient('h')} />
+                <OklchSliders />
             {:else if color.mode === 'rgb'}
-                <Slider label="Red" bind:value={localRgb.r} displayValue={String(localRgb.r)} min={0} max={255} step={1} {...getGradient('r')} oninput={updateRgbFromLocal} />
-                <Slider label="Green" bind:value={localRgb.g} displayValue={String(localRgb.g)} min={0} max={255} step={1} {...getGradient('g')} oninput={updateRgbFromLocal} />
-                <Slider label="Blue" bind:value={localRgb.b} displayValue={String(localRgb.b)} min={0} max={255} step={1} {...getGradient('b')} oninput={updateRgbFromLocal} />
+                <RgbSliders />
             {:else if color.mode === 'hsl'}
-                <Slider label="Hue" bind:value={localHsl.h} displayValue={`${localHsl.h.toFixed(0)}°`} min={0} max={360} step={1} {...getGradient('hsl-h')} oninput={updateHslFromLocal} />
-                <Slider label="Saturation" bind:value={localHsl.s} displayValue={`${localHsl.s.toFixed(0)}%`} min={0} max={100} step={1} {...getGradient('hsl-s')} oninput={updateHslFromLocal} />
-                <Slider label="Lightness" bind:value={localHsl.l} displayValue={`${localHsl.l.toFixed(0)}%`} min={0} max={100} step={1} {...getGradient('hsl-l')} oninput={updateHslFromLocal} />
+                <HslSliders />
             {/if}
 
-            <Slider label="Alpha" bind:value={color.alpha} displayValue={`${(color.alpha * 100).toFixed(0)}%`} min={0} max={1} step={0.01} {...getGradient('alpha')} showCheckerboard />
+            <Slider label="Alpha" bind:value={color.alpha} displayValue={`${(color.alpha * 100).toFixed(0)}%`} min={0} max={1} step={0.01} {...getGradient('alpha', color.rgbComp)} showCheckerboard />
         </div>
 
         <!-- Large Swatch -->
