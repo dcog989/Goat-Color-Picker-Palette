@@ -1,6 +1,8 @@
-# Goat Color
+# Goat Color Picker Palette
 
-A modern, perceptually uniform color workspace built for the post-sRGB era.
+A color picker with palette, image analyser, and export format options. Utilises various color formats for input or output.
+
+If you find a better color picker, let us know.
 
 ## Features
 
