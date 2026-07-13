@@ -1,6 +1,6 @@
 import { colordx } from '@colordx/core';
 import { IMAGE_ANALYSIS } from '../constants';
-import { WorkerManager } from '../utils/worker-manager';
+import { ManagedWorker } from '../utils/worker-manager';
 import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
 
 export type SortMode = 'dominant' | 'vibrant' | 'bright' | 'dark';
@@ -18,7 +18,7 @@ export class ImageStore {
   previewUrl = $state<string>('');
   currentFile = $state<File | null>(null);
 
-  #workerManager = new WorkerManager<ImageWorkerMessage>();
+  #managedWorker = new ManagedWorker<ImageWorkerMessage>();
 
   extractedPalette = $derived.by(() => {
     if (!this.mosaicData.length) return [];
@@ -62,7 +62,7 @@ export class ImageStore {
       throw new Error(`Image too large (${sizeMb}MB). Max size is ${maxMb}MB.`);
     }
 
-    this.#workerManager.terminate();
+    this.#managedWorker.terminate();
 
     this.isProcessing = true;
     this.currentFile = file;
@@ -92,13 +92,13 @@ export class ImageStore {
 
       bitmap.close();
 
-      this.#workerManager.init(
+      this.#managedWorker.init(
         () => new ColorAnalysisWorker(),
         {
           onMessage: (data) => {
             this.mosaicData = data.clusters;
             this.isProcessing = false;
-            this.#workerManager.terminate();
+            this.#managedWorker.terminate();
           },
           onError: () => {
             this.isProcessing = false;
@@ -107,11 +107,11 @@ export class ImageStore {
         'Image analysis worker',
       );
 
-      this.#workerManager.post({ imageData, distance: 0.05 }, [imageData.data.buffer]);
+      this.#managedWorker.post({ imageData, distance: 0.05 }, [imageData.data.buffer]);
     } catch (error) {
       console.error('Image analysis error:', error);
       this.isProcessing = false;
-      this.#workerManager.terminate();
+      this.#managedWorker.terminate();
       throw error;
     }
   }
@@ -123,11 +123,11 @@ export class ImageStore {
       URL.revokeObjectURL(this.previewUrl);
       this.previewUrl = '';
     }
-    this.#workerManager.terminate();
+    this.#managedWorker.terminate();
   }
 
   destroy() {
     this.clear();
-    this.#workerManager.destroy();
+    this.#managedWorker.destroy();
   }
 }

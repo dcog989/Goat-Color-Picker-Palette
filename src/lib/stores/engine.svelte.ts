@@ -1,7 +1,7 @@
 import { colordx } from '@colordx/core';
 import { PRECISION } from '../constants';
 import { type GenerationMode, generatePalette, isHarmonyMode } from '../utils/palette';
-import { WorkerManager } from '../utils/worker-manager';
+import { ManagedWorker } from '../utils/worker-manager';
 import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
 import type { ColorStore } from './color.svelte';
 
@@ -14,11 +14,10 @@ export type WorkerMessageData = {
 
 export class EngineStore {
   closestName = $state('Searching...');
-  #workerManager = new WorkerManager<WorkerMessageData>({ maxRetries: 3, retryDelay: 1000 });
+  #managedWorker = new ManagedWorker<WorkerMessageData>({ maxRetries: 3, retryDelay: 1000 });
   #debounceHandle: number | null = null;
   #initialized = false;
   #colorStore: ColorStore;
-  #workerSubscribers: Array<(msg: WorkerMessageData) => void> = [];
 
   genSteps = $state(8);
   genAxis = $state<GenerationMode>('l');
@@ -101,22 +100,16 @@ export class EngineStore {
   }
 
   #initWorker() {
-    this.#workerManager.init(
+    this.#managedWorker.init(
       () => new ColorNameSearchWorker(),
       {
         onMessage: (data) => {
           if (data.type === 'result') {
             this.closestName = data.name ?? 'Custom Color';
           }
-          this.#workerSubscribers.forEach((h) => {
-            h(data);
-          });
         },
         onError: () => {
           this.closestName = 'Custom Color';
-          this.#workerSubscribers.forEach((h) => {
-            h({ type: 'error' });
-          });
         },
       },
       'Color name search worker',
@@ -124,7 +117,7 @@ export class EngineStore {
   }
 
   #searchColorName(color: { l: number; c: number; h: number; alpha: number }) {
-    this.#workerManager.post({ type: 'search', color });
+    this.#managedWorker.post({ type: 'search', color });
   }
 
   destroy() {
@@ -132,18 +125,15 @@ export class EngineStore {
       clearTimeout(this.#debounceHandle);
       this.#debounceHandle = null;
     }
-    this.#workerManager.destroy();
+    this.#managedWorker.destroy();
   }
 
   subscribeToWorker(handler: (msg: WorkerMessageData) => void): () => void {
-    this.#workerSubscribers.push(handler);
-    return () => {
-      this.#workerSubscribers = this.#workerSubscribers.filter((h) => h !== handler);
-    };
+    return this.#managedWorker.subscribe(handler);
   }
 
   postToWorker(data: Record<string, unknown>): void {
-    this.#workerManager.post(data);
+    this.#managedWorker.post(data);
   }
 
   #getBaseColor(): { l: number; c: number; h: number; alpha: number } {
