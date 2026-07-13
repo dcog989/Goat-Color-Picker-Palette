@@ -7,15 +7,15 @@ export class ToastStore {
   } | null>(null);
   #counter = 0;
 
-  show(message: string, duration: number = 3000) {
-    this.#emit(message, undefined, duration);
+  show(message: string) {
+    this.#emit(message);
   }
 
-  showAt(message: string, event: MouseEvent | undefined, duration: number = 3000) {
-    this.#emit(message, event, duration);
+  showAt(message: string, event: MouseEvent | undefined) {
+    this.#emit(message, event);
   }
 
-  #emit(message: string, event?: MouseEvent, duration: number = 3000) {
+  #emit(message: string, event?: MouseEvent, duration = 3000) {
     const id = ++this.#counter;
 
     this.active = {
