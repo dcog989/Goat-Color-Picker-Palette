@@ -4,6 +4,8 @@ A color picker with palette, image analyser, and export format options. Utilises
 
 If you find a better color picker, let us know.
 
+![Goat Color Picker Palette](/assets/screen-1.png)
+
 ## Features
 
 - **OKLCH First:** Design with perceptual uniformity using the latest color space.
@@ -12,8 +14,6 @@ If you find a better color picker, let us know.
 - **Accessibility:** Real-time APCA (Lc) and WCAG 2.1 contrast checking.
 - **Smart Paintbox:** Persistent storage with multi-format export (Tailwind, CSS, SVG, PDF).
 - **Library:** Search 30,000+ named colors.
-
-![Goat Color Picker Palette](/assets/screen-1.png)
 
 ## Tech Stack
 
