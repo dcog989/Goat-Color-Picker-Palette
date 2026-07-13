@@ -19,7 +19,7 @@ export default defineConfig({
   build: {
     target: 'esnext',
     minify: 'esbuild',
-    sourcemap: process.env.BUNDLE_ANALYZE ? true : process.env.NODE_ENV !== 'production',
+    sourcemap: process.env.BUNDLE_ANALYZE ? true : process.env.NODE_ENV !== 'production' ? true : 'hidden',
     cssMinify: true,
     rollupOptions: {
       external: ['html2canvas', 'canvg', 'dompurify'],
