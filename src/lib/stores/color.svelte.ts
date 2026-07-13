@@ -53,16 +53,14 @@ export class ColorStore {
     return this.#current.toOklch().l;
   }
   set l(v: number) {
-    const { c, alpha } = this.#current.toOklch();
-    this.#setCurrent(colordx({ l: v, c, h: this.h, alpha }));
+    this.#setOklchField('l', v);
   }
 
   get c() {
     return this.#current.toOklch().c;
   }
   set c(v: number) {
-    const { l, alpha } = this.#current.toOklch();
-    this.#setCurrent(colordx({ l, c: v, h: this.h, alpha }));
+    this.#setOklchField('c', v);
   }
 
   get h() {
@@ -70,8 +68,12 @@ export class ColorStore {
     return c > 0.001 ? h : this.#lastMeaningfulHue;
   }
   set h(v: number) {
-    const { l, c, alpha } = this.#current.toOklch();
-    this.#setCurrent(colordx({ l, c, h: Math.min(v, 359.999), alpha }));
+    this.#setOklchField('h', Math.min(v, 359.999));
+  }
+
+  #setOklchField(field: 'l' | 'c' | 'h', value: number) {
+    const { l, c, h, alpha } = this.#current.toOklch();
+    this.#setCurrent(colordx({ l, c, h, alpha, [field]: value }));
   }
 
   get alpha() {
