@@ -1,5 +1,6 @@
 import { colordx } from '@colordx/core';
 import { IMAGE_ANALYSIS } from '../constants';
+import { validateImageFile } from '../utils/validate-image';
 import { ManagedWorker } from '../utils/worker-manager';
 import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
 
@@ -53,14 +54,7 @@ export class ImageStore {
   });
 
   async analyze(file: File) {
-    if (!IMAGE_ANALYSIS.ALLOWED_TYPES.includes(file.type as (typeof IMAGE_ANALYSIS.ALLOWED_TYPES)[number])) {
-      throw new Error(`Unsupported format. Please use JPEG, PNG, WEBP, AVIF, GIF, BMP, or SVG.`);
-    }
-    if (file.size > IMAGE_ANALYSIS.MAX_FILE_SIZE) {
-      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-      const maxMb = IMAGE_ANALYSIS.MAX_FILE_SIZE / (1024 * 1024);
-      throw new Error(`Image too large (${sizeMb}MB). Max size is ${maxMb}MB.`);
-    }
+    validateImageFile(file);
 
     this.#managedWorker.terminate();
 
