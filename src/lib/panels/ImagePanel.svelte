@@ -53,7 +53,7 @@ const addAll = (e?: MouseEvent) => {
     imageAnalyzer.extractedPalette.forEach((c) => {
         paintbox.add(c);
     });
-    toast.show('Added All to Paintbox', e);
+    toast.showAt('Added All to Paintbox', e);
 };
 
 const sortOptions: { label: string; value: SortMode }[] = [

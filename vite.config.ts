@@ -1,11 +1,11 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
+import type { PluginOption } from 'vite';
 import { defineConfig } from 'vite';
 
-const plugins = [tailwindcss(), svelte()];
+const plugins: PluginOption[] = [tailwindcss(), svelte()];
 
 if (process.env.BUNDLE_ANALYZE) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports -- dynamic
   const { default: sonda } = await import('sonda/vite');
   plugins.push(sonda());
 }

@@ -18,7 +18,7 @@ let { color: swatchColor, index, onSelect, dynamicClass = true }: Props = $props
 const copy = (e: MouseEvent) => {
     const formatted = color.formatColor(swatchColor);
     navigator.clipboard.writeText(formatted);
-    toast.show('Copied', e);
+    toast.showAt('Copied', e);
 };
 
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -76,7 +76,7 @@ const getActionClass = () => {
                 onclick={(e) => {
                     e.stopPropagation();
                     paintbox.add(swatchColor);
-                    toast.show('Added', e);
+                    toast.showAt('Added', e);
                 }}
                 class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm

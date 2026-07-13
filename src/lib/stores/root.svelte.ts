@@ -42,6 +42,6 @@ export class RootStore {
 
   copy(text: string, e?: MouseEvent) {
     navigator.clipboard.writeText(text);
-    this.toast.show('Copied', e);
+    this.toast.showAt('Copied', e);
   }
 }
