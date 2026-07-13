@@ -1,6 +1,7 @@
 <script lang="ts">
 import { getApp } from '../context';
-import { type ExportFormat, exportCode, strategies } from '../utils/export';
+import type { ExportFormat } from '../utils/formatters';
+import { exportCode, strategies } from '../utils/strategies';
 
 interface Props {
     onClose: () => void;
