@@ -3,9 +3,7 @@ import CircleX from '@lucide/svelte/icons/circle-x';
 import PaintboxGrid from '../components/PaintboxGrid.svelte';
 import { getApp } from '../context';
 import type { PaintboxSortMode } from '../stores/paintbox.svelte';
-import { exportPdf } from '../utils/export-pdf';
-import { exportPng } from '../utils/export-png';
-import { exportSvg } from '../utils/export-svg';
+import { exportVisual } from '../utils/strategies';
 
 interface Props {
     onExport: () => void;
@@ -101,7 +99,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
         <div class="grid grid-cols-4 gap-3">
             <button
                 type="button"
-                onclick={() => exportPng(app)}
+                onclick={() => exportVisual(app, 'png')}
                 class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
@@ -112,7 +110,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                 ">PNG</button>
             <button
                 type="button"
-                onclick={() => exportSvg(app)}
+                onclick={() => exportVisual(app, 'svg')}
                 class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
@@ -128,7 +126,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                     const originalText = btn?.textContent ?? 'PDF';
                     if (btn) btn.textContent = '...';
                     try {
-                        await exportPdf(app);
+                        await exportVisual(app, 'pdf');
                     } finally {
                         if (btn) btn.textContent = originalText;
                     }

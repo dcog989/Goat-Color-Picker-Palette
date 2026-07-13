@@ -45,6 +45,13 @@ interface ExportStrategy {
   format(source: ColorSource, exportFormat: ExportFormat): string;
 }
 
+export interface VisualExportStrategy {
+  name: string;
+  extension: string;
+  mimeType: string;
+  render(source: ColorSource, root: RootStore): Blob | Promise<Blob>;
+}
+
 class CssExportStrategy implements ExportStrategy {
   name = 'CSS Variables';
   format(source: ColorSource, exportFormat: ExportFormat): string {
@@ -121,4 +128,13 @@ export function exportCode(root: RootStore, strategyName: string, format: Export
   const strategy = strategies[strategyName];
   if (!strategy) throw new Error(`Unknown export strategy: ${strategyName}`);
   return strategy.format(getColorSource(root), format);
+}
+
+export async function exportVisual(root: RootStore, strategyName: string): Promise<void> {
+  const { visualStrategies } = await import('./visual-strategies');
+  const strategy = visualStrategies[strategyName];
+  if (!strategy) throw new Error(`Unknown visual export strategy: ${strategyName}`);
+  const source = getColorSource(root);
+  const blob = await strategy.render(source, root);
+  downloadFile(blob, generateFilename(root, strategy.extension), strategy.mimeType);
 }
