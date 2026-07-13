@@ -3,7 +3,9 @@ import CircleX from '@lucide/svelte/icons/circle-x';
 import PaintboxGrid from '../components/PaintboxGrid.svelte';
 import { getApp } from '../context';
 import type { PaintboxSortMode } from '../stores/paintbox.svelte';
-import { exportPdf, exportPng, exportSvg } from '../utils/export';
+import { exportPdf } from '../utils/export-pdf';
+import { exportPng } from '../utils/export-png';
+import { exportSvg } from '../utils/export-svg';
 
 interface Props {
     onExport: () => void;
