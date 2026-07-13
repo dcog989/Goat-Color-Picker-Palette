@@ -1,4 +1,4 @@
-export class WorkerManager<TMessage = unknown> {
+export class ManagedWorker<TMessage = unknown> {
   #worker: Worker | null = null;
   #retryCount = 0;
   #maxRetries: number;
@@ -9,6 +9,7 @@ export class WorkerManager<TMessage = unknown> {
     onError?: (error: Event) => void;
   } | null = null;
   #context = '';
+  #subscribers: Array<(msg: TMessage) => void> = [];
 
   constructor(config?: { maxRetries?: number; retryDelay?: number }) {
     this.#maxRetries = config?.maxRetries ?? 0;
@@ -38,6 +39,9 @@ export class WorkerManager<TMessage = unknown> {
       worker.onmessage = (e: MessageEvent<TMessage>) => {
         this.#retryCount = 0;
         handlers.onMessage(e.data);
+        this.#subscribers.forEach((h) => {
+          h(e.data);
+        });
       };
 
       worker.onerror = (error) => {
@@ -66,6 +70,13 @@ export class WorkerManager<TMessage = unknown> {
     }
   }
 
+  subscribe(handler: (msg: TMessage) => void): () => void {
+    this.#subscribers.push(handler);
+    return () => {
+      this.#subscribers = this.#subscribers.filter((h) => h !== handler);
+    };
+  }
+
   terminate(): void {
     if (this.#worker) {
       this.#worker.terminate();
@@ -78,6 +89,7 @@ export class WorkerManager<TMessage = unknown> {
     this.#workerFactory = null;
     this.#handlers = null;
     this.#retryCount = 0;
+    this.#subscribers = [];
   }
 
   #retry(): void {
