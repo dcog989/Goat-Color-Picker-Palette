@@ -1,60 +1,73 @@
-# AGENTS: Goat Color Picker Palette Guidelines
+# Agent Directives
 
-## Dev Environment
+## Project Context
 
-Linux CachyOS / KDE Plasma 6 + Firefox, Zed code editor, fish shell with Ghostty + Fresh editor. yay and bun package managers. All software is updated as of today.
+- Name: goatcolor
+- Description: Color picker, palette generator, image extraction, contrast checker SPA
+- Tech: Svelte 5 (Runes API), Vite, TypeScript 6 (strict), Tailwind CSS v4, colordx, Biome 2, Vitest 4
 
-## Tech Stack
+## Key Files
 
-- **Framework:** Svelte 5 (Runes API)
-- **Build:** Vite 8, TypeScript 6 (strict), Tailwind CSS v4
-- **Color:** `colordx` ^5.4 (conversion, manipulation, APCA contrast)
-- **Data:** `color-name-list` ^14.37.0 (30,000+ named colors)
-- **UI:** `lucide-svelte` ^1.0.1, `jspdf` ^4.2.1 (PDF export)
-- **Lint/Format:** Biome 2 (lefthook pre-commit hook)
-- **Test:** Vitest 4 + Testing Library (jsdom)
+- `src/main.ts` — entry point
+- `src/lib/stores/root.svelte.ts` — root state
+- `src/lib/stores/color.svelte.ts` — color state
+- `src/lib/stores/engine.svelte.ts` — engine state
+- `src/lib/stores/image.svelte.ts` — image state
+- `src/lib/stores/paintbox.svelte.ts` — paintbox state (persisted to localStorage)
+- `src/lib/stores/theme.svelte.ts` — theme state
+- `src/lib/stores/toast.svelte.ts` — toast state
+- `src/lib/workers/color-analysis.ts` — image analysis worker (K-Means)
+- `src/lib/workers/color-name-search.ts` — color name search worker
+- `src/lib/utils/format.test.ts` — tests
 
-## Scripts
+---
 
-| Command             | Action                          |
-|---------------------|---------------------------------|
-| `bun run dev`       | Start dev server                |
-| `bun run build`     | Production build                |
-| `bun run preview`   | Preview build                   |
-| `bun run check`     | Biome lint + svelte-check + tsc |
-| `bun run lint`      | Biome check only                |
-| `bun run fix`       | Biome auto-fix                  |
-| `bun run format`    | Biome format                    |
-| `bun run test`      | Vitest                          |
+## Development Workflow
 
-## Architecture
-
-- **State:** Svelte 5 runes (`$state`, `$derived`, `$effect`) in `src/lib/stores/` (7 stores: color, engine, image, paintbox, root, theme, toast)
-- **Workers:** `src/lib/workers/` — color name search, image analysis (K-Means)
-- **Color:** OKLCH primary; `colordx` handles all conversions and APCA (`contrastAPCA()`) + WCAG 2.1
-- **Persistence:** Paintbox saves to localStorage
-
-## Coding Principles
-
-- Modern Svelte 5 runes, strict TS, KISS/DRY/YAGNI
-- Self-documenting code via clear naming; comments only for workarounds/complex logic
-- 4-space indent, single quotes, semicolons always, trailing commas all, bracket same line
-- Split files >400 lines into separate concerns
-- No magic numbers
-- **Do not create docs files** (README, summary, reference, etc.) unless requested
+| Command | Action |
+|---------|--------|
+| `bun run dev` | Start dev server |
+| `bun run build` | Production build |
+| `bun run preview` | Preview build |
+| `bun run check` | Biome lint + svelte-check + tsc |
+| `bun run lint` | Biome check only |
+| `bun run fix` | Biome auto-fix |
+| `bun run format` | Biome format |
+| `bun run test` | Vitest |
 
 ## File System Access
 
-Root: `/home/bubba/Projects/Goat-Color-Picker-Palette/`
+- Root: `/home/bubba/Projects/Goat-Color-Picker-Palette/`
+- Allowed: All subdirectories except disallowed
+- Read-Only: `.env*`, `.git/`
+- Disallowed: `.assets/`, `.context/`, `.docs/`, `.git/`, `.repomix/`, `.repomixignore`, `node_modules/`, `dist/`, `build/`, `.svelte-kit/`, `bun.lock`, `repomix.*.json`
+- Require confirmation: adding/removing dependencies, changes outside `src/`, any operation outside project root
 
-### Disallowed
+## Rules
 
-- `.assets/`, `.context/`, `.docs/`, `.git/`, `.repomix/`, `.repomixignore`
-- `node_modules/`, `dist/`, `build/`, `.svelte-kit/`, `bun.lock`, `repomix.*.json`
+- Keep modifications minimal and scoped. Ask before architectural changes.
+- Do not delete files or make destructive changes without confirmation.
+- Do not create documentation files (README, summary, reference, etc.) unless explicitly requested.
+- Prefer incremental improvements over rewrites.
+- Use explicit types and named constants (no magic numbers).
+- Return explicit error types; do not suppress exceptions.
+- Follow standard repository linting and formatting configs (Biome — 4-space indent, single quotes, semicolons always, trailing commas all, bracket same line, 120 line width).
+- Decompose files over 500 lines if they mix concerns.
+- Never run git mutations (commit, push, reset, rebase, amend) unless explicitly asked.
+- Self-documenting code via clear naming. Use comments only for complex workarounds or issues that need noting.
+- Modern Svelte 5 Runes API (`$state`, `$derived`, `$effect`), KISS/DRY/YAGNI.
 
-## Interaction Style
+## Communication Style
 
-- do not pretend to understand how the user feels. no "You're right to be frustrated." etc.
-- no analogies
-- be concise, be precise
-- answer the question asked, no 'helpful' suggestions
+- Provide concise, precise, actionable responses.
+- Do not pretend to understand how the user feels. Do not pretend to be human.
+- No analogies.
+- Answer the question asked, no unsolicited suggestions.
+- Flag potential risks or edge cases proactively.
+
+## Definition of Done
+
+- Logic fully implemented.
+- `bun run check` and `bun run test` pass with zero errors.
+- New/modified features have tests.
+- Existing docs updated if public interfaces changed.
