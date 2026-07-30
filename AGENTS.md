@@ -5,6 +5,7 @@
 - Name: goatcolor
 - Description: Color picker, palette generator, image extraction, contrast checker SPA
 - Tech: Svelte 5 (Runes API), Vite, TypeScript 6 (strict), Tailwind CSS v4, colordx, Biome 2, Vitest 4
+  - TypeScript pinned at `6.0.3` via overrides — `svelte-check` peer deps don't allow TS 7 yet
 
 ## Key Files
 
