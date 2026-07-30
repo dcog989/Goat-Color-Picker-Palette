@@ -18,12 +18,23 @@ If you find a better color picker, let us know.
 ## Tech Stack
 
 - **Framework:** Svelte 5 (Runes)
-- **Styling:** Tailwind CSS
+- **Language:** TypeScript 6 (strict)
+- **Styling:** Tailwind CSS v4
 - **Build:** Vite
-- **Math:** colordx
+- **Color:** colordx
+- **Lint/Format:** Biome 2
+- **Test:** Vitest 4
 
 ## Development
 
-- Install dependencies: `bun install` + `bun update`
-- Start development server: `bun run dev`
-- Build for production: `bun run build`
+| Command | Action |
+|---------|--------|
+| `bun install` | Install dependencies |
+| `bun run dev` | Start dev server |
+| `bun run build` | Production build |
+| `bun run preview` | Preview build |
+| `bun run check` | Biome lint + typecheck |
+| `bun run lint` | Biome check only |
+| `bun run fix` | Biome auto-fix |
+| `bun run format` | Biome format |
+| `bun run test` | Run tests |
