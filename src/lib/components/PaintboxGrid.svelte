@@ -19,57 +19,63 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
 </script>
 
 <div
-    class="
+  class="
       grid grid-cols-4 gap-3
       md:grid-cols-5
-    ">
-    {#each items as item (item.id)}
-        <div class="group relative aspect-square">
-            <button
-                type="button"
-                class="
+    "
+>
+  {#each items as item (item.id)}
+    <div class="group relative aspect-square">
+      <button
+        type="button"
+        class="
                   block size-full cursor-pointer rounded-full border
                   border-white/10 p-0 shadow-lg transition-transform
                   [background:var(--paintbox-item)]
                   hover:scale-105
                 "
-                style:--paintbox-item={item.css}
-                onclick={() => color.set(item.css)}
-                title={color.formatColor(item.css)}
-                aria-label="Select saved color"></button>
-            <button
-                type="button"
-                onclick={(e) => {
+        style:--paintbox-item={item.css}
+        onclick={() => color.set(item.css)}
+        title={color.formatColor(item.css)}
+        aria-label="Select saved color"
+      ></button>
+      <button
+        type="button"
+        onclick={(e) => {
                     e.stopPropagation();
                     paintbox.remove(item.id);
                 }}
-                class="
+        class="
                   absolute -top-2 -right-2 z-10 flex size-6 items-center
                   justify-center rounded-full bg-black/50 text-sm font-bold
                   text-white opacity-0 shadow-lg transition-all
                   group-hover:opacity-100
                   hover:bg-red-500
                 "
-                aria-label="Remove color">×</button>
-        </div>
-    {/each}
+        aria-label="Remove color"
+      >
+        ×
+      </button>
+    </div>
+  {/each}
 
-    {#each Array(emptySlotsCount) as _, i (i)}
-        <div
-            class="
+  {#each Array(emptySlotsCount) as _, i (i)}
+    <div
+      class="
               relative aspect-square
               {i >= mobileEmptyLimit
                 ? `
                   hidden
                   md:block
                 `
-                : `block`}">
-            <div
-                class="
+                : `block`}"
+    >
+      <div
+        class="
                   block size-full rounded-full border border-(--ui-border)
                   bg-(--ui-bg) opacity-40
-                ">
-            </div>
-        </div>
-    {/each}
+                "
+      ></div>
+    </div>
+  {/each}
 </div>

@@ -25,76 +25,76 @@ const INITIAL_DISPLAY_LIMIT = 100;
 let displayedColors = $state<Array<{ name: string; hex: string }>>([]);
 
 onMount(() => {
-    unsubscribe = engine.subscribeToWorker((msg) => {
-        if (msg.type === 'filterResult') {
-            workerFilteredColors = msg.colors || [];
-            isFiltering = false;
-        } else if (msg.type === 'pageResult') {
-            const colors = msg.colors || [];
-            if (!hasLoadedInitialPage) {
-                hasLoadedInitialPage = true;
-                if (colors.length === 0) {
-                    loadError = 'Failed to load color library. Please refresh the page.';
-                }
-                isLoading = false;
-            }
-            displayedColors = [...displayedColors, ...colors];
-            if (msg.total !== undefined) {
-                totalColors = msg.total;
-            }
-        } else if (msg.type === 'error') {
-            loadError = 'Failed to load color library. Please refresh the page.';
-            isLoading = false;
+  unsubscribe = engine.subscribeToWorker((msg) => {
+    if (msg.type === 'filterResult') {
+      workerFilteredColors = msg.colors || [];
+      isFiltering = false;
+    } else if (msg.type === 'pageResult') {
+      const colors = msg.colors || [];
+      if (!hasLoadedInitialPage) {
+        hasLoadedInitialPage = true;
+        if (colors.length === 0) {
+          loadError = 'Failed to load color library. Please refresh the page.';
         }
-    });
+        isLoading = false;
+      }
+      displayedColors = [...displayedColors, ...colors];
+      if (msg.total !== undefined) {
+        totalColors = msg.total;
+      }
+    } else if (msg.type === 'error') {
+      loadError = 'Failed to load color library. Please refresh the page.';
+      isLoading = false;
+    }
+  });
 
-    engine.postToWorker({
-        type: 'get-page',
-        offset: 0,
-        limit: INITIAL_DISPLAY_LIMIT,
-    });
+  engine.postToWorker({
+    type: 'get-page',
+    offset: 0,
+    limit: INITIAL_DISPLAY_LIMIT,
+  });
 });
 
 onDestroy(() => {
-    if (searchDebounceTimeout !== null) {
-        clearTimeout(searchDebounceTimeout);
-    }
-    unsubscribe?.();
+  if (searchDebounceTimeout !== null) {
+    clearTimeout(searchDebounceTimeout);
+  }
+  unsubscribe?.();
 });
 
 $effect(() => {
-    if (searchDebounceTimeout !== null) {
-        clearTimeout(searchDebounceTimeout);
-    }
+  if (searchDebounceTimeout !== null) {
+    clearTimeout(searchDebounceTimeout);
+  }
 
-    if (searchQuery.trim()) {
-        isFiltering = true;
-        searchDebounceTimeout = window.setTimeout(() => {
-            debouncedQuery = searchQuery.trim();
-            searchDebounceTimeout = null;
-        }, 500);
-    } else {
-        isFiltering = false;
-        debouncedQuery = '';
-    }
+  if (searchQuery.trim()) {
+    isFiltering = true;
+    searchDebounceTimeout = window.setTimeout(() => {
+      debouncedQuery = searchQuery.trim();
+      searchDebounceTimeout = null;
+    }, 500);
+  } else {
+    isFiltering = false;
+    debouncedQuery = '';
+  }
 
-    _scrollTop = 0;
-    throttledScrollTop = 0;
+  _scrollTop = 0;
+  throttledScrollTop = 0;
 });
 
 $effect(() => {
-    if (debouncedQuery) {
-        engine.postToWorker({
-            type: 'filter',
-            query: debouncedQuery,
-            limit: 500,
-        });
-    }
+  if (debouncedQuery) {
+    engine.postToWorker({
+      type: 'filter',
+      query: debouncedQuery,
+      limit: 500,
+    });
+  }
 });
 
 let filteredColors = $derived.by((): Array<{ name: string; hex: string }> => {
-    if (isLoading) return [];
-    return searchQuery.trim() ? workerFilteredColors : displayedColors;
+  if (isLoading) return [];
+  return searchQuery.trim() ? workerFilteredColors : displayedColors;
 });
 
 let _scrollTop = $state(0);
@@ -105,215 +105,201 @@ const buffer = 5;
 let scrollThrottleTimeout: number | null = null;
 
 function handleScroll(e: Event) {
-    const target = e.target as HTMLElement;
-    _scrollTop = target.scrollTop;
+  const target = e.target as HTMLElement;
+  _scrollTop = target.scrollTop;
 
-    if (scrollThrottleTimeout !== null) {
-        return;
+  if (scrollThrottleTimeout !== null) {
+    return;
+  }
+
+  scrollThrottleTimeout = window.setTimeout(() => {
+    throttledScrollTop = _scrollTop;
+    scrollThrottleTimeout = null;
+
+    if (!searchQuery.trim() && !isLoading) {
+      const scrolledNearBottom = _scrollTop + viewportHeight > displayedColors.length * itemHeight - 500;
+      if (scrolledNearBottom && displayedColors.length < totalColors) {
+        engine.postToWorker({
+          type: 'get-page',
+          offset: displayedColors.length,
+          limit: 100,
+        });
+      }
     }
-
-    scrollThrottleTimeout = window.setTimeout(() => {
-        throttledScrollTop = _scrollTop;
-        scrollThrottleTimeout = null;
-
-        if (!searchQuery.trim() && !isLoading) {
-            const scrolledNearBottom =
-                _scrollTop + viewportHeight > displayedColors.length * itemHeight - 500;
-            if (scrolledNearBottom && displayedColors.length < totalColors) {
-                engine.postToWorker({
-                    type: 'get-page',
-                    offset: displayedColors.length,
-                    limit: 100,
-                });
-            }
-        }
-    }, 16);
+  }, 16);
 }
 
 let totalHeight = $derived(filteredColors.length * itemHeight);
 let startIndex = $derived(Math.max(0, Math.floor(throttledScrollTop / itemHeight) - buffer));
 let endIndex = $derived(
-    Math.min(
-        filteredColors.length,
-        Math.ceil((throttledScrollTop + viewportHeight) / itemHeight) + buffer,
-    ),
+  Math.min(filteredColors.length, Math.ceil((throttledScrollTop + viewportHeight) / itemHeight) + buffer),
 );
 let visibleItems = $derived(filteredColors.slice(startIndex, endIndex));
 let offsetY = $derived(startIndex * itemHeight);
 
 interface Props {
-    onSelect?: () => void;
-    forceExpanded?: boolean;
+  onSelect?: () => void;
+  forceExpanded?: boolean;
 }
 
 let { onSelect, forceExpanded = false }: Props = $props();
 
 function selectColor(hex: string) {
-    colorStore.set(hex);
-    onSelect?.();
+  colorStore.set(hex);
+  onSelect?.();
 }
 
 let isExpanded = $state(false);
 let shouldShowContent = $derived(forceExpanded || isExpanded);
 
 $effect(() => {
-    if (shouldShowContent && searchInput) {
-        searchInput.focus();
-    }
+  if (shouldShowContent && searchInput) {
+    searchInput.focus();
+  }
 });
 </script>
 
 <div class="flex h-full flex-col">
-    {#if !forceExpanded}
-        <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-xs font-black tracking-widest uppercase opacity-30">
-                Color Library
-            </h3>
-            <button
-                type="button"
-                onclick={() => (isExpanded = !isExpanded)}
-                class="
+  {#if !forceExpanded}
+    <div class="mb-4 flex items-center justify-between">
+      <h3 class="text-xs font-black tracking-widest uppercase opacity-30">Color Library</h3>
+      <button
+        type="button"
+        onclick={() => (isExpanded = !isExpanded)}
+        class="
                   text-xs font-bold uppercase opacity-40 transition-opacity
                   hover:opacity-100
                 "
-            >
-                {isExpanded ? "Collapse" : "Expand"}
-            </button>
-        </div>
-    {/if}
+      >
+        {isExpanded ? "Collapse" : "Expand"}
+      </button>
+    </div>
+  {/if}
 
-    {#if shouldShowContent}
-        <div
-            class="
+  {#if shouldShowContent}
+    <div
+      class="
               flex flex-1 flex-col overflow-hidden rounded-xl border
               border-(--ui-border) bg-(--ui-bg) p-4
               md:p-6
             "
-        >
-            <input
-                id="searchInput"
-                bind:this={searchInput}
-                type="text"
-                bind:value={searchQuery}
-                placeholder="Search 30,000+ colors..."
-                class="
+    >
+      <input
+        id="searchInput"
+        bind:this={searchInput}
+        type="text"
+        bind:value={searchQuery}
+        placeholder="Search 30,000+ colors..."
+        class="
                   focus:ring-brand/20 mb-4 w-full shrink-0 rounded-md border
                   border-(--ui-border) bg-(--ui-card) p-4 font-mono text-sm shadow-inner
                   outline-none focus:ring-2
                 "
-            />
+      >
 
-            {#if isLoading}
-                <LoadingSpinner message="Loading color library..." subtitle="30,000+ colors" />
-            {:else if isFiltering}
-                <LoadingSpinner message="Searching..." />
-            {:else if loadError}
-                <div class="flex flex-1 items-center justify-center">
-                    <div class="text-center text-red-500">
-                        <CircleAlert class="mx-auto mb-4 size-12" />
-                        <div class="text-sm">{loadError}</div>
-                    </div>
-                </div>
-            {:else}
-                <div
-                    class="custom-scrollbar relative flex-1 overflow-y-auto"
-                    onscroll={handleScroll}
-                    bind:clientHeight={viewportHeight}
-                >
-                    {#if filteredColors.length > 0}
-                        <div
-                            style:height="{totalHeight}px"
-                            class="pointer-events-none absolute top-0 left-0 w-full"
-                        ></div>
+      {#if isLoading}
+        <LoadingSpinner message="Loading color library..." subtitle="30,000+ colors" />
+      {:else if isFiltering}
+        <LoadingSpinner message="Searching..." />
+      {:else if loadError}
+        <div class="flex flex-1 items-center justify-center">
+          <div class="text-center text-red-500">
+            <CircleAlert class="mx-auto mb-4 size-12" />
+            <div class="text-sm">{loadError}</div>
+          </div>
+        </div>
+      {:else}
+        <div
+          class="custom-scrollbar relative flex-1 overflow-y-auto"
+          onscroll={handleScroll}
+          bind:clientHeight={viewportHeight}
+        >
+          {#if filteredColors.length > 0}
+            <div style:height="{totalHeight}px" class="pointer-events-none absolute top-0 left-0 w-full"></div>
 
-                        <div
-                            style:transform="translateY({offsetY}px)"
-                            class="absolute top-0 left-0 w-full px-1"
-                        >
-                            {#each visibleItems as color (color.hex + color.name)}
-                                <button
-                                    type="button"
-                                    onclick={() => selectColor(color.hex)}
-                                    class="
+            <div style:transform="translateY({offsetY}px)" class="absolute top-0 left-0 w-full px-1">
+              {#each visibleItems as color (color.hex + color.name)}
+                <button
+                  type="button"
+                  onclick={() => selectColor(color.hex)}
+                  class="
                                       group mb-1 box-border flex h-14 w-full
                                       items-center gap-4 rounded-md p-2
                                       text-left transition-colors
                                       hover:bg-(--ui-card)
                                     "
-                                >
-                                    <div
-                                        class="
+                >
+                  <div
+                    class="
                                           size-10 shrink-0 rounded-sm border
                                           border-white/10 shadow-sm
                                           transition-transform
                                           [background:var(--item-bg)]
                                           group-hover:scale-110
                                         "
-                                        style:--item-bg={color.hex}
-                                        title={colorStore.formatColor(
+                    style:--item-bg={color.hex}
+                    title={colorStore.formatColor(
                                             color.hex,
                                         )}
-                                    ></div>
-                                    <div class="min-w-0 flex-1">
-                                        <div
-                                            class="
+                  ></div>
+                  <div class="min-w-0 flex-1">
+                    <div
+                      class="
                                               truncate text-sm font-bold
                                               text-(--ui-text)
                                             "
-                                        >
-                                            {color.name}
-                                        </div>
-                                        <div
-                                            class="
+                    >
+                      {color.name}
+                    </div>
+                    <div
+                      class="
                                               font-mono text-xs tracking-wider
                                               uppercase opacity-70
                                             "
-                                        >
-                                            {color.hex}
-                                        </div>
-                                    </div>
-                                </button>
-                            {/each}
-                        </div>
-                    {:else}
-                        <div
-                            class="
+                    >
+                      {color.hex}
+                    </div>
+                  </div>
+                </button>
+              {/each}
+            </div>
+          {:else}
+            <div
+              class="
                               flex h-full items-center justify-center text-sm
                               opacity-60
                             "
-                        >
-                            No colors found
-                        </div>
-                    {/if}
-                </div>
-            {/if}
+            >
+              No colors found
+            </div>
+          {/if}
         </div>
-    {/if}
+      {/if}
+    </div>
+  {/if}
 </div>
 
 <style>
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-    }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
 
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: transparent;
-    }
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: var(--ui-border);
-        border-radius: 9999px;
-    }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--ui-border);
+  border-radius: 9999px;
+}
 
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: oklch(from var(--current-color) l c h / 0.7);
-    }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: oklch(from var(--current-color) l c h / 0.7);
+}
 
-    @media (prefers-color-scheme: dark) {
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: oklch(
-                from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9
-            );
-        }
-    }
+@media (prefers-color-scheme: dark) {
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: oklch(from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9);
+  }
+}
 </style>

@@ -6,7 +6,7 @@ import type { PaintboxSortMode } from '../stores/paintbox.svelte';
 import { exportVisual } from '../utils/strategies';
 
 interface Props {
-    onExport: () => void;
+  onExport: () => void;
 }
 
 let { onExport }: Props = $props();
@@ -15,61 +15,66 @@ const app = getApp();
 const { paintbox } = app;
 
 const sortOptions: { label: string; value: PaintboxSortMode }[] = [
-    { label: 'New First', value: 'newest' },
-    { label: 'New Last', value: 'oldest' },
-    { label: 'Hue', value: 'hue' },
-    { label: 'Bright', value: 'lightness' },
-    { label: 'Vivid', value: 'chroma' },
+  { label: 'New First', value: 'newest' },
+  { label: 'New Last', value: 'oldest' },
+  { label: 'Hue', value: 'hue' },
+  { label: 'Bright', value: 'lightness' },
+  { label: 'Vivid', value: 'chroma' },
 ];
 </script>
 
 <section
-    class="
+  class="
       flex h-full flex-col justify-between overflow-y-auto rounded-xl border
       border-(--ui-border) bg-(--ui-card) p-4 shadow-xl
       sm:p-6
       md:p-8
-    ">
-    <div class="space-y-6">
-        <div
-            class="
+    "
+>
+  <div class="space-y-6">
+    <div
+      class="
               flex flex-col items-start justify-between gap-4
               sm:flex-row sm:items-center
-            ">
-            <h2
-                class="
+            "
+    >
+      <h2
+        class="
                   shrink-0 text-xs font-black tracking-widest
                   text-(--ui-text-muted) uppercase
-                ">
-                Paintbox
-            </h2>
+                "
+      >
+        Paintbox
+      </h2>
 
-            <div
-                class="
+      <div
+        class="
                   flex w-full flex-wrap items-center gap-2
                   sm:w-auto
-                ">
-                <select
-                    id="paintboxSort"
-                    bind:value={paintbox.sortMode}
-                    aria-label="Sort paintbox by"
-                    class="
+                "
+      >
+        <select
+          id="paintboxSort"
+          bind:value={paintbox.sortMode}
+          aria-label="Sort paintbox by"
+          class="
                       flex-1 cursor-pointer rounded-lg border
                       border-(--ui-border) bg-(--ui-bg) px-2 py-1.5 text-xs
                       font-bold uppercase transition-colors duration-200 outline-none
                       focus:border-(--current-color)
                       sm:flex-none
-                    ">
-                    {#each sortOptions as option (option.value)}
-                        <option value={option.value}>{option.label}</option>
-                    {/each}
-                </select>
+                    "
+        >
+          {#each sortOptions as option (option.value)}
+            <option value={option.value}>{option.label}</option>
+          {/each}
+        </select>
 
-                <button
-                    type="button"
-                    onclick={() => paintbox.clear()}
-                    disabled={paintbox.items.length === 0}
-                    class="
+        <button
+          type="button"
+          onclick={() => paintbox.clear()}
+          disabled={paintbox.items.length === 0}
+          class="
                       shrink-0 rounded-lg border border-(--ui-border)
                       bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm
                       transition duration-200
@@ -78,50 +83,58 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                       {paintbox.items.length > 0
                         ? 'opacity-100'
                         : `pointer-events-none opacity-35`}"
-                    title="Clear Paintbox">
-                    <CircleX class="size-4" />
-                </button>
-            </div>
-        </div>
-
-        <PaintboxGrid />
+          title="Clear Paintbox"
+        >
+          <CircleX class="size-4" />
+        </button>
+      </div>
     </div>
 
-    <!-- Export Options -->
-    <div class="mt-8 space-y-3">
-        <h3
-            class="
+    <PaintboxGrid />
+  </div>
+
+  <!-- Export Options -->
+  <div class="mt-8 space-y-3">
+    <h3
+      class="
               text-xs font-black tracking-widest text-(--ui-text-muted)
               uppercase
-            ">
-            Export
-        </h3>
-        <div class="grid grid-cols-4 gap-3">
-            <button
-                type="button"
-                onclick={() => exportVisual(app, 'png')}
-                class="
+            "
+    >
+      Export
+    </h3>
+    <div class="grid grid-cols-4 gap-3">
+      <button
+        type="button"
+        onclick={() => exportVisual(app, 'png')}
+        class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
                   bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
                   transition duration-200
                   will-change-transform hover:scale-105
                   hover:bg-(--current-color)
-                ">PNG</button>
-            <button
-                type="button"
-                onclick={() => exportVisual(app, 'svg')}
-                class="
+                "
+      >
+        PNG
+      </button>
+      <button
+        type="button"
+        onclick={() => exportVisual(app, 'svg')}
+        class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
                   bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
                   transition duration-200
                   will-change-transform hover:scale-105
                   hover:bg-(--current-color)
-                ">SVG</button>
-            <button
-                type="button"
-                onclick={async () => {
+                "
+      >
+        SVG
+      </button>
+      <button
+        type="button"
+        onclick={async () => {
                     const btn = document.activeElement as HTMLButtonElement;
                     const originalText = btn?.textContent ?? 'PDF';
                     if (btn) btn.textContent = '...';
@@ -131,25 +144,31 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                         if (btn) btn.textContent = originalText;
                     }
                 }}
-                class="
+        class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
                   bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
                   transition duration-200
                   will-change-transform hover:scale-105
                   hover:bg-(--current-color)
-                ">PDF</button>
-            <button
-                type="button"
-                onclick={onExport}
-                class="
+                "
+      >
+        PDF
+      </button>
+      <button
+        type="button"
+        onclick={onExport}
+        class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
                   bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
                   transition duration-200
                   will-change-transform hover:scale-105
                   hover:bg-(--current-color)
-                ">Code</button>
-        </div>
+                "
+      >
+        Code
+      </button>
     </div>
+  </div>
 </section>

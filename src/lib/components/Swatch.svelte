@@ -7,102 +7,105 @@ import { getApp } from '../context';
 const { color, paintbox, toast } = getApp();
 
 interface Props {
-    color: string;
-    index: number;
-    onSelect?: () => void;
-    dynamicClass?: boolean;
+  color: string;
+  index: number;
+  onSelect?: () => void;
+  dynamicClass?: boolean;
 }
 
 let { color: swatchColor, index, onSelect, dynamicClass = true }: Props = $props();
 
 const copy = (e: MouseEvent) => {
-    const formatted = color.formatColor(swatchColor);
-    navigator.clipboard.writeText(formatted);
-    toast.showAt('Copied', e);
+  const formatted = color.formatColor(swatchColor);
+  navigator.clipboard.writeText(formatted);
+  toast.showAt('Copied', e);
 };
 
 const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        color.set(swatchColor);
-    }
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    color.set(swatchColor);
+  }
 };
 
 const getActionClass = () => {
-    if (!dynamicClass) {
-        return 'bg-white/30 hover:bg-white/50 text-white';
-    }
-    let l = 0;
-    try {
-        const parsed = colordx(swatchColor);
-        l = parsed.toOklch().l;
-    } catch {
-        // fallback
-    }
-    return l > 0.6
-        ? 'bg-black/10 hover:bg-black/20 text-black'
-        : 'bg-white/20 hover:bg-white/30 text-white';
+  if (!dynamicClass) {
+    return 'bg-white/30 hover:bg-white/50 text-white';
+  }
+  let l = 0;
+  try {
+    const parsed = colordx(swatchColor);
+    l = parsed.toOklch().l;
+  } catch {
+    // fallback
+  }
+  return l > 0.6 ? 'bg-black/10 hover:bg-black/20 text-black' : 'bg-white/20 hover:bg-white/30 text-white';
 };
 </script>
 
 <div
-    role="button"
-    tabindex="0"
-    class="
+  role="button"
+  tabindex="0"
+  class="
       group relative aspect-square cursor-pointer overflow-hidden rounded-lg
       border border-white/10 shadow-md
       will-change-transform
       [background:var(--swatch-color)]
       hover:scale-105
     "
-    style:--swatch-color={swatchColor}
-    title={color.formatColor(swatchColor)}
-    onclick={() => (onSelect ? onSelect() : color.set(swatchColor))}
-    onkeydown={handleKeyDown}
-    aria-label="Select swatch {index + 1}">
-    <div
-        class="
+  style:--swatch-color={swatchColor}
+  title={color.formatColor(swatchColor)}
+  onclick={() => (onSelect ? onSelect() : color.set(swatchColor))}
+  onkeydown={handleKeyDown}
+  aria-label="Select swatch {index + 1}"
+>
+  <div
+    class="
           absolute inset-0 flex items-center justify-center
           overflow-hidden
-        ">
-        <div
-            class="
+        "
+  >
+    <div
+      class="
               flex items-center justify-center gap-2
               translate-y-8 opacity-0
               transition-all duration-300
               group-hover:translate-y-0 group-hover:opacity-100
-            ">
-            <button
-                onclick={(e) => {
+            "
+    >
+      <button
+        onclick={(e) => {
                     e.stopPropagation();
                     paintbox.add(swatchColor);
                     toast.showAt('Added', e);
                 }}
-                class="{getActionClass()}
+        class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm
                   transition-transform duration-200
                   will-change-transform
                   hover:scale-110
                 "
-                title="Add to paintbox"
-                type="button">
-                <Plus class="pointer-events-none size-4" />
-            </button>
-            <button
-                onclick={(e) => {
+        title="Add to paintbox"
+        type="button"
+      >
+        <Plus class="pointer-events-none size-4" />
+      </button>
+      <button
+        onclick={(e) => {
                     e.stopPropagation();
                     copy(e);
                 }}
-                class="{getActionClass()}
+        class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm
                   transition-transform duration-200
                   will-change-transform
                   hover:scale-110
                 "
-                title="Copy"
-                type="button">
-                <Copy class="pointer-events-none size-4" />
-            </button>
-        </div>
+        title="Copy"
+        type="button"
+      >
+        <Copy class="pointer-events-none size-4" />
+      </button>
     </div>
+  </div>
 </div>
