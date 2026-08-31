@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.4.2 - 2026-08-31
+
+#### Bug Fixes
+
+- (57646d9) allow onError handler without an error event - dcog989
+- - -
+
 ## v3.4.1 - 2026-08-31
 - - -
 
