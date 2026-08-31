@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "changelog": "cog changelog",
     "check": "bun run lint && bun run typecheck",
     "clean": "rm -rf node_modules .vitest bun.lock",
     "dev": "vite",
@@ -15,11 +16,13 @@
     "lint": "biome check src/",
     "postinstall": "lefthook install",
     "preview": "vite preview",
+    "release": "cog bump --auto",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
-    "update": "bun update --latest"
+    "update": "bun update --latest",
+    "version": "cog bump --version"
   },
   "dependencies": {
     "@colordx/core": "^5.7.0",

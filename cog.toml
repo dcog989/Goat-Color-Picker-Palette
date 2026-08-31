@@ -1,0 +1,10 @@
+#:schema https://docs.cocogitto.io/cog-schema.json
+
+branch_whitelist = ["main"]
+from_latest_tag = true
+ignore_merge_commits = true
+tag_prefix = "v"
+
+[changelog]
+path = "CHANGELOG.md"
+template = "changelog.tpl"

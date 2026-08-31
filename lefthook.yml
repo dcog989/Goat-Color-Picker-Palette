@@ -4,3 +4,8 @@ pre-commit:
       glob: "*.{js,ts,mts,cts,jsx,tsx,svelte,css,json,yaml,yml,toml,html}"
       run: bunx biome check --write --no-errors-on-unmatched {staged_files}
       stage_fixed: true
+
+commit-msg:
+  commands:
+    cog:
+      run: cog verify --file {1}
