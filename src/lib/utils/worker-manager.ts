@@ -7,6 +7,7 @@ export class ManagedWorker<TMessage = unknown> {
   #handlers: {
     onMessage: (data: TMessage) => void;
     onError?: (error: Event) => void;
+    onReady?: () => void;
   } | null = null;
   #context = '';
   #subscribers: Array<(msg: TMessage) => void> = [];
@@ -25,6 +26,7 @@ export class ManagedWorker<TMessage = unknown> {
     handlers: {
       onMessage: (data: TMessage) => void;
       onError?: (error: Event) => void;
+      onReady?: () => void;
     },
     context = 'Worker',
   ): void {
@@ -52,8 +54,10 @@ export class ManagedWorker<TMessage = unknown> {
       };
 
       this.#worker = worker;
+      handlers.onReady?.();
     } catch (error) {
       console.error(`Failed to initialize ${context}:`, error);
+      handlers.onError?.();
       this.#retry();
     }
   }

@@ -17,6 +17,7 @@ export class EngineStore {
   #managedWorker = new ManagedWorker<WorkerMessageData>({ maxRetries: 3, retryDelay: 1000 });
   #debounceHandle: number | null = null;
   #initialized = false;
+  #pendingSearch: { l: number; c: number; h: number; alpha: number } | null = null;
   #colorStore: ColorStore;
 
   genSteps = $state(8);
@@ -105,11 +106,17 @@ export class EngineStore {
       {
         onMessage: (data) => {
           if (data.type === 'result') {
+            this.#pendingSearch = null;
             this.closestName = data.name ?? 'Custom Color';
           }
         },
         onError: () => {
           this.closestName = 'Custom Color';
+        },
+        onReady: () => {
+          if (this.#pendingSearch) {
+            this.#managedWorker.post({ type: 'search', color: this.#pendingSearch });
+          }
         },
       },
       'Color name search worker',
@@ -117,6 +124,7 @@ export class EngineStore {
   }
 
   #searchColorName(color: { l: number; c: number; h: number; alpha: number }) {
+    this.#pendingSearch = color;
     this.#managedWorker.post({ type: 'search', color });
   }
 

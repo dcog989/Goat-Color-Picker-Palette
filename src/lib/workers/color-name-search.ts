@@ -22,8 +22,6 @@ let hexValues: string[] = [];
 let isLoading = false;
 let loadError: Error | null = null;
 
-const messageQueue: { l: number; c: number; h: number; alpha: number }[] = [];
-
 async function prepareData(): Promise<void> {
   if (coordinates !== null || isLoading) return;
 
@@ -55,22 +53,9 @@ async function prepareData(): Promise<void> {
         // Skip colors that can't be parsed
       }
     }
-
-    while (messageQueue.length > 0) {
-      const color = messageQueue.shift();
-      if (color) {
-        const result = findClosestName(color);
-        self.postMessage({ type: 'result', name: result } as WorkerResponse);
-      }
-    }
   } catch (error) {
     loadError = error instanceof Error ? error : new Error('Failed to load color names');
     console.error('Failed to load color name list:', loadError);
-
-    while (messageQueue.length > 0) {
-      messageQueue.shift();
-      self.postMessage({ type: 'result', name: 'Custom Color' } as WorkerResponse);
-    }
   } finally {
     isLoading = false;
   }
@@ -79,8 +64,7 @@ async function prepareData(): Promise<void> {
 self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
   if (e.data.type === 'search' && e.data.color) {
     if (coordinates === null || isLoading) {
-      messageQueue.push(e.data.color);
-      return;
+      await waitForData();
     }
 
     const result = findClosestName(e.data.color);
@@ -107,7 +91,7 @@ self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
 };
 
 async function waitForData(): Promise<void> {
-  while (coordinates === null || isLoading) {
+  while (!loadError && (coordinates === null || isLoading)) {
     await new Promise((resolve) => setTimeout(resolve, 10));
   }
 }
