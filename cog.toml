@@ -5,6 +5,10 @@ from_latest_tag = true
 ignore_merge_commits = true
 tag_prefix = "v"
 
+pre_bump_hooks = [
+    "./scripts/sync_version.sh {{version}}",
+]
+
 post_bump_hooks = [
     "git push",
     "git push origin {{version_tag}}",
