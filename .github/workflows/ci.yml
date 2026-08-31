@@ -38,7 +38,6 @@ jobs:
 
       - name: Audit dependencies
         run: bun audit
-        continue-on-error: true
 
       - name: Run type checking
         run: bun run check

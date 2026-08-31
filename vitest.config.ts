@@ -6,28 +6,27 @@ import { defineConfig } from 'vitest/config';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-    plugins: [svelte()],
-    test: {
-        environment: 'jsdom',
-        globals: true,
-        include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx,svelte}'],
-        setupFiles: ['./vitest.setup.ts'],
-        coverage: {
-            provider: 'v8',
-            reporter: ['text', 'json', 'html', 'lcov'],
-            exclude: [
-                'node_modules/',
-                '.svelte-kit/',
-                '**/types.ts',
-                '**/*.d.ts',
-                '**/constants.ts',
-                '**/data/**',
-            ],
-        },
+  plugins: [svelte()],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx,svelte}'],
+    setupFiles: ['./vitest.setup.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      exclude: ['node_modules/', '.svelte-kit/', '**/types.ts', '**/*.d.ts', '**/constants.ts', '**/data/**'],
+      thresholds: {
+        lines: 80,
+        statements: 80,
+        functions: 80,
+        branches: 80,
+      },
     },
-    resolve: {
-        alias: {
-            $lib: path.resolve(__dirname, './src/lib'),
-        },
+  },
+  resolve: {
+    alias: {
+      $lib: path.resolve(__dirname, './src/lib'),
     },
+  },
 });

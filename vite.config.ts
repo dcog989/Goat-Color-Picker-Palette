@@ -22,7 +22,6 @@ export default defineConfig({
     sourcemap: process.env.BUNDLE_ANALYZE ? true : process.env.NODE_ENV !== 'production' ? true : 'hidden',
     cssMinify: true,
     rollupOptions: {
-      external: ['html2canvas', 'canvg', 'dompurify'],
       output: {
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
