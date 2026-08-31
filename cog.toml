@@ -5,6 +5,12 @@ from_latest_tag = true
 ignore_merge_commits = true
 tag_prefix = "v"
 
+post_bump_hooks = [
+    "git push",
+    "git push origin {{version_tag}}",
+    "gh release create {{version_tag}} --generate-notes",
+]
+
 [changelog]
 path = "CHANGELOG.md"
 template = "changelog.tpl"
