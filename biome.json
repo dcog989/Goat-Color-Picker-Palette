@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!.assets/", "!.svelte-kit/", "!node_modules/", "!src-tauri/"]
+    "includes": ["**", "!.svelte-kit/", "!node_modules/"]
   },
   "formatter": {
     "indentStyle": "space",
