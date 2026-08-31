@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.4.0 - 2026-08-31
+
+#### Features
+
+- (a5ef64a) add dynamic color URL sync with shareable links - dcog989
+
+#### Bug Fixes
+
+- (6f00579) stop header hanging on 'Searching...' when worker is slow or errors - dcog989
+
+- (5c3db02) enforce coverage thresholds, block audit failures, drop stale vite externals - dcog989
+- - -
+
 ## v3.3.3 - 2026-08-31
 - - -
 
