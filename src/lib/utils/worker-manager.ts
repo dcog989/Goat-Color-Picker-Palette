@@ -6,7 +6,7 @@ export class ManagedWorker<TMessage = unknown> {
   #workerFactory: (() => Worker) | null = null;
   #handlers: {
     onMessage: (data: TMessage) => void;
-    onError?: (error: Event) => void;
+    onError?: (error?: Event) => void;
     onReady?: () => void;
   } | null = null;
   #context = '';
@@ -25,7 +25,7 @@ export class ManagedWorker<TMessage = unknown> {
     factory: () => Worker,
     handlers: {
       onMessage: (data: TMessage) => void;
-      onError?: (error: Event) => void;
+      onError?: (error?: Event) => void;
       onReady?: () => void;
     },
     context = 'Worker',
