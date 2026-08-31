@@ -31,6 +31,31 @@ let activeInfo = $state<{ title: string; content: string } | null>(null);
 // Initialize logic
 app.init();
 
+// URL hash color sync — load color from hash, mirror current color to hash.
+// sessionStorage persists across reloads (same tab) but not new tabs, so an
+// F5 refresh gets a fresh random color while opening a shared link still loads it.
+const URL_COLOR_KEY = 'goatcolor:url-color';
+
+const applyHashColor = () => {
+  const stored = sessionStorage.getItem(URL_COLOR_KEY);
+  const hash = location.hash;
+  if (hash && hash !== stored) {
+    color.set(hash);
+    sessionStorage.setItem(URL_COLOR_KEY, hash);
+  } else {
+    sessionStorage.removeItem(URL_COLOR_KEY);
+  }
+};
+applyHashColor();
+
+$effect(() => {
+  const hash = color.hexa;
+  if (location.hash !== hash) {
+    history.replaceState(null, '', hash);
+    sessionStorage.setItem(URL_COLOR_KEY, hash);
+  }
+});
+
 // Cleanup
 onDestroy(() => {
   app.destroy();
@@ -136,7 +161,7 @@ const showInfo = (key: keyof typeof infoContent) => {
 };
 </script>
 
-<svelte:window onkeydown={handleKeyboard} />
+<svelte:window onkeydown={handleKeyboard} onhashchange={applyHashColor} />
 
 <div
   class="

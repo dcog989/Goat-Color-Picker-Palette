@@ -2,6 +2,7 @@
 import Copy from '@lucide/svelte/icons/copy';
 import DecimalsArrowLeft from '@lucide/svelte/icons/decimals-arrow-left';
 import DecimalsArrowRight from '@lucide/svelte/icons/decimals-arrow-right';
+import Link from '@lucide/svelte/icons/link';
 import Plus from '@lucide/svelte/icons/plus';
 import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 import HslSliders from '../components/HslSliders.svelte';
@@ -30,6 +31,11 @@ let inputVal = $derived.by(() => {
 const addToPaintbox = (e?: MouseEvent) => {
   paintbox.add(color.hexa);
   toast.showAt('Added to Paintbox', e);
+};
+
+const copyLink = (e?: MouseEvent) => {
+  const url = `${location.href.split('#')[0]}#${color.hexa}`;
+  app.copy(url, e);
 };
 
 const togglePrecision = () => {
@@ -270,6 +276,20 @@ const hslValues = $derived(color.hslComp);
             title="Add to Paintbox"
           >
             <Plus class="size-4" />
+          </button>
+          <button
+            type="button"
+            onclick={(e) => copyLink(e)}
+            class="
+                          cursor-pointer rounded-full bg-white/30 p-3 text-white
+                          shadow-lg backdrop-blur-md
+                          transition-transform duration-200
+                          will-change-transform hover:scale-110
+                          hover:bg-white/40
+                        "
+            title="Copy link"
+          >
+            <Link class="size-4" />
           </button>
         </div>
       </div>
