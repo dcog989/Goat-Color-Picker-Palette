@@ -1,25 +1,17 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
-import type { PluginOption } from 'vite';
 import { defineConfig } from 'vite';
-
-const plugins: PluginOption[] = [tailwindcss(), svelte()];
-
-if (process.env.BUNDLE_ANALYZE) {
-  const { default: sonda } = await import('sonda/vite');
-  plugins.push(sonda());
-}
 
 export default defineConfig({
   base: './',
-  plugins,
+  plugins: [tailwindcss(), svelte()],
   worker: {
     format: 'es',
   },
   build: {
     target: 'esnext',
     minify: 'esbuild',
-    sourcemap: process.env.BUNDLE_ANALYZE ? true : process.env.NODE_ENV !== 'production' ? true : 'hidden',
+    sourcemap: process.env.NODE_ENV !== 'production' ? true : 'hidden',
     cssMinify: true,
     rollupOptions: {
       output: {

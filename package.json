@@ -43,7 +43,6 @@
     "esbuild": "^0.28.2",
     "jsdom": "^30.0.1",
     "lefthook": "^2.1.12",
-    "sonda": "^0.14.0",
     "svelte": "^5.57.0",
     "svelte-check": "^4.7.6",
     "tailwindcss": "^4.3.3",
