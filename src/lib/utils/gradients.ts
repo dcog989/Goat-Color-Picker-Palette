@@ -16,11 +16,11 @@ export function getGradient(channel: string, rgb: { r: number; g: number; b: num
 
   switch (channel) {
     case 'r':
-      return { gradientStyle: `linear-gradient(to right, rgb(0,${rgb.g},${rgb.b}), rgb(255,${rgb.g},${rgb.b}))` };
+      return { gradientStyle: 'linear-gradient(to right, rgb(0,0,0), rgb(255,0,0))' };
     case 'g':
-      return { gradientStyle: `linear-gradient(to right, rgb(${rgb.r},0,${rgb.b}), rgb(${rgb.r},255,${rgb.b}))` };
+      return { gradientStyle: 'linear-gradient(to right, rgb(0,0,0), rgb(0,255,0))' };
     case 'b':
-      return { gradientStyle: `linear-gradient(to right, rgb(${rgb.r},${rgb.g},0), rgb(${rgb.r},${rgb.g},255))` };
+      return { gradientStyle: 'linear-gradient(to right, rgb(0,0,0), rgb(0,0,255))' };
     case 'alpha':
       return {
         gradientStyle: `linear-gradient(to right, rgba(${rgb.r},${rgb.g},${rgb.b},0), rgba(${rgb.r},${rgb.g},${rgb.b},1))`,
