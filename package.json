@@ -8,7 +8,7 @@
     "build": "vite build",
     "changelog": "cog changelog",
     "check": "bun run lint && bun run typecheck",
-    "clean": "rm -rf node_modules .vitest bun.lock",
+    "clean": "rm -rf dist node_modules .vitest",
     "dev": "vite",
     "fix": "biome check --write src/",
     "format": "biome format --write src/",
