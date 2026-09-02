@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.4.3 - 2026-09-02
+
+#### Bug Fixes
+
+- (4dc04e1) package clean script - dcog989
+- - -
+
 ## v3.4.2 - 2026-08-31
 
 #### Bug Fixes
