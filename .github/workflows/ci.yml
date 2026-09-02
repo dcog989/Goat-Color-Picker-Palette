@@ -2,51 +2,92 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE26: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-and-test:
+  check:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [26.x]
-
+    timeout-minutes: 30
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          node-version: ${{ matrix.node-version }}
+          fetch-depth: 0
 
-      - name: Cache Bun dependencies
-        uses: actions/cache@v6
+      - name: Install cocogitto
+        uses: taiki-e/install-action@899b013517f9e7774591216672bf75a46bb9a481
         with:
-          path: ~/.bun/install/cache
-          key: bun-${{ hashFiles('bun.lock') }}
-          restore-keys: bun-
+          tool: cocogitto
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Check conventional commits (PR)
+        if: github.event_name == 'pull_request'
+        run: cog check "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+
+      - name: Check conventional commits (push)
+        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+        run: cog check "${{ github.event.before }}..${{ github.event.after }}"
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+
+      - name: Cache node_modules
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: node_modules
+          key: bun-${{ hashFiles('bun.lock') }}-v1
+          restore-keys: |
+            bun-${{ hashFiles('bun.lock') }}-
+            bun-
+
+      - name: Install frontend dependencies
+        run: bun install
 
       - name: Audit dependencies
         run: bun audit
 
-      - name: Run type checking
-        run: bun run check
+      - name: Check frontend format & lint
+        run: bun run lint
 
-      - name: Run tests with coverage
-        run: bun run test:coverage
+      - name: Check frontend types
+        run: bun run typecheck
 
       - name: Build
         run: bun run build
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+
+      - name: Cache node_modules
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: node_modules
+          key: bun-${{ hashFiles('bun.lock') }}-v1
+          restore-keys: |
+            bun-${{ hashFiles('bun.lock') }}-
+            bun-
+
+      - name: Install frontend dependencies
+        run: bun install
+
+      - name: Run tests with coverage
+        run: bun run test:coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v6

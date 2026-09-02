@@ -25,7 +25,7 @@
     "version": "cog bump --version"
   },
   "dependencies": {
-    "@colordx/core": "^5.7.0",
+    "@colordx/core": "^5.8.0",
     "@lucide/svelte": "^1.39.0",
     "color-name-list": "^14.48.0",
     "jspdf": "^4.2.1"

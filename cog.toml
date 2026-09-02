@@ -6,6 +6,7 @@ ignore_merge_commits = true
 tag_prefix = "v"
 
 pre_bump_hooks = [
+    "cog check --from-latest-tag",
     "./scripts/sync_version.sh {{version}}",
 ]
 
