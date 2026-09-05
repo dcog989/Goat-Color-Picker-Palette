@@ -1,11 +1,11 @@
 <script lang="ts">
-import Moon from '@lucide/svelte/icons/moon';
-import RefreshCw from '@lucide/svelte/icons/refresh-cw';
-import Search from '@lucide/svelte/icons/search';
-import Sun from '@lucide/svelte/icons/sun';
-import { fade } from 'svelte/transition';
-import Title from '../components/Title.svelte';
-import { getApp } from '../context';
+import Moon from "@lucide/svelte/icons/moon";
+import RefreshCw from "@lucide/svelte/icons/refresh-cw";
+import Search from "@lucide/svelte/icons/search";
+import Sun from "@lucide/svelte/icons/sun";
+import { fade } from "svelte/transition";
+import Title from "../components/Title.svelte";
+import { getApp } from "../context";
 
 interface Props {
   onSearch: () => void;

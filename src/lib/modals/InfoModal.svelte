@@ -1,6 +1,6 @@
 <script lang="ts">
-import { quadOut } from 'svelte/easing';
-import { fade, scale } from 'svelte/transition';
+import { quadOut } from "svelte/easing";
+import { fade, scale } from "svelte/transition";
 
 interface Props {
   title: string;

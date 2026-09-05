@@ -1,32 +1,32 @@
-import { EXPORT } from '../constants';
-import type { RootStore } from '../stores/root.svelte';
-import { safeColor } from './formatters';
-import type { ColorSource, VisualExportStrategy } from './strategies';
+import { EXPORT } from "../constants";
+import type { RootStore } from "../stores/root.svelte";
+import { safeColor } from "./formatters";
+import type { ColorSource, VisualExportStrategy } from "./strategies";
 
 class PngExportStrategy implements VisualExportStrategy {
-  name = 'PNG';
-  extension = 'png';
-  mimeType = 'image/png';
+  name = "PNG";
+  extension = "png";
+  mimeType = "image/png";
 
   async render(source: ColorSource, root: RootStore): Promise<Blob> {
     const { colors, isSingle } = source;
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = EXPORT.PNG_WIDTH;
     canvas.height = EXPORT.PNG_HEIGHT;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Could not get canvas 2d context');
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Could not get canvas 2d context");
 
-    ctx.textAlign = 'left';
+    ctx.textAlign = "left";
 
     if (isSingle) {
       ctx.fillStyle = colors[0]?.css ?? root.color.hex;
       ctx.fillRect(0, 0, EXPORT.PNG_WIDTH, EXPORT.PNG_HEIGHT);
 
-      const textColor = root.color.l > 0.5 ? '#000000' : '#ffffff';
+      const textColor = root.color.l > 0.5 ? "#000000" : "#ffffff";
       ctx.fillStyle = textColor;
-      ctx.font = 'bold 80px system-ui, -apple-system, sans-serif';
+      ctx.font = "bold 80px system-ui, -apple-system, sans-serif";
       ctx.fillText(root.engine.closestName.toUpperCase(), 60, 150);
-      ctx.font = '40px ui-monospace, monospace';
+      ctx.font = "40px ui-monospace, monospace";
       ctx.fillText(root.color.display, 60, 230);
       ctx.fillText(`HEX: ${root.color.hex.toUpperCase()}`, 60, 290);
       ctx.fillText(`RGB: ${root.color.rgb}`, 60, 350);
@@ -51,10 +51,10 @@ class PngExportStrategy implements VisualExportStrategy {
             const parsed = safeColor(item.css);
             if (parsed) {
               const oklchVal = parsed.toOklch();
-              const textColor = oklchVal.l > 0.5 ? '#000000' : '#ffffff';
+              const textColor = oklchVal.l > 0.5 ? "#000000" : "#ffffff";
               ctx.fillStyle = textColor;
               ctx.font = `bold ${Math.min(swatchHeight / 4, 32)}px ui-monospace, monospace`;
-              ctx.textAlign = 'center';
+              ctx.textAlign = "center";
               ctx.fillText(parsed.toHex().toUpperCase(), x + swatchWidth / 2, y + swatchHeight / 2 + 8);
             }
           }
@@ -62,41 +62,41 @@ class PngExportStrategy implements VisualExportStrategy {
       });
 
       const titleHeight = 60;
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
       ctx.fillRect(0, EXPORT.PNG_HEIGHT - titleHeight, EXPORT.PNG_WIDTH, titleHeight);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 28px system-ui, -apple-system, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('GOAT COLOR PALETTE', EXPORT.PNG_WIDTH / 2, EXPORT.PNG_HEIGHT - titleHeight / 2 + 10);
-      ctx.textAlign = 'left';
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 28px system-ui, -apple-system, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("GOAT COLOR PALETTE", EXPORT.PNG_WIDTH / 2, EXPORT.PNG_HEIGHT - titleHeight / 2 + 10);
+      ctx.textAlign = "left";
     }
 
     return new Promise((resolve, reject) => {
       canvas.toBlob((blob) => {
         if (blob) resolve(blob);
-        else reject(new Error('Failed to create PNG blob'));
-      }, 'image/png');
+        else reject(new Error("Failed to create PNG blob"));
+      }, "image/png");
     });
   }
 }
 
 class SvgExportStrategy implements VisualExportStrategy {
-  name = 'SVG';
-  extension = 'svg';
-  mimeType = 'image/svg+xml';
+  name = "SVG";
+  extension = "svg";
+  mimeType = "image/svg+xml";
 
   render(source: ColorSource, root: RootStore): Blob {
     const { colors, isSingle } = source;
     let svg: string;
 
     if (isSingle) {
-      const textFill = root.color.l > 0.5 ? '#000000' : '#ffffff';
+      const textFill = root.color.l > 0.5 ? "#000000" : "#ffffff";
       svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" viewBox="0 0 ${EXPORT.SVG_SIZE} ${EXPORT.SVG_SIZE}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" fill="${root.color.hex}" />
   <text x="20" y="40" font-family="sans-serif" font-weight="bold" font-size="24" fill="${textFill}">${root.engine.closestName.toUpperCase()}</text>
   <text x="20" y="70" font-family="monospace" font-size="14" fill="${textFill}">${root.color.display}</text>
-  ${root.color.alpha < 1 ? `<text x="20" y="90" font-family="monospace" font-size="12" fill="${textFill}">Alpha: ${(root.color.alpha * 100).toFixed(0)}%</text>` : ''}
+  ${root.color.alpha < 1 ? `<text x="20" y="90" font-family="monospace" font-size="12" fill="${textFill}">Alpha: ${(root.color.alpha * 100).toFixed(0)}%</text>` : ""}
 </svg>`;
     } else {
       const cols = Math.min(colors.length, 6);
@@ -114,10 +114,10 @@ class SvgExportStrategy implements VisualExportStrategy {
           const parsed = safeColor(item.css);
           const hexColor = parsed ? parsed.toHex() : item.css;
 
-          let colorText = '';
+          let colorText = "";
           if (swatchHeight > 50 && parsed) {
             const oklchVal = parsed.toOklch();
-            const textColor = oklchVal.l > 0.5 ? '#000000' : '#ffffff';
+            const textColor = oklchVal.l > 0.5 ? "#000000" : "#ffffff";
             const fontSize = Math.min(swatchHeight / 5, 14);
             colorText = `<text x="${x + swatchWidth / 2}" y="${y + swatchHeight / 2 + fontSize / 3}" font-family="monospace" font-size="${fontSize}" font-weight="bold" fill="${textColor}" text-anchor="middle">${hexColor.toUpperCase()}</text>`;
           }
@@ -125,7 +125,7 @@ class SvgExportStrategy implements VisualExportStrategy {
           return `  <rect x="${x}" y="${y}" width="${swatchWidth}" height="${swatchHeight}" fill="${hexColor}" />
 ${colorText}`;
         })
-        .join('\n');
+        .join("\n");
 
       const titleY = EXPORT.SVG_SIZE - 50;
       svg = `<?xml version="1.0" encoding="UTF-8"?>
@@ -141,22 +141,22 @@ ${swatches}
 }
 
 class PdfExportStrategy implements VisualExportStrategy {
-  name = 'PDF';
-  extension = 'pdf';
-  mimeType = 'application/pdf';
+  name = "PDF";
+  extension = "pdf";
+  mimeType = "application/pdf";
 
   async render(source: ColorSource, _root: RootStore): Promise<Blob> {
     const { colors } = source;
-    const { jsPDF } = await import('jspdf');
+    const { jsPDF } = await import("jspdf");
 
-    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+    const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
     const pageWidth = 210;
     const margin = 20;
     const contentWidth = pageWidth - margin * 2;
 
     doc.setFontSize(24);
-    doc.setFont('helvetica', 'bold');
-    doc.text('GOAT COLOR PALETTE', margin, 30);
+    doc.setFont("helvetica", "bold");
+    doc.text("GOAT COLOR PALETTE", margin, 30);
 
     const cols = 4;
     const gap = 5;
@@ -177,15 +177,15 @@ class PdfExportStrategy implements VisualExportStrategy {
         const hex = parsed.toHex();
 
         doc.setFillColor(hex);
-        doc.rect(x, y, swatchWidth, swatchHeight, 'F');
+        doc.rect(x, y, swatchWidth, swatchHeight, "F");
 
         doc.setFontSize(12);
         doc.setTextColor(0);
-        doc.setFont('courier', 'bold');
+        doc.setFont("courier", "bold");
         doc.text(hex.toUpperCase(), x, y + swatchHeight + 5);
 
         doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
+        doc.setFont("helvetica", "normal");
         doc.setTextColor(100);
         doc.text(parsed.toOklchString(), x, y + swatchHeight + 10);
       }
@@ -198,7 +198,7 @@ class PdfExportStrategy implements VisualExportStrategy {
       }
     });
 
-    return doc.output('blob');
+    return doc.output("blob");
   }
 }
 

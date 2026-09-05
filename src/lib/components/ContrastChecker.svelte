@@ -1,33 +1,33 @@
 <script lang="ts">
-import { colordx, getFormat } from '@colordx/core';
-import ArrowRightLeft from '@lucide/svelte/icons/arrow-right-left';
-import Check from '@lucide/svelte/icons/check';
-import X from '@lucide/svelte/icons/x';
-import { getApp } from '../context';
+import { colordx, getFormat } from "@colordx/core";
+import ArrowRightLeft from "@lucide/svelte/icons/arrow-right-left";
+import Check from "@lucide/svelte/icons/check";
+import X from "@lucide/svelte/icons/x";
+import { getApp } from "../context";
 
 const { color } = getApp();
 
-type ContrastMode = 'white' | 'black' | 'custom';
-type WcagLevel = 'AA Large' | 'AA' | 'AAA';
+type ContrastMode = "white" | "black" | "custom";
+type WcagLevel = "AA Large" | "AA" | "AAA";
 
-let mode = $state<ContrastMode>('white');
-let customColor = $state('#888888');
+let mode = $state<ContrastMode>("white");
+let customColor = $state("#888888");
 let isFg = $state(true);
 
 const isValidColor = (colorStr: string): boolean => {
   return getFormat(colorStr) !== undefined;
 };
 
-let customColorError = $derived(mode === 'custom' && !isValidColor(customColor));
+let customColorError = $derived(mode === "custom" && !isValidColor(customColor));
 
 const getTargetColor = (m: ContrastMode): string => {
   switch (m) {
-    case 'white':
-      return '#ffffff';
-    case 'black':
-      return '#000000';
-    case 'custom':
-      return isValidColor(customColor) ? customColor : '#888888';
+    case "white":
+      return "#ffffff";
+    case "black":
+      return "#000000";
+    case "custom":
+      return isValidColor(customColor) ? customColor : "#888888";
   }
 };
 
@@ -37,7 +37,7 @@ let fg = $derived(isFg ? color.hex : currentTarget);
 let bg = $derived(isFg ? currentTarget : color.hex);
 
 let currentApca = $derived.by((): number => {
-  if (mode === 'custom' && !isValidColor(customColor)) return 0;
+  if (mode === "custom" && !isValidColor(customColor)) return 0;
   try {
     return Math.round(Math.abs(colordx(fg).apcaContrast(bg)));
   } catch {
@@ -46,7 +46,7 @@ let currentApca = $derived.by((): number => {
 });
 
 let currentWcag = $derived.by((): number => {
-  if (mode === 'custom' && !isValidColor(customColor)) return 0;
+  if (mode === "custom" && !isValidColor(customColor)) return 0;
   try {
     const ratio = colordx(fg).contrast(bg);
     return !Number.isNaN(ratio) && Number.isFinite(ratio) ? ratio : 0;
@@ -57,22 +57,22 @@ let currentWcag = $derived.by((): number => {
 
 const passes = (ratio: number, level: WcagLevel): boolean => {
   switch (level) {
-    case 'AA Large':
+    case "AA Large":
       return ratio >= 3.0;
-    case 'AA':
+    case "AA":
       return ratio >= 4.5;
-    case 'AAA':
+    case "AAA":
       return ratio >= 7.0;
   }
 };
 
 const getApcaRating = (score: number) => {
-  if (score >= 90) return 'Excellent for all.';
-  if (score >= 75) return 'Good for all.';
-  if (score >= 60) return 'OK for large text + headlines.';
-  if (score >= 45) return 'Poor for text, OK for large headlines.';
+  if (score >= 90) return "Excellent for all.";
+  if (score >= 75) return "Good for all.";
+  if (score >= 60) return "OK for large text + headlines.";
+  if (score >= 45) return "Poor for text, OK for large headlines.";
   if (score >= 30) return "'Spot' / disabled text only.";
-  return 'Fail for all.';
+  return "Fail for all.";
 };
 </script>
 

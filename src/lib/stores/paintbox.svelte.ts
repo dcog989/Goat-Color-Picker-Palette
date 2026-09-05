@@ -1,5 +1,5 @@
-﻿import { colordx } from '@colordx/core';
-import { PAINTBOX } from '../constants';
+﻿import { colordx } from "@colordx/core";
+import { PAINTBOX } from "../constants";
 
 type SavedColor = {
   id: string;
@@ -7,12 +7,12 @@ type SavedColor = {
   timestamp: number;
   oklch: { l: number; c: number; h: number; alpha: number };
 };
-export type PaintboxSortMode = 'newest' | 'oldest' | 'hue' | 'lightness' | 'chroma';
+export type PaintboxSortMode = "newest" | "oldest" | "hue" | "lightness" | "chroma";
 
 export class PaintboxStore {
   #colors = $state<SavedColor[]>([]);
   #initialized = false;
-  sortMode = $state<PaintboxSortMode>('newest');
+  sortMode = $state<PaintboxSortMode>("newest");
 
   init() {
     if (this.#initialized) return;
@@ -36,10 +36,10 @@ export class PaintboxStore {
             .filter(
               (item) =>
                 item &&
-                typeof item === 'object' &&
-                typeof item.id === 'string' &&
-                typeof item.css === 'string' &&
-                typeof item.timestamp === 'number',
+                typeof item === "object" &&
+                typeof item.id === "string" &&
+                typeof item.css === "string" &&
+                typeof item.timestamp === "number",
             )
             .map((item) => this.#ensureOklch(item));
         } else {
@@ -47,7 +47,7 @@ export class PaintboxStore {
         }
       }
     } catch (e) {
-      console.error('Failed to load paintbox data:', e);
+      console.error("Failed to load paintbox data:", e);
       this.#colors = [];
       try {
         localStorage.removeItem(PAINTBOX.STORAGE_KEY);
@@ -61,8 +61,8 @@ export class PaintboxStore {
     try {
       localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(this.#colors));
     } catch (e) {
-      console.error('Failed to save paintbox data:', e);
-      if (e instanceof Error && e.name === 'QuotaExceededError' && this.#colors.length > 0) {
+      console.error("Failed to save paintbox data:", e);
+      if (e instanceof Error && e.name === "QuotaExceededError" && this.#colors.length > 0) {
         this.#colors = this.#colors.slice(0, Math.floor(this.#colors.length / 2));
         try {
           localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(this.#colors));
@@ -77,7 +77,7 @@ export class PaintboxStore {
     if (item.oklch) {
       return item as SavedColor;
     }
-    const parsed = colordx(item.css ?? '');
+    const parsed = colordx(item.css ?? "");
     const oklch = parsed.isValid() ? parsed.toOklch() : { l: 0, c: 0, h: 0, alpha: 1 };
     return { ...item, oklch } as SavedColor;
   }
@@ -86,13 +86,13 @@ export class PaintboxStore {
     const list = [...this.#colors];
 
     switch (this.sortMode) {
-      case 'hue':
+      case "hue":
         return list.sort((a, b) => (a.oklch.h || 0) - (b.oklch.h || 0));
-      case 'lightness':
+      case "lightness":
         return list.sort((a, b) => b.oklch.l - a.oklch.l);
-      case 'chroma':
+      case "chroma":
         return list.sort((a, b) => b.oklch.c - a.oklch.c);
-      case 'newest':
+      case "newest":
         return list.sort((a, b) => b.timestamp - a.timestamp);
       default:
         return list.sort((a, b) => a.timestamp - b.timestamp);

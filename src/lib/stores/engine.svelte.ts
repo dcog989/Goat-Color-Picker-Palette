@@ -1,9 +1,9 @@
-import { colordx } from '@colordx/core';
-import { PRECISION } from '../constants';
-import { type GenerationMode, generatePalette, isHarmonyMode } from '../utils/palette';
-import { ManagedWorker } from '../utils/worker-manager';
-import ColorNameSearchWorker from '../workers/color-name-search.ts?worker';
-import type { ColorStore } from './color.svelte';
+import { colordx } from "@colordx/core";
+import { PRECISION } from "../constants";
+import { type GenerationMode, generatePalette, isHarmonyMode } from "../utils/palette";
+import { ManagedWorker } from "../utils/worker-manager";
+import ColorNameSearchWorker from "../workers/color-name-search.ts?worker";
+import type { ColorStore } from "./color.svelte";
 
 export type WorkerMessageData = {
   type: string;
@@ -13,7 +13,7 @@ export type WorkerMessageData = {
 };
 
 export class EngineStore {
-  closestName = $state('Searching...');
+  closestName = $state("Searching...");
   #managedWorker = new ManagedWorker<WorkerMessageData>({ maxRetries: 3, retryDelay: 1000 });
   #debounceHandle: number | null = null;
   #initialized = false;
@@ -21,7 +21,7 @@ export class EngineStore {
   #colorStore: ColorStore;
 
   genSteps = $state(8);
-  genAxis = $state<GenerationMode>('l');
+  genAxis = $state<GenerationMode>("l");
 
   constructor(colorStore: ColorStore) {
     this.#colorStore = colorStore;
@@ -30,10 +30,10 @@ export class EngineStore {
   #contrastWhite = $derived.by((): string => {
     try {
       const current = colordx(this.#colorStore.hex);
-      const raw = current.apcaContrast('#fff');
+      const raw = current.apcaContrast("#fff");
       return Math.abs(raw).toFixed(PRECISION.CONTRAST_DISPLAY);
     } catch {
-      return '0';
+      return "0";
     }
   });
 
@@ -44,10 +44,10 @@ export class EngineStore {
   #contrastBlack = $derived.by((): string => {
     try {
       const current = colordx(this.#colorStore.hex);
-      const raw = current.apcaContrast('#000');
+      const raw = current.apcaContrast("#000");
       return Math.abs(raw).toFixed(PRECISION.CONTRAST_DISPLAY);
     } catch {
-      return '0';
+      return "0";
     }
   });
 
@@ -105,27 +105,27 @@ export class EngineStore {
       () => new ColorNameSearchWorker(),
       {
         onMessage: (data) => {
-          if (data.type === 'result') {
+          if (data.type === "result") {
             this.#pendingSearch = null;
-            this.closestName = data.name ?? 'Custom Color';
+            this.closestName = data.name ?? "Custom Color";
           }
         },
         onError: () => {
-          this.closestName = 'Custom Color';
+          this.closestName = "Custom Color";
         },
         onReady: () => {
           if (this.#pendingSearch) {
-            this.#managedWorker.post({ type: 'search', color: this.#pendingSearch });
+            this.#managedWorker.post({ type: "search", color: this.#pendingSearch });
           }
         },
       },
-      'Color name search worker',
+      "Color name search worker",
     );
   }
 
   #searchColorName(color: { l: number; c: number; h: number; alpha: number }) {
     this.#pendingSearch = color;
-    this.#managedWorker.post({ type: 'search', color });
+    this.#managedWorker.post({ type: "search", color });
   }
 
   destroy() {

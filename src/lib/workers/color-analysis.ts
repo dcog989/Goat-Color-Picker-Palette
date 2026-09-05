@@ -7,7 +7,7 @@ interface WorkerMessage {
 function rgbToHex(r: number, g: number, b: number): string {
   const toHex = (n: number) => {
     const i = Math.max(0, Math.min(255, Math.round(n)));
-    return i.toString(16).padStart(2, '0');
+    return i.toString(16).padStart(2, "0");
   };
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
-import { onMount } from 'svelte';
-import { getApp } from '../context';
+import { onMount } from "svelte";
+import { getApp } from "../context";
 
 const { color } = getApp();
 
@@ -10,10 +10,10 @@ interface Props {
 
 let { name }: Props = $props();
 
-const blockSize = 'w-10 h-10 lg:w-12 lg:h-12 text-lg md:text-xl lg:text-2xl';
-const gapSize = 'gap-1 md:gap-1';
+const blockSize = "w-10 h-10 lg:w-12 lg:h-12 text-lg md:text-xl lg:text-2xl";
+const gapSize = "gap-1 md:gap-1";
 
-let letters = $derived(name.toUpperCase().split(''));
+let letters = $derived(name.toUpperCase().split(""));
 let container: HTMLDivElement;
 let content: HTMLDivElement;
 let overflow = $state(false);
@@ -87,7 +87,7 @@ $effect(() => {
   raf = requestAnimationFrame(frame);
   return () => {
     cancelAnimationFrame(raf);
-    if (content) content.style.transform = '';
+    if (content) content.style.transform = "";
   };
 });
 </script>

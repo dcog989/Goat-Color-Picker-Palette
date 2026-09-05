@@ -1,7 +1,7 @@
-import { getContext, setContext } from 'svelte';
-import type { RootStore } from './stores/root.svelte';
+import { getContext, setContext } from "svelte";
+import type { RootStore } from "./stores/root.svelte";
 
-const APP_KEY = Symbol('APP_ROOT');
+const APP_KEY = Symbol("APP_ROOT");
 
 export function setApp(store: RootStore) {
   setContext(APP_KEY, store);

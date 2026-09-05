@@ -1,7 +1,7 @@
 <script lang="ts">
-import { getApp } from '../context';
-import { getGradient } from '../utils/gradients';
-import Slider from './Slider.svelte';
+import { getApp } from "../context";
+import { getGradient } from "../utils/gradients";
+import Slider from "./Slider.svelte";
 
 const { color } = getApp();
 </script>

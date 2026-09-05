@@ -1,16 +1,16 @@
 <script lang="ts">
-import Copy from '@lucide/svelte/icons/copy';
-import DecimalsArrowLeft from '@lucide/svelte/icons/decimals-arrow-left';
-import DecimalsArrowRight from '@lucide/svelte/icons/decimals-arrow-right';
-import Link from '@lucide/svelte/icons/link';
-import Plus from '@lucide/svelte/icons/plus';
-import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
-import HslSliders from '../components/HslSliders.svelte';
-import OklchSliders from '../components/OklchSliders.svelte';
-import RgbSliders from '../components/RgbSliders.svelte';
-import Slider from '../components/Slider.svelte';
-import { getApp } from '../context';
-import { getGradient } from '../utils/gradients';
+import Copy from "@lucide/svelte/icons/copy";
+import DecimalsArrowLeft from "@lucide/svelte/icons/decimals-arrow-left";
+import DecimalsArrowRight from "@lucide/svelte/icons/decimals-arrow-right";
+import Link from "@lucide/svelte/icons/link";
+import Plus from "@lucide/svelte/icons/plus";
+import TriangleAlert from "@lucide/svelte/icons/triangle-alert";
+import HslSliders from "../components/HslSliders.svelte";
+import OklchSliders from "../components/OklchSliders.svelte";
+import RgbSliders from "../components/RgbSliders.svelte";
+import Slider from "../components/Slider.svelte";
+import { getApp } from "../context";
+import { getGradient } from "../utils/gradients";
 
 const app = getApp();
 const { color, paintbox, toast } = app;
@@ -19,27 +19,27 @@ let hasError = $state(false);
 
 let inputVal = $derived.by(() => {
   switch (color.mode) {
-    case 'oklch':
+    case "oklch":
       return color.display;
-    case 'rgb':
+    case "rgb":
       return color.rgb;
-    case 'hsl':
+    case "hsl":
       return color.hsl;
   }
 });
 
 const addToPaintbox = (e?: MouseEvent) => {
   paintbox.add(color.hexa);
-  toast.showAt('Added to Paintbox', e);
+  toast.showAt("Added to Paintbox", e);
 };
 
 const copyLink = (e?: MouseEvent) => {
-  const url = `${location.href.split('#')[0]}#${color.hexa}`;
+  const url = `${location.href.split("#")[0]}#${color.hexa}`;
   app.copy(url, e);
 };
 
 const togglePrecision = () => {
-  app.precision = app.precision === 'precise' ? 'practical' : 'precise';
+  app.precision = app.precision === "precise" ? "practical" : "precise";
 };
 
 const handleInput = (e: Event) => {
@@ -48,7 +48,7 @@ const handleInput = (e: Event) => {
     hasError = false;
   } else {
     hasError = true;
-    toast.show('Invalid color format');
+    toast.show("Invalid color format");
   }
 };
 

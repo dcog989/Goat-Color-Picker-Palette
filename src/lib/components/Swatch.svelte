@@ -1,8 +1,8 @@
 <script lang="ts">
-import { colordx } from '@colordx/core';
-import Copy from '@lucide/svelte/icons/copy';
-import Plus from '@lucide/svelte/icons/plus';
-import { getApp } from '../context';
+import { colordx } from "@colordx/core";
+import Copy from "@lucide/svelte/icons/copy";
+import Plus from "@lucide/svelte/icons/plus";
+import { getApp } from "../context";
 
 const { color, paintbox, toast } = getApp();
 
@@ -18,11 +18,11 @@ let { color: swatchColor, index, onSelect, dynamicClass = true }: Props = $props
 const copy = (e: MouseEvent) => {
   const formatted = color.formatColor(swatchColor);
   navigator.clipboard.writeText(formatted);
-  toast.showAt('Copied', e);
+  toast.showAt("Copied", e);
 };
 
 const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' || e.key === ' ') {
+  if (e.key === "Enter" || e.key === " ") {
     e.preventDefault();
     color.set(swatchColor);
   }
@@ -30,7 +30,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
 
 const getActionClass = () => {
   if (!dynamicClass) {
-    return 'bg-white/30 hover:bg-white/50 text-white';
+    return "bg-white/30 hover:bg-white/50 text-white";
   }
   let l = 0;
   try {
@@ -39,7 +39,7 @@ const getActionClass = () => {
   } catch {
     // fallback
   }
-  return l > 0.6 ? 'bg-black/10 hover:bg-black/20 text-black' : 'bg-white/20 hover:bg-white/30 text-white';
+  return l > 0.6 ? "bg-black/10 hover:bg-black/20 text-black" : "bg-white/20 hover:bg-white/30 text-white";
 };
 </script>
 

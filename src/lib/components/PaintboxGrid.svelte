@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getApp } from '../context';
+import { getApp } from "../context";
 
 const { color, paintbox } = getApp();
 

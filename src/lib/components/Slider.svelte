@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { HTMLInputAttributes } from 'svelte/elements';
+import type { HTMLInputAttributes } from "svelte/elements";
 
 interface Props {
   label: string;
@@ -11,7 +11,7 @@ interface Props {
   gradientClass?: string;
   gradientStyle?: string;
   showCheckerboard?: boolean;
-  oninput?: HTMLInputAttributes['oninput'];
+  oninput?: HTMLInputAttributes["oninput"];
 }
 
 let {

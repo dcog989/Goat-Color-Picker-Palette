@@ -1,6 +1,6 @@
-import { colordx, getFormat } from '@colordx/core';
+import { colordx, getFormat } from "@colordx/core";
 
-export type ExportFormat = 'hex' | 'rgb' | 'hsl' | 'oklch';
+export type ExportFormat = "hex" | "rgb" | "hsl" | "oklch";
 
 export function safeColor(str: string) {
   if (getFormat(str) !== undefined) {
@@ -18,13 +18,13 @@ export function formatColor(color: string, format: ExportFormat): string {
   if (!parsed) return color;
 
   switch (format) {
-    case 'hex':
+    case "hex":
       return parsed.toHex();
-    case 'rgb':
+    case "rgb":
       return parsed.toRgbString();
-    case 'hsl':
+    case "hsl":
       return parsed.toHslString();
-    case 'oklch':
+    case "oklch":
       return parsed.toOklchString();
     default:
       return color;

@@ -1,6 +1,6 @@
 <script lang="ts">
-import { fly } from 'svelte/transition';
-import { getApp } from '../context';
+import { fly } from "svelte/transition";
+import { getApp } from "../context";
 
 const { toast } = getApp();
 

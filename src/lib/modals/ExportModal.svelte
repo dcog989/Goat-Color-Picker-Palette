@@ -1,7 +1,7 @@
 <script lang="ts">
-import { getApp } from '../context';
-import type { ExportFormat } from '../utils/formatters';
-import { exportCode, strategies } from '../utils/strategies';
+import { getApp } from "../context";
+import type { ExportFormat } from "../utils/formatters";
+import { exportCode, strategies } from "../utils/strategies";
 
 interface Props {
   onClose: () => void;
@@ -11,7 +11,7 @@ let { onClose }: Props = $props();
 
 const app = getApp();
 
-let exportFormat = $state<ExportFormat>('oklch');
+let exportFormat = $state<ExportFormat>("oklch");
 
 const exports = $derived.by(() =>
   Object.entries(strategies).map(([key, strategy]) => ({

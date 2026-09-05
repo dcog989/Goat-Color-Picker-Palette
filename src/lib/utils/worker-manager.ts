@@ -9,7 +9,7 @@ export class ManagedWorker<TMessage = unknown> {
     onError?: (error?: Event) => void;
     onReady?: () => void;
   } | null = null;
-  #context = '';
+  #context = "";
   #subscribers: Array<(msg: TMessage) => void> = [];
 
   constructor(config?: { maxRetries?: number; retryDelay?: number }) {
@@ -28,7 +28,7 @@ export class ManagedWorker<TMessage = unknown> {
       onError?: (error?: Event) => void;
       onReady?: () => void;
     },
-    context = 'Worker',
+    context = "Worker",
   ): void {
     this.terminate();
     this.#workerFactory = factory;

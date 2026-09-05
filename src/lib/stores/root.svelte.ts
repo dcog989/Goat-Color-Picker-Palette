@@ -1,20 +1,20 @@
-import { extend } from '@colordx/core';
-import a11y from '@colordx/core/plugins/a11y';
-import cmyk from '@colordx/core/plugins/cmyk';
-import harmonies from '@colordx/core/plugins/harmonies';
-import lab from '@colordx/core/plugins/lab';
+import { extend } from "@colordx/core";
+import a11y from "@colordx/core/plugins/a11y";
+import cmyk from "@colordx/core/plugins/cmyk";
+import harmonies from "@colordx/core/plugins/harmonies";
+import lab from "@colordx/core/plugins/lab";
 
-import { ColorStore } from './color.svelte';
-import { EngineStore } from './engine.svelte';
-import { ImageStore } from './image.svelte';
-import { PaintboxStore } from './paintbox.svelte';
-import { ThemeStore } from './theme.svelte';
-import { ToastStore } from './toast.svelte';
+import { ColorStore } from "./color.svelte";
+import { EngineStore } from "./engine.svelte";
+import { ImageStore } from "./image.svelte";
+import { PaintboxStore } from "./paintbox.svelte";
+import { ThemeStore } from "./theme.svelte";
+import { ToastStore } from "./toast.svelte";
 
 extend([a11y, harmonies, cmyk, lab]);
 
 export class RootStore {
-  precision = $state<'precise' | 'practical'>('practical');
+  precision = $state<"precise" | "practical">("practical");
   color: ColorStore;
   toast = new ToastStore();
   paintbox = new PaintboxStore();
@@ -42,6 +42,6 @@ export class RootStore {
 
   copy(text: string, e?: MouseEvent) {
     navigator.clipboard.writeText(text);
-    this.toast.showAt('Copied', e);
+    this.toast.showAt("Copied", e);
   }
 }

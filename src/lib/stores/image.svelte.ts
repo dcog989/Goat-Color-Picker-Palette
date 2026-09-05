@@ -1,10 +1,10 @@
-import { colordx } from '@colordx/core';
-import { IMAGE_ANALYSIS } from '../constants';
-import { validateImageFile } from '../utils/validate-image';
-import { ManagedWorker } from '../utils/worker-manager';
-import ColorAnalysisWorker from '../workers/color-analysis.ts?worker';
+import { colordx } from "@colordx/core";
+import { IMAGE_ANALYSIS } from "../constants";
+import { validateImageFile } from "../utils/validate-image";
+import { ManagedWorker } from "../utils/worker-manager";
+import ColorAnalysisWorker from "../workers/color-analysis.ts?worker";
 
-export type SortMode = 'dominant' | 'vibrant' | 'bright' | 'dark';
+export type SortMode = "dominant" | "vibrant" | "bright" | "dark";
 
 type ImageWorkerMessage = {
   colors: string[];
@@ -14,9 +14,9 @@ type ImageWorkerMessage = {
 export class ImageStore {
   mosaicData = $state<{ color: string; pixels: number }[]>([]);
 
-  sortMode = $state<SortMode>('dominant');
+  sortMode = $state<SortMode>("dominant");
   isProcessing = $state(false);
-  previewUrl = $state<string>('');
+  previewUrl = $state<string>("");
   currentFile = $state<File | null>(null);
 
   #managedWorker = new ManagedWorker<ImageWorkerMessage>();
@@ -36,13 +36,13 @@ export class ImageStore {
     };
 
     switch (this.sortMode) {
-      case 'vibrant':
+      case "vibrant":
         candidates.sort((a, b) => getC(b.color) - getC(a.color));
         break;
-      case 'bright':
+      case "bright":
         candidates.sort((a, b) => getL(b.color) - getL(a.color));
         break;
-      case 'dark':
+      case "dark":
         candidates.sort((a, b) => getL(a.color) - getL(b.color));
         break;
       default:
@@ -73,7 +73,7 @@ export class ImageStore {
       const height = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
 
       const canvas = new OffscreenCanvas(width, height);
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (!ctx) {
         bitmap.close();
         this.isProcessing = false;
@@ -98,12 +98,12 @@ export class ImageStore {
             this.isProcessing = false;
           },
         },
-        'Image analysis worker',
+        "Image analysis worker",
       );
 
       this.#managedWorker.post({ imageData, distance: 0.05 }, [imageData.data.buffer]);
     } catch (error) {
-      console.error('Image analysis error:', error);
+      console.error("Image analysis error:", error);
       this.isProcessing = false;
       this.#managedWorker.terminate();
       throw error;
@@ -115,7 +115,7 @@ export class ImageStore {
     this.currentFile = null;
     if (this.previewUrl) {
       URL.revokeObjectURL(this.previewUrl);
-      this.previewUrl = '';
+      this.previewUrl = "";
     }
     this.#managedWorker.terminate();
   }

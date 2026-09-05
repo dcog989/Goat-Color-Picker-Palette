@@ -1,5 +1,5 @@
 // Color name list module types
-declare module 'color-name-list' {
+declare module "color-name-list" {
   export interface ColorName {
     name: string;
     hex: string;
@@ -9,7 +9,7 @@ declare module 'color-name-list' {
 }
 
 // Vite ?worker imports — each resolves to a Worker constructor
-declare module '*?worker' {
+declare module "*?worker" {
   const Worker: new () => Worker;
   export default Worker;
 }

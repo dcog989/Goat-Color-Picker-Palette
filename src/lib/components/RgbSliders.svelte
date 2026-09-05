@@ -1,14 +1,14 @@
 <script lang="ts">
-import { getApp } from '../context';
-import { getGradient } from '../utils/gradients';
-import Slider from './Slider.svelte';
+import { getApp } from "../context";
+import { getGradient } from "../utils/gradients";
+import Slider from "./Slider.svelte";
 
 const { color } = getApp();
 
 let localRgb = $state({ r: 0, g: 0, b: 0 });
 
 $effect(() => {
-  if (color.mode === 'rgb') {
+  if (color.mode === "rgb") {
     const rgb = color.rgbComp;
     localRgb = { r: rgb.r, g: rgb.g, b: rgb.b };
   }

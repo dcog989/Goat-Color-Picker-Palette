@@ -1,7 +1,7 @@
-﻿import { colordx } from '@colordx/core';
+﻿import { colordx } from "@colordx/core";
 
 interface WorkerMessage {
-  type: 'search' | 'filter' | 'get-page';
+  type: "search" | "filter" | "get-page";
   color?: { l: number; c: number; h: number; alpha: number };
   query?: string;
   limit?: number;
@@ -9,7 +9,7 @@ interface WorkerMessage {
 }
 
 interface WorkerResponse {
-  type: 'result' | 'filterResult' | 'pageResult';
+  type: "result" | "filterResult" | "pageResult";
   name?: string;
   colors?: Array<{ name: string; hex: string }>;
   total?: number;
@@ -28,7 +28,7 @@ async function prepareData(): Promise<void> {
   isLoading = true;
 
   try {
-    const module = await import('../data/colors');
+    const module = await import("../data/colors");
     const list = await module.loadColorNames();
 
     const count = list.length;
@@ -54,36 +54,36 @@ async function prepareData(): Promise<void> {
       }
     }
   } catch (error) {
-    loadError = error instanceof Error ? error : new Error('Failed to load color names');
-    console.error('Failed to load color name list:', loadError);
+    loadError = error instanceof Error ? error : new Error("Failed to load color names");
+    console.error("Failed to load color name list:", loadError);
   } finally {
     isLoading = false;
   }
 }
 
 self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
-  if (e.data.type === 'search' && e.data.color) {
+  if (e.data.type === "search" && e.data.color) {
     if (coordinates === null || isLoading) {
       await waitForData();
     }
 
     const result = findClosestName(e.data.color);
-    self.postMessage({ type: 'result', name: result } as WorkerResponse);
-  } else if (e.data.type === 'filter') {
+    self.postMessage({ type: "result", name: result } as WorkerResponse);
+  } else if (e.data.type === "filter") {
     if (coordinates === null || isLoading) {
       await waitForData();
     }
 
-    const results = filterColors(e.data.query || '', e.data.limit || 500);
-    self.postMessage({ type: 'filterResult', colors: results } as WorkerResponse);
-  } else if (e.data.type === 'get-page') {
+    const results = filterColors(e.data.query || "", e.data.limit || 500);
+    self.postMessage({ type: "filterResult", colors: results } as WorkerResponse);
+  } else if (e.data.type === "get-page") {
     if (coordinates === null || isLoading) {
       await waitForData();
     }
 
     const results = getPage(e.data.offset || 0, e.data.limit || 100);
     self.postMessage({
-      type: 'pageResult',
+      type: "pageResult",
       colors: results,
       total: names.length,
     } as WorkerResponse);
@@ -98,7 +98,7 @@ async function waitForData(): Promise<void> {
 
 function findClosestName(current: { l: number; c: number; h: number; alpha: number }): string {
   if (loadError || !coordinates || !names.length) {
-    return 'Custom Color';
+    return "Custom Color";
   }
 
   let tL: number, ta: number, tb: number;
@@ -108,7 +108,7 @@ function findClosestName(current: { l: number; c: number; h: number; alpha: numb
     ta = target.a;
     tb = target.b;
   } catch {
-    return 'Custom Color';
+    return "Custom Color";
   }
 
   let minDistSq = Infinity;
@@ -139,7 +139,7 @@ function findClosestName(current: { l: number; c: number; h: number; alpha: numb
     return names[bestIndex] as string;
   }
 
-  return 'Custom Color';
+  return "Custom Color";
 }
 
 function filterColors(query: string, limit: number): Array<{ name: string; hex: string }> {

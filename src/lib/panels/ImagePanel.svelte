@@ -1,12 +1,12 @@
 <script lang="ts">
-import Image from '@lucide/svelte/icons/image';
-import LayersPlus from '@lucide/svelte/icons/layers-plus';
-import X from '@lucide/svelte/icons/x';
-import { onDestroy } from 'svelte';
-import Swatch from '../components/Swatch.svelte';
-import { IMAGE_ANALYSIS } from '../constants';
-import { getApp } from '../context';
-import type { SortMode } from '../stores/image.svelte';
+import Image from "@lucide/svelte/icons/image";
+import LayersPlus from "@lucide/svelte/icons/layers-plus";
+import X from "@lucide/svelte/icons/x";
+import { onDestroy } from "svelte";
+import Swatch from "../components/Swatch.svelte";
+import { IMAGE_ANALYSIS } from "../constants";
+import { getApp } from "../context";
+import type { SortMode } from "../stores/image.svelte";
 
 const { image: imageAnalyzer, paintbox, toast } = getApp();
 
@@ -22,7 +22,7 @@ const handleFiles = async (files: FileList | null) => {
     try {
       await imageAnalyzer.analyze(files[0]);
     } catch (err) {
-      toast.show(err instanceof Error ? err.message : 'Failed to analyze image');
+      toast.show(err instanceof Error ? err.message : "Failed to analyze image");
     }
   }
 };
@@ -53,14 +53,14 @@ const addAll = (e?: MouseEvent) => {
   imageAnalyzer.extractedPalette.forEach((c) => {
     paintbox.add(c);
   });
-  toast.showAt('Added All to Paintbox', e);
+  toast.showAt("Added All to Paintbox", e);
 };
 
 const sortOptions: { label: string; value: SortMode }[] = [
-  { label: 'Dominant', value: 'dominant' },
-  { label: 'Vibrant', value: 'vibrant' },
-  { label: 'Bright', value: 'bright' },
-  { label: 'Dark', value: 'dark' },
+  { label: "Dominant", value: "dominant" },
+  { label: "Vibrant", value: "vibrant" },
+  { label: "Bright", value: "bright" },
+  { label: "Dark", value: "dark" },
 ];
 
 onDestroy(() => {

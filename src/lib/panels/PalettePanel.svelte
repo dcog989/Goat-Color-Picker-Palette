@@ -1,9 +1,9 @@
 <script lang="ts">
-import LayersPlus from '@lucide/svelte/icons/layers-plus';
-import ListMinus from '@lucide/svelte/icons/list-minus';
-import ListPlus from '@lucide/svelte/icons/list-plus';
-import Swatch from '../components/Swatch.svelte';
-import { getApp } from '../context';
+import LayersPlus from "@lucide/svelte/icons/layers-plus";
+import ListMinus from "@lucide/svelte/icons/list-minus";
+import ListPlus from "@lucide/svelte/icons/list-plus";
+import Swatch from "../components/Swatch.svelte";
+import { getApp } from "../context";
 
 const { engine, paintbox, toast } = getApp();
 
@@ -11,7 +11,7 @@ const addAll = (e?: MouseEvent) => {
   engine.generated.forEach((c: string) => {
     paintbox.add(c);
   });
-  toast.showAt('Added All to Paintbox', e);
+  toast.showAt("Added All to Paintbox", e);
 };
 
 const addRow = () => {

@@ -1,6 +1,6 @@
-import type { Colordx } from '@colordx/core';
-import { colordx, inGamutSrgb } from '@colordx/core';
-import { resolveNamedColor } from '../utils/named-colors';
+import type { Colordx } from "@colordx/core";
+import { colordx, inGamutSrgb } from "@colordx/core";
+import { resolveNamedColor } from "../utils/named-colors";
 
 function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
@@ -12,10 +12,10 @@ function getDisplayColor(color: Colordx): Colordx {
 export class ColorStore {
   #current = $state<Colordx>(colordx(ColorStore.#getRandomColor()));
   #lastMeaningfulHue = 0;
-  mode = $state<'oklch' | 'rgb' | 'hsl'>('oklch');
-  #precisionMode: () => 'precise' | 'practical';
+  mode = $state<"oklch" | "rgb" | "hsl">("oklch");
+  #precisionMode: () => "precise" | "practical";
 
-  constructor(precisionGetter: () => 'precise' | 'practical' = () => 'practical') {
+  constructor(precisionGetter: () => "precise" | "practical" = () => "practical") {
     this.#precisionMode = precisionGetter;
     // Capture initial hue if meaningful
     const init = this.#current.toOklch();
@@ -53,14 +53,14 @@ export class ColorStore {
     return this.#current.toOklch().l;
   }
   set l(v: number) {
-    this.#setOklchField('l', v);
+    this.#setOklchField("l", v);
   }
 
   get c() {
     return this.#current.toOklch().c;
   }
   set c(v: number) {
-    this.#setOklchField('c', v);
+    this.#setOklchField("c", v);
   }
 
   get h() {
@@ -68,10 +68,10 @@ export class ColorStore {
     return c > 0.001 ? h : this.#lastMeaningfulHue;
   }
   set h(v: number) {
-    this.#setOklchField('h', Math.min(v, 359.999));
+    this.#setOklchField("h", Math.min(v, 359.999));
   }
 
-  #setOklchField(field: 'l' | 'c' | 'h', value: number) {
+  #setOklchField(field: "l" | "c" | "h", value: number) {
     const { l, c, h, alpha } = this.#current.toOklch();
     this.#setCurrent(colordx({ l, c, h, alpha, [field]: value }));
   }
@@ -102,11 +102,11 @@ export class ColorStore {
     this.#setCurrent(this.#current.mapSrgb());
   }
 
-  setRgb(channel: 'r' | 'g' | 'b', value: number) {
+  setRgb(channel: "r" | "g" | "b", value: number) {
     const sr = this.#current.toRgb();
-    const newR = channel === 'r' ? value : sr.r;
-    const newG = channel === 'g' ? value : sr.g;
-    const newB = channel === 'b' ? value : sr.b;
+    const newR = channel === "r" ? value : sr.r;
+    const newG = channel === "g" ? value : sr.g;
+    const newB = channel === "b" ? value : sr.b;
     this.#setCurrent(colordx({ r: newR, g: newG, b: newB, alpha: this.alpha }));
   }
 
@@ -129,11 +129,11 @@ export class ColorStore {
     return this.#displayColor.toHsl();
   }
 
-  setHsl(channel: 'h' | 's' | 'l', value: number) {
+  setHsl(channel: "h" | "s" | "l", value: number) {
     const hsl = this.#current.toHsl();
-    const newH = channel === 'h' ? Math.min(value, 359.999) : hsl.h;
-    const newS = channel === 's' ? Math.max(0, Math.min(value, 100)) : hsl.s;
-    const newL = channel === 'l' ? Math.max(0, Math.min(value, 100)) : hsl.l;
+    const newH = channel === "h" ? Math.min(value, 359.999) : hsl.h;
+    const newS = channel === "s" ? Math.max(0, Math.min(value, 100)) : hsl.s;
+    const newL = channel === "l" ? Math.max(0, Math.min(value, 100)) : hsl.l;
     this.#setCurrent(colordx({ h: newH, s: newS, l: newL, alpha: this.alpha }));
   }
 
@@ -154,11 +154,11 @@ export class ColorStore {
       return css;
     }
 
-    const precision = this.#precisionMode() === 'precise' ? 4 : undefined;
+    const precision = this.#precisionMode() === "precise" ? 4 : undefined;
 
-    if (this.mode === 'rgb') {
+    if (this.mode === "rgb") {
       return parsed.toRgbString();
-    } else if (this.mode === 'hsl') {
+    } else if (this.mode === "hsl") {
       return parsed.toHslString(precision);
     } else {
       return parsed.toOklchString(precision);
@@ -166,7 +166,7 @@ export class ColorStore {
   }
 
   display = $derived.by(() => {
-    if (this.#precisionMode() === 'precise') {
+    if (this.#precisionMode() === "precise") {
       return this.#current.toOklchString();
     }
     const { l, c, h, alpha } = this.#current.toOklch();
@@ -179,7 +179,7 @@ export class ColorStore {
   });
 
   get #precision(): number {
-    return this.#precisionMode() === 'precise' ? 4 : 0;
+    return this.#precisionMode() === "precise" ? 4 : 0;
   }
 
   hex = $derived(this.#displayColor.alpha(1).toHex());
@@ -201,13 +201,13 @@ export class ColorStore {
 
   lab = $derived(this.#current.toLabString(this.#precision));
 
-  oklab = $derived.by(() => this.#current.toOklabString(this.#precisionMode() === 'precise' ? 4 : 2));
+  oklab = $derived.by(() => this.#current.toOklabString(this.#precisionMode() === "precise" ? 4 : 2));
 
   cmyk = $derived(this.#displayColor.toCmykString(this.#precision));
 
   cssVar = $derived.by(() => {
     const oklch = this.#current.toOklch();
-    const alphaStr = oklch.alpha < 1 ? ` / ${oklch.alpha}` : '';
+    const alphaStr = oklch.alpha < 1 ? ` / ${oklch.alpha}` : "";
     return `oklch(${oklch.l * 100}% ${oklch.c} ${oklch.h}${alphaStr})`;
   });
 

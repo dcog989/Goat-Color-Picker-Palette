@@ -1,14 +1,14 @@
 <script lang="ts">
-import { getApp } from '../context';
-import { getGradient } from '../utils/gradients';
-import Slider from './Slider.svelte';
+import { getApp } from "../context";
+import { getGradient } from "../utils/gradients";
+import Slider from "./Slider.svelte";
 
 const { color } = getApp();
 
 let localHsl = $state({ h: 0, s: 0, l: 0 });
 
 $effect(() => {
-  if (color.mode === 'hsl') {
+  if (color.mode === "hsl") {
     const hsl = color.hslComp;
     localHsl = { h: hsl.h, s: hsl.s, l: hsl.l };
   }

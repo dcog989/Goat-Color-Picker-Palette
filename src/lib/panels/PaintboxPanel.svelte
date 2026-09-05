@@ -1,9 +1,9 @@
 <script lang="ts">
-import CircleX from '@lucide/svelte/icons/circle-x';
-import PaintboxGrid from '../components/PaintboxGrid.svelte';
-import { getApp } from '../context';
-import type { PaintboxSortMode } from '../stores/paintbox.svelte';
-import { exportVisual } from '../utils/strategies';
+import CircleX from "@lucide/svelte/icons/circle-x";
+import PaintboxGrid from "../components/PaintboxGrid.svelte";
+import { getApp } from "../context";
+import type { PaintboxSortMode } from "../stores/paintbox.svelte";
+import { exportVisual } from "../utils/strategies";
 
 interface Props {
   onExport: () => void;
@@ -15,11 +15,11 @@ const app = getApp();
 const { paintbox } = app;
 
 const sortOptions: { label: string; value: PaintboxSortMode }[] = [
-  { label: 'New First', value: 'newest' },
-  { label: 'New Last', value: 'oldest' },
-  { label: 'Hue', value: 'hue' },
-  { label: 'Bright', value: 'lightness' },
-  { label: 'Vivid', value: 'chroma' },
+  { label: "New First", value: "newest" },
+  { label: "New Last", value: "oldest" },
+  { label: "Hue", value: "hue" },
+  { label: "Bright", value: "lightness" },
+  { label: "Vivid", value: "chroma" },
 ];
 </script>
 

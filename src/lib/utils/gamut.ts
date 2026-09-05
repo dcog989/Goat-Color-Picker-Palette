@@ -1,4 +1,4 @@
-import { inGamutSrgb } from '@colordx/core';
+import { inGamutSrgb } from "@colordx/core";
 
 const cache = new Map<number, number>();
 
