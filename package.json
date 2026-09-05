@@ -1,7 +1,7 @@
 {
   "name": "goatcolor",
   "description": "The only color picker palette generator you need.",
-  "version": "3.4.5",
+  "version": "3.4.6",
   "private": true,
   "type": "module",
   "scripts": {
