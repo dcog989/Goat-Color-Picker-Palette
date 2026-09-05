@@ -1,3 +1,4 @@
 .docs/
 [Dd]ist/
 node_modules/
+vite.config.d.ts
