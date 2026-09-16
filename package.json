@@ -25,30 +25,30 @@
     "version": "cog bump --version"
   },
   "dependencies": {
-    "@colordx/core": "^6.3.0",
-    "@lucide/svelte": "^1.41.0",
-    "color-name-list": "^14.48.0",
+    "@colordx/core": "^6.5.0",
+    "@lucide/svelte": "^1.46.0",
+    "color-name-list": "^14.50.0",
     "jspdf": "^4.2.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.12",
+    "@biomejs/biome": "^2.5.14",
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tailwindcss/node": "^4.3.3",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/svelte": "^5.4.2",
     "@tsconfig/svelte": "^5.0.8",
-    "@types/node": "^26.4.1",
-    "@vitest/coverage-v8": "^5.0.0",
+    "@types/node": "^26.5.1",
+    "@vitest/coverage-v8": "^5.0.1",
     "esbuild": "^0.28.2",
     "jsdom": "^30.0.1",
-    "lefthook": "^2.1.12",
+    "lefthook": "^2.1.14",
     "svelte": "^5.57.0",
     "svelte-check": "^4.7.6",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
-    "vite": "^8.2.2",
-    "vitest": "^5.0.0"
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
   },
   "overrides": {
     "typescript": "6.0.3"
