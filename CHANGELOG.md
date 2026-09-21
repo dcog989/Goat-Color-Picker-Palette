@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.5.0 - 2026-09-21
+
+#### Features
+
+- (26bd2c8) add HWB and OKHSL copy formats, relabel LAB to CIELAB - dcog989
+- - -
+
 ## v3.4.7 - 2026-09-16
 - - -
 
