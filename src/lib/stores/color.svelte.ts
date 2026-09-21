@@ -1,6 +1,7 @@
 import type { Colordx } from "@colordx/core";
 import { colordx, inGamutSrgb } from "@colordx/core";
 import { resolveNamedColor } from "../utils/named-colors";
+import { oklchToOkhsl } from "../utils/okhsl";
 
 function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
@@ -198,6 +199,18 @@ export class ColorStore {
   });
 
   hsl = $derived(this.#displayColor.toHslString(this.#precision));
+
+  hwb = $derived(this.#displayColor.toHwbString(this.#precision));
+
+  okhsl = $derived.by(() => {
+    const { l, c, h, alpha } = this.#current.toOklch();
+    const { h: hh, s, l: ll } = oklchToOkhsl(l, c, h);
+    const p = this.#precision;
+    const hStr = p ? parseFloat(hh.toFixed(p)) : Math.round(hh);
+    const sStr = p ? parseFloat((s * 100).toFixed(p)) : Math.round(s * 100);
+    const lStr = p ? parseFloat((ll * 100).toFixed(p)) : Math.round(ll * 100);
+    return alpha < 1 ? `okhsl(${hStr} ${sStr}% ${lStr}% / ${alpha})` : `okhsl(${hStr} ${sStr}% ${lStr}%)`;
+  });
 
   lab = $derived(this.#current.toLabString(this.#precision));
 

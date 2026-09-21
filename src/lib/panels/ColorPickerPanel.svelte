@@ -102,7 +102,7 @@ const hslValues = $derived(color.hslComp);
                       w-full rounded-md border bg-(--ui-bg) py-2 pr-8 pl-3
                       font-mono text-base uppercase transition-shadow duration-200 outline-none
                       focus:ring-2 focus:ring-(--current-color)
-                      {hasError ? 'border-red-500 ring-2 ring-red-500/20' : `border-(--ui-border)`}"
+                      {hasError ? "border-red-500 ring-2 ring-red-500/20" : `border-(--ui-border)`}"
           placeholder="Paste color..."
         >
         {#if color.isOutOfGamut}
@@ -145,7 +145,7 @@ const hslValues = $derived(color.hslComp);
                       hover:bg-(--current-color)
                     "
       >
-        {#if app.precision === 'precise'}
+        {#if app.precision === "precise"}
           <DecimalsArrowRight
             class="
                           size-5 opacity-60 transition-opacity
@@ -169,7 +169,7 @@ const hslValues = $derived(color.hslComp);
                       group-hover:opacity-100
                     "
         >
-          {app.precision === 'precise' ? 'Precise → Practical' : 'Practical → Precise'}
+          {app.precision === "precise" ? "Precise → Practical" : "Practical → Precise"}
         </div>
       </button>
     </div>
@@ -180,17 +180,15 @@ const hslValues = $derived(color.hslComp);
               bg-(--ui-bg) p-1
             "
     >
-      {#each ['oklch', 'rgb', 'hsl'] as m (m)}
+      {#each ["oklch", "rgb", "hsl"] as m (m)}
         <button
           type="button"
-          onclick={() => (color.mode = m as 'oklch' | 'rgb' | 'hsl')}
+          onclick={() => (color.mode = m as "oklch" | "rgb" | "hsl")}
           class="
                       rounded-sm px-4 py-2 text-xs font-black uppercase
                       transition duration-200
                       will-change-transform
-                      {color.mode === m
-                        ? 'text-on-current bg-(--current-color)'
-                        : 'hover:bg-(--ui-card)'}"
+                      {color.mode === m ? "text-on-current bg-(--current-color)" : "hover:bg-(--ui-card)"}"
         >
           {m}
         </button>
@@ -207,11 +205,11 @@ const hslValues = $derived(color.hslComp);
   >
     <!-- Sliders -->
     <div class="space-y-6">
-      {#if color.mode === 'oklch'}
+      {#if color.mode === "oklch"}
         <OklchSliders />
-      {:else if color.mode === 'rgb'}
+      {:else if color.mode === "rgb"}
         <RgbSliders />
-      {:else if color.mode === 'hsl'}
+      {:else if color.mode === "hsl"}
         <HslSliders />
       {/if}
 
@@ -222,7 +220,7 @@ const hslValues = $derived(color.hslComp);
         min={0}
         max={1}
         step={0.01}
-        {...getGradient('alpha', color.rgbComp)}
+        {...getGradient("alpha", color.rgbComp)}
         showCheckerboard
       />
     </div>
@@ -298,7 +296,17 @@ const hslValues = $derived(color.hslComp);
 
   <!-- Output Formats -->
   <div class="flex flex-wrap gap-2 border-t border-(--ui-border) pt-4">
-    {#each [{ label: 'OKLCH', value: color.display }, { label: 'HEX', value: color.hexa }, { label: 'RGB', value: color.rgb }, { label: 'HSL', value: color.hsl }, { label: 'OKLAB', value: color.oklab }, { label: 'LAB', value: color.lab }, { label: 'CMYK', value: color.cmyk }] as format (format.label)}
+    {#each [
+   { label: "HEX", value: color.hexa },
+   { label: "HSL", value: color.hsl },
+   { label: "HWB", value: color.hwb },
+   { label: "RGB", value: color.rgb },
+   { label: "Oklch", value: color.display },
+   { label: "Okhsl", value: color.okhsl },
+   { label: "CIELAB", value: color.lab },
+   { label: "Oklab", value: color.oklab },
+   { label: "CMYK", value: color.cmyk },
+ ] as format (format.label)}
       <button
         type="button"
         onclick={(e) => app.copy(format.value, e)}

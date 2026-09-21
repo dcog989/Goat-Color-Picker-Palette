@@ -25,9 +25,9 @@
     "version": "cog bump --version"
   },
   "dependencies": {
-    "@colordx/core": "^6.5.0",
-    "@lucide/svelte": "^1.46.0",
-    "color-name-list": "^14.50.0",
+    "@colordx/core": "^6.6.0",
+    "@lucide/svelte": "^1.47.0",
+    "color-name-list": "^14.51.0",
     "jspdf": "^4.2.1"
   },
   "devDependencies": {
@@ -38,12 +38,12 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/svelte": "^5.4.2",
     "@tsconfig/svelte": "^5.0.8",
-    "@types/node": "^26.5.1",
+    "@types/node": "^26.6.2",
     "@vitest/coverage-v8": "^5.0.1",
     "esbuild": "^0.28.2",
-    "jsdom": "^30.0.1",
+    "jsdom": "^30.1.0",
     "lefthook": "^2.1.14",
-    "svelte": "^5.57.0",
+    "svelte": "^5.57.1",
     "svelte-check": "^4.7.6",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
