@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.5.1 - 2026-09-22
+
+#### Refactoring
+
+- (e8680bf) use colordx okhsl plugin, drop custom OKHSL util - dcog989
+- - -
+
 ## v3.5.0 - 2026-09-21
 
 #### Features
