@@ -55,14 +55,20 @@ let currentWcag = $derived.by((): number => {
   }
 });
 
-const passes = (ratio: number, level: WcagLevel): boolean => {
-  switch (level) {
-    case "AA Large":
-      return ratio >= 3.0;
-    case "AA":
-      return ratio >= 4.5;
-    case "AAA":
-      return ratio >= 7.0;
+const readableAt = (level: WcagLevel): boolean => {
+  if (mode === "custom" && !isValidColor(customColor)) return false;
+  try {
+    const parsed = colordx(fg);
+    switch (level) {
+      case "AA Large":
+        return parsed.isReadable(bg, { size: "large" });
+      case "AA":
+        return parsed.isReadable(bg);
+      case "AAA":
+        return parsed.isReadable(bg, { level: "AAA" });
+    }
+  } catch {
+    return false;
   }
 };
 
@@ -84,7 +90,7 @@ const getApcaRating = (score: number) => {
           bg-(--ui-bg) p-1
         "
   >
-    {#each ['white', 'black', 'custom'] as m (m)}
+    {#each ["white", "black", "custom"] as m (m)}
       <button
         type="button"
         onclick={() => (mode = m as ContrastMode)}
@@ -92,8 +98,8 @@ const getApcaRating = (score: number) => {
                   relative flex flex-col items-center gap-1 rounded-lg px-2 py-3
                   transition-all
                   {mode === m
-                    ? 'bg-(--ui-card) text-(--ui-text) shadow-sm'
-                    : `
+  ? "bg-(--ui-card) text-(--ui-text) shadow-sm"
+  : `
                       opacity-70
                       hover:bg-black/5 hover:opacity-100
                       dark:hover:bg-white/5
@@ -108,7 +114,7 @@ const getApcaRating = (score: number) => {
         >
         {#if mode === m}
           <div class="flex items-baseline gap-1">
-            {#if m === 'custom' && !isValidColor(customColor)}
+            {#if m === "custom" && !isValidColor(customColor)}
               <span class="text-lg font-black text-red-500">--</span>
               <span class="font-mono text-xs text-red-500/70">!</span>
             {:else}
@@ -132,7 +138,7 @@ const getApcaRating = (score: number) => {
 
   <!-- 2. Controls Row (Custom Input & Swap) -->
   <div class="flex min-h-10.5 items-center gap-4">
-    {#if mode === 'custom'}
+    {#if mode === "custom"}
       <div class="relative flex-1 pb-6">
         <input
           id="contrastColor"
@@ -143,9 +149,7 @@ const getApcaRating = (score: number) => {
                       py-2 pr-4 pl-9 font-mono text-sm uppercase transition-all
                       outline-none
                       focus:ring-2 focus:ring-(--current-color)
-                      {customColorError
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50'
-                        : 'border-(--ui-border)'}
+                      {customColorError ? "border-red-500 focus:border-red-500 focus:ring-red-500/50" : "border-(--ui-border)"}
                     "
         >
         <div
@@ -153,7 +157,7 @@ const getApcaRating = (score: number) => {
                       absolute top-1/2 left-3 size-4 -translate-y-1/2
                       rounded-full border border-(--ui-border)
                     "
-          style:background-color={customColorError ? 'transparent' : customColor}
+          style:background-color={customColorError ? "transparent" : customColor}
         >
           {#if customColorError}
             <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-red-500">!</span>
@@ -239,7 +243,7 @@ const getApcaRating = (score: number) => {
                     "
           >APCA</span
         >
-        <span class="text-xl font-black">{customColorError && mode === 'custom' ? '--' : currentApca}</span>
+        <span class="text-xl font-black">{customColorError && mode === "custom" ? "--" : currentApca}</span>
       </div>
       <div
         class="
@@ -247,9 +251,7 @@ const getApcaRating = (score: number) => {
                   opacity-70
                 "
       >
-        {customColorError && mode === 'custom'
-                    ? 'Invalid color format'
-                    : getApcaRating(currentApca)}
+        {customColorError && mode === "custom" ? "Invalid color format" : getApcaRating(currentApca)}
       </div>
     </div>
 
@@ -268,9 +270,7 @@ const getApcaRating = (score: number) => {
           >Ratio</span
         >
         <span class="text-xl font-black"
-          >{customColorError && mode === 'custom'
-                        ? '--'
-                        : currentWcag.toFixed(1)}:1</span
+          >{customColorError && mode === "custom" ? "--" : currentWcag.toFixed(1)}:1</span
         >
       </div>
 
@@ -279,7 +279,7 @@ const getApcaRating = (score: number) => {
                   mt-1 flex justify-between border-t border-(--ui-border) pt-2
                 "
       >
-        {#if customColorError && mode === 'custom'}
+        {#if customColorError && mode === "custom"}
           <div class="flex flex-col items-center gap-1">
             <span class="text-xs font-bold uppercase opacity-70">AA Lg</span>
             <X class="size-4 text-gray-400 opacity-70" />
@@ -295,7 +295,7 @@ const getApcaRating = (score: number) => {
         {:else}
           <div class="flex flex-col items-center gap-1">
             <span class="text-xs font-bold uppercase opacity-70">AA Lg</span>
-            {#if passes(currentWcag, 'AA Large')}
+            {#if readableAt("AA Large")}
               <Check class="size-4 text-green-500" />
             {:else}
               <X class="size-4 text-red-500 opacity-70" />
@@ -303,7 +303,7 @@ const getApcaRating = (score: number) => {
           </div>
           <div class="flex flex-col items-center gap-1">
             <span class="text-xs font-bold uppercase opacity-70">AA</span>
-            {#if passes(currentWcag, 'AA')}
+            {#if readableAt("AA")}
               <Check class="size-4 text-green-500" />
             {:else}
               <X class="size-4 text-red-500 opacity-70" />
@@ -311,7 +311,7 @@ const getApcaRating = (score: number) => {
           </div>
           <div class="flex flex-col items-center gap-1">
             <span class="text-xs font-bold uppercase opacity-70">AAA</span>
-            {#if passes(currentWcag, 'AAA')}
+            {#if readableAt("AAA")}
               <Check class="size-4 text-green-500" />
             {:else}
               <X class="size-4 text-red-500 opacity-70" />
