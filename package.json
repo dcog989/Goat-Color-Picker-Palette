@@ -25,14 +25,14 @@
     "version": "cog bump --version"
   },
   "dependencies": {
-    "@colordx/core": "^6.7.0",
+    "@colordx/core": "^7.0.0",
     "@lucide/svelte": "^1.47.0",
     "color-name-list": "^14.51.0",
     "jspdf": "^4.2.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",
-    "@sveltejs/vite-plugin-svelte": "^7.3.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tailwindcss/node": "^4.3.3",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
