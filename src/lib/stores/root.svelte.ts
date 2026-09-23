@@ -4,6 +4,7 @@ import cmyk from "@colordx/core/plugins/cmyk";
 import harmonies from "@colordx/core/plugins/harmonies";
 import hwb from "@colordx/core/plugins/hwb";
 import lab from "@colordx/core/plugins/lab";
+import names from "@colordx/core/plugins/names";
 import okhsl from "@colordx/core/plugins/okhsl";
 
 import { ColorStore } from "./color.svelte";
@@ -13,7 +14,7 @@ import { PaintboxStore } from "./paintbox.svelte";
 import { ThemeStore } from "./theme.svelte";
 import { ToastStore } from "./toast.svelte";
 
-extend([a11y, harmonies, cmyk, hwb, lab, okhsl]);
+extend([a11y, harmonies, cmyk, hwb, lab, names, okhsl]);
 
 export class RootStore {
   precision = $state<"precise" | "practical">("practical");
