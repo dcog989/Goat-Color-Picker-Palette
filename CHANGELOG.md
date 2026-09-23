@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.5.2 - 2026-09-23
+
+#### Bug Fixes
+
+- (ed9f345) preserve hue/saturation when lightness hits 0 or 100 - dcog989
+
+#### Refactoring
+
+- (289895a) use colordx contrast instead of OKLCH lightness cutoffs for text color - dcog989
+
+- (1006324) use colordx isReadable for WCAG pass/fail checks - dcog989
+
+- (a9a05cb) replace hand-rolled CSS name table with colordx names plugin - dcog989
+- - -
+
 ## v3.5.1 - 2026-09-22
 
 #### Refactoring
