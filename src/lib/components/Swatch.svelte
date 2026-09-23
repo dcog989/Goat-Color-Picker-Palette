@@ -1,8 +1,8 @@
 <script lang="ts">
-import { colordx } from "@colordx/core";
 import Copy from "@lucide/svelte/icons/copy";
 import Plus from "@lucide/svelte/icons/plus";
 import { getApp } from "../context";
+import { usesDarkText } from "../utils/text-contrast";
 
 const { color, paintbox, toast } = getApp();
 
@@ -32,14 +32,9 @@ const getActionClass = () => {
   if (!dynamicClass) {
     return "bg-white/30 hover:bg-white/50 text-white";
   }
-  let l = 0;
-  try {
-    const parsed = colordx(swatchColor);
-    l = parsed.toOklch().l;
-  } catch {
-    // fallback
-  }
-  return l > 0.6 ? "bg-black/10 hover:bg-black/20 text-black" : "bg-white/20 hover:bg-white/30 text-white";
+  return usesDarkText(swatchColor)
+    ? "bg-black/10 hover:bg-black/20 text-black"
+    : "bg-white/20 hover:bg-white/30 text-white";
 };
 </script>
 
@@ -75,10 +70,10 @@ const getActionClass = () => {
     >
       <button
         onclick={(e) => {
-                    e.stopPropagation();
-                    paintbox.add(swatchColor);
-                    toast.showAt('Added', e);
-                }}
+  e.stopPropagation();
+  paintbox.add(swatchColor);
+  toast.showAt("Added", e);
+}}
         class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm
                   transition-transform duration-200
@@ -92,9 +87,9 @@ const getActionClass = () => {
       </button>
       <button
         onclick={(e) => {
-                    e.stopPropagation();
-                    copy(e);
-                }}
+  e.stopPropagation();
+  copy(e);
+}}
         class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm
                   transition-transform duration-200

@@ -14,6 +14,7 @@ import ImagePanel from "./lib/panels/ImagePanel.svelte";
 import PaintboxPanel from "./lib/panels/PaintboxPanel.svelte";
 import PalettePanel from "./lib/panels/PalettePanel.svelte";
 import { RootStore } from "./lib/stores/root.svelte";
+import { usesDarkText } from "./lib/utils/text-contrast";
 
 // Create Root Store
 const app = new RootStore();
@@ -70,7 +71,6 @@ $effect(() => {
   // Read reactive values
   const cssVar = color.cssVar;
   const hStr = color.h.toString();
-  const l = color.l;
   const c = color.c;
 
   // Cancel pending update
@@ -97,7 +97,7 @@ $effect(() => {
     body.style.backgroundColor = cssVar;
 
     // Set data attribute for contrast-dependent styling
-    const needsDarkText = l > 0.55;
+    const needsDarkText = usesDarkText(cssVar);
     root.setAttribute("data-color-contrast", needsDarkText ? "dark" : "light");
 
     rafId = null;
@@ -222,7 +222,7 @@ const showInfo = (key: keyof typeof infoContent) => {
             "
     >
       <button
-        onclick={() => showInfo('oklch')}
+        onclick={() => showInfo("oklch")}
         type="button"
         class="
                   cursor-pointer
@@ -239,7 +239,7 @@ const showInfo = (key: keyof typeof infoContent) => {
         >|</span
       >
       <button
-        onclick={() => showInfo('analysis')}
+        onclick={() => showInfo("analysis")}
         type="button"
         class="
                   cursor-pointer
@@ -256,7 +256,7 @@ const showInfo = (key: keyof typeof infoContent) => {
         >|</span
       >
       <button
-        onclick={() => showInfo('contrast')}
+        onclick={() => showInfo("contrast")}
         type="button"
         class="
                   cursor-pointer
@@ -284,7 +284,7 @@ const showInfo = (key: keyof typeof infoContent) => {
     </div>
 
     <button
-      onclick={() => showInfo('shortcuts')}
+      onclick={() => showInfo("shortcuts")}
       type="button"
       class="
               rounded-lg p-2 transition-colors
