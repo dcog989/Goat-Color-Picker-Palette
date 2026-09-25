@@ -184,14 +184,12 @@ export class ColorStore {
   hexa = $derived(this.#displayColor.toHex());
 
   rgb = $derived.by(() => {
-    const { r, g, b, alpha } = this.#displayColor.toRgb();
     const p = this.#precision;
-    if (p) {
-      return alpha < 1
-        ? `rgb(${parseFloat(r.toFixed(p))} ${parseFloat(g.toFixed(p))} ${parseFloat(b.toFixed(p))} / ${alpha})`
-        : `rgb(${parseFloat(r.toFixed(p))} ${parseFloat(g.toFixed(p))} ${parseFloat(b.toFixed(p))})`;
+    if (!p) {
+      return this.#displayColor.toRgbString();
     }
-    return this.#displayColor.toRgbString();
+    const { r, g, b, alpha } = this.#displayColor.toRgb(p);
+    return alpha < 1 ? `rgb(${r} ${g} ${b} / ${alpha})` : `rgb(${r} ${g} ${b})`;
   });
 
   hsl = $derived(this.#displayColor.toHslString(this.#precision));
