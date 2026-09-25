@@ -2,10 +2,8 @@ import type { Colordx } from "@colordx/core";
 import { colordx, inGamutSrgb } from "@colordx/core";
 
 const RANDOM_HUE_MAX = 360;
-const RANDOM_LIGHTNESS_MIN = 0.45;
-const RANDOM_LIGHTNESS_MAX = 0.75;
-const RANDOM_CHROMA_MIN = 0.06;
-const RANDOM_CHROMA_MAX = 0.2;
+const RANDOM_LIGHTNESS = 0.45;
+const RANDOM_CHROMA = 0.08;
 
 function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
@@ -29,9 +27,7 @@ export class ColorStore {
 
   static #getRandomColor(): Colordx {
     const h = Math.random() * RANDOM_HUE_MAX;
-    const l = RANDOM_LIGHTNESS_MIN + Math.random() * (RANDOM_LIGHTNESS_MAX - RANDOM_LIGHTNESS_MIN);
-    const c = RANDOM_CHROMA_MIN + Math.random() * (RANDOM_CHROMA_MAX - RANDOM_CHROMA_MIN);
-    return colordx({ l, c, h }).mapSrgb();
+    return colordx({ l: RANDOM_LIGHTNESS, c: RANDOM_CHROMA, h }).mapSrgb();
   }
 
   #setCurrent(color: Colordx) {
