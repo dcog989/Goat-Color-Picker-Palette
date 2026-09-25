@@ -1,6 +1,12 @@
 import type { Colordx } from "@colordx/core";
 import { colordx, inGamutSrgb } from "@colordx/core";
 
+const RANDOM_HUE_MAX = 360;
+const RANDOM_LIGHTNESS_MIN = 0.45;
+const RANDOM_LIGHTNESS_MAX = 0.75;
+const RANDOM_CHROMA_MIN = 0.06;
+const RANDOM_CHROMA_MAX = 0.2;
+
 function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
     return color;
@@ -9,7 +15,7 @@ function getDisplayColor(color: Colordx): Colordx {
 }
 
 export class ColorStore {
-  #current = $state<Colordx>(colordx(ColorStore.#getRandomColor()));
+  #current = $state<Colordx>(ColorStore.#getRandomColor());
   #lastMeaningfulHue = 0;
   mode = $state<"oklch" | "rgb" | "hsl">("oklch");
   #precisionMode: () => "precise" | "practical";
@@ -21,11 +27,11 @@ export class ColorStore {
     if (init.c > 0.001) this.#lastMeaningfulHue = init.h;
   }
 
-  static #getRandomColor(): string {
-    const h = Math.random() * 360;
-    const s = 0.4 + Math.random() * 0.5;
-    const l = 0.4 + Math.random() * 0.3;
-    return `hsl(${h}, ${s * 100}%, ${l * 100}%)`;
+  static #getRandomColor(): Colordx {
+    const h = Math.random() * RANDOM_HUE_MAX;
+    const l = RANDOM_LIGHTNESS_MIN + Math.random() * (RANDOM_LIGHTNESS_MAX - RANDOM_LIGHTNESS_MIN);
+    const c = RANDOM_CHROMA_MIN + Math.random() * (RANDOM_CHROMA_MAX - RANDOM_CHROMA_MIN);
+    return colordx({ l, c, h }).mapSrgb();
   }
 
   #setCurrent(color: Colordx) {
@@ -216,6 +222,6 @@ export class ColorStore {
   });
 
   randomize() {
-    this.#setCurrent(colordx(ColorStore.#getRandomColor()));
+    this.#setCurrent(ColorStore.#getRandomColor());
   }
 }
