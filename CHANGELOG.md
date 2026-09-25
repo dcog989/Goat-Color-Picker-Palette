@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.5.3 - 2026-09-25
+
+#### Bug Fixes
+
+- (2062c05) show real decimal RGB channels in precise mode - dcog989
+
+#### Refactoring
+
+- (a60ca2b) randomize hue at fixed OKLCH L/C - dcog989
+
+- (abd9b5a) generate random colors in OKLCH with perceptual lightness - dcog989
+
+- (3e23aa2) use @colordx/core/fn rgbToHex - dcog989
+- - -
+
 ## v3.5.2 - 2026-09-23
 
 #### Bug Fixes
