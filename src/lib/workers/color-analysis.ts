@@ -1,15 +1,8 @@
+import { rgbToHex } from "@colordx/core/fn";
+
 interface WorkerMessage {
   imageData: ImageData;
   distance: number;
-}
-
-// Helper to convert RGB to Hex
-function rgbToHex(r: number, g: number, b: number): string {
-  const toHex = (n: number) => {
-    const i = Math.max(0, Math.min(255, Math.round(n)));
-    return i.toString(16).padStart(2, "0");
-  };
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 self.onmessage = (e: MessageEvent<WorkerMessage>) => {
@@ -125,9 +118,9 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   const finalColors = mergedList.slice(0, 64);
 
   self.postMessage({
-    colors: finalColors.map((c) => rgbToHex(c.r, c.g, c.b)),
+    colors: finalColors.map((c) => rgbToHex({ r: c.r, g: c.g, b: c.b, alpha: 1 })),
     clusters: finalColors.map((c) => ({
-      color: rgbToHex(c.r, c.g, c.b),
+      color: rgbToHex({ r: c.r, g: c.g, b: c.b, alpha: 1 }),
       pixels: c.count,
     })),
   });
