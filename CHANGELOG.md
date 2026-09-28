@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.6.0 - 2026-09-28
+
+#### Features
+
+- (218edd6) default to OKHSL picker and track sRGB gamut chroma in OKLCH - dcog989
+- - -
+
 ## v3.5.3 - 2026-09-25
 
 #### Bug Fixes
