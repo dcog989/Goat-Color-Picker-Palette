@@ -13,16 +13,16 @@ const { color } = getApp();
   min={0}
   max={1}
   step={0.01}
-  {...getGradient('l', color.rgbComp)}
+  {...getGradient("l", color.rgbComp)}
 />
 <Slider
   label="Chroma"
   bind:value={color.c}
   displayValue={color.c.toFixed(3)}
   min={0}
-  max={0.33}
+  max={color.chromaMax}
   step={0.001}
-  {...getGradient('c', color.rgbComp)}
+  {...getGradient("c", color.rgbComp)}
 />
 <Slider
   label="Hue"
@@ -31,5 +31,5 @@ const { color } = getApp();
   min={0}
   max={360}
   step={0.1}
-  {...getGradient('h', color.rgbComp)}
+  {...getGradient("h", color.rgbComp)}
 />

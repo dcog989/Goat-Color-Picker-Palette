@@ -5,7 +5,7 @@ import DecimalsArrowRight from "@lucide/svelte/icons/decimals-arrow-right";
 import Link from "@lucide/svelte/icons/link";
 import Plus from "@lucide/svelte/icons/plus";
 import TriangleAlert from "@lucide/svelte/icons/triangle-alert";
-import HslSliders from "../components/HslSliders.svelte";
+import OkhslSliders from "../components/OkhslSliders.svelte";
 import OklchSliders from "../components/OklchSliders.svelte";
 import RgbSliders from "../components/RgbSliders.svelte";
 import Slider from "../components/Slider.svelte";
@@ -19,12 +19,12 @@ let hasError = $state(false);
 
 let inputVal = $derived.by(() => {
   switch (color.mode) {
+    case "okhsl":
+      return color.okhsl;
     case "oklch":
       return color.display;
     case "rgb":
       return color.rgb;
-    case "hsl":
-      return color.hsl;
   }
 });
 
@@ -51,8 +51,6 @@ const handleInput = (e: Event) => {
     toast.show("Invalid color format");
   }
 };
-
-const hslValues = $derived(color.hslComp);
 </script>
 
 <section
@@ -65,10 +63,7 @@ const hslValues = $derived(color.hslComp);
   style:--picker-l={color.l}
   style:--picker-c={color.c}
   style:--picker-h={color.h}
-  style:--picker-max-c={0.33}
-  style:--picker-hsl-h={hslValues.h}
-  style:--picker-hsl-s={`${hslValues.s}%`}
-  style:--picker-hsl-l={`${hslValues.l}%`}
+  style:--picker-max-c={color.chromaMax}
 >
   <!-- Top Row: Input and Mode Switch -->
   <div
@@ -180,10 +175,10 @@ const hslValues = $derived(color.hslComp);
               bg-(--ui-bg) p-1
             "
     >
-      {#each ["oklch", "rgb", "hsl"] as m (m)}
+      {#each ["okhsl", "oklch", "rgb"] as m (m)}
         <button
           type="button"
-          onclick={() => (color.mode = m as "oklch" | "rgb" | "hsl")}
+          onclick={() => (color.mode = m as "okhsl" | "oklch" | "rgb")}
           class="
                       rounded-sm px-4 py-2 text-xs font-black uppercase
                       transition duration-200
@@ -205,12 +200,12 @@ const hslValues = $derived(color.hslComp);
   >
     <!-- Sliders -->
     <div class="space-y-6">
-      {#if color.mode === "oklch"}
+      {#if color.mode === "okhsl"}
+        <OkhslSliders />
+      {:else if color.mode === "oklch"}
         <OklchSliders />
       {:else if color.mode === "rgb"}
         <RgbSliders />
-      {:else if color.mode === "hsl"}
-        <HslSliders />
       {/if}
 
       <Slider

@@ -4,6 +4,9 @@ import { colordx, inGamutSrgb } from "@colordx/core";
 const RANDOM_HUE_MAX = 360;
 const RANDOM_LIGHTNESS = 0.45;
 const RANDOM_CHROMA = 0.08;
+const CHROMA_SEARCH_UPPER_BOUND = 0.5;
+const CHROMA_SEARCH_ITERATIONS = 18;
+const MIN_CHROMA_MAX = 0.001;
 
 function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
@@ -12,10 +15,24 @@ function getDisplayColor(color: Colordx): Colordx {
   return color.clampSrgb();
 }
 
+function getMaxSrgbChroma(l: number, h: number): number {
+  let low = 0;
+  let high = CHROMA_SEARCH_UPPER_BOUND;
+  for (let i = 0; i < CHROMA_SEARCH_ITERATIONS; i++) {
+    const mid = (low + high) / 2;
+    if (inGamutSrgb({ l, c: mid, h })) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+  return low;
+}
+
 export class ColorStore {
   #current = $state<Colordx>(ColorStore.#getRandomColor());
   #lastMeaningfulHue = 0;
-  mode = $state<"oklch" | "rgb" | "hsl">("oklch");
+  mode = $state<"okhsl" | "oklch" | "rgb">("okhsl");
   #precisionMode: () => "precise" | "practical";
 
   constructor(precisionGetter: () => "precise" | "practical" = () => "practical") {
@@ -92,6 +109,18 @@ export class ColorStore {
     return this.#isOutOfGamut;
   }
 
+  #maxChroma = $derived.by(() => getMaxSrgbChroma(this.l, this.h));
+
+  get maxChroma() {
+    return this.#maxChroma;
+  }
+
+  #chromaMax = $derived.by(() => Math.max(this.#maxChroma, this.c, MIN_CHROMA_MAX));
+
+  get chromaMax() {
+    return this.#chromaMax;
+  }
+
   #displayColor = $derived.by(() => getDisplayColor(this.#current));
 
   get rgbComp() {
@@ -114,31 +143,20 @@ export class ColorStore {
     this.#setCurrent(colordx({ r, g, b, alpha: this.alpha }));
   }
 
-  setHslValues(h: number, s: number, l: number) {
+  setOkhslValues(h: number, s: number, l: number) {
     this.#setCurrent(
       colordx({
         h: Math.min(h, 359.999),
         s: Math.max(0, Math.min(s, 100)),
         l: Math.max(0, Math.min(l, 100)),
         alpha: this.alpha,
+        colorSpace: "okhsl",
       }),
     );
   }
 
-  get hslComp() {
-    return this.#displayColor.toHsl();
-  }
-
-  setHsl(channel: "h" | "s" | "l", value: number) {
-    const hsl = this.#current.toHsl();
-    const newH = channel === "h" ? Math.min(value, 359.999) : hsl.h;
-    const newS = channel === "s" ? Math.max(0, Math.min(value, 100)) : hsl.s;
-    const newL = channel === "l" ? Math.max(0, Math.min(value, 100)) : hsl.l;
-    this.#setCurrent(colordx({ h: newH, s: newS, l: newL, alpha: this.alpha }));
-  }
-
-  get hslValues() {
-    return this.#current.toHsl();
+  get okhslComp() {
+    return this.#displayColor.toOkhsl();
   }
 
   formatColor(css: string): string {
@@ -157,8 +175,8 @@ export class ColorStore {
 
     if (this.mode === "rgb") {
       return parsed.toRgbString();
-    } else if (this.mode === "hsl") {
-      return parsed.toHslString(precision);
+    } else if (this.mode === "okhsl") {
+      return parsed.toOkhslString(precision);
     } else {
       return parsed.toOklchString(precision);
     }

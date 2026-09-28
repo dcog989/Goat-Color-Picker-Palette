@@ -336,42 +336,6 @@ select {
   );
 }
 
-.gradient-hsl-h {
-  background: linear-gradient(
-    to right,
-    hsl(0 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(30 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(60 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(90 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(120 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(150 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(180 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(210 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(240 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(270 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(300 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(330 var(--picker-hsl-s) var(--picker-hsl-l)),
-    hsl(360 var(--picker-hsl-s) var(--picker-hsl-l))
-  );
-}
-
-.gradient-hsl-s {
-  background: linear-gradient(
-    to right,
-    hsl(var(--picker-hsl-h) 0% var(--picker-hsl-l)),
-    hsl(var(--picker-hsl-h) 100% var(--picker-hsl-l))
-  );
-}
-
-.gradient-hsl-l {
-  background: linear-gradient(
-    to right,
-    hsl(var(--picker-hsl-h) var(--picker-hsl-s) 0%),
-    hsl(var(--picker-hsl-h) var(--picker-hsl-s) 50%),
-    hsl(var(--picker-hsl-h) var(--picker-hsl-s) 100%)
-  );
-}
-
 @media (min-width: 1920px) {
   .main-grid {
     grid-template-columns: 1fr 500px 500px;

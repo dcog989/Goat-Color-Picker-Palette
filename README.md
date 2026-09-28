@@ -8,7 +8,7 @@ If you find a better color picker, let us know.
 
 ## Features
 
-- **OKLCH First:** Design with perceptual uniformity using the latest color space.
+- **Perceptual Pickers:** Author in OKHSL (default, gamut-aware) or OKLCH (wide gamut), with an RGB fallback.
 - **Palette Engine:** Generate harmonies (split-complementary, triadic) and variable scales.
 - **Image Analysis:** Extract dominant and vibrant palettes using local K-Means clustering.
 - **Accessibility:** Real-time APCA (Lc) and WCAG 2.1 contrast checking.

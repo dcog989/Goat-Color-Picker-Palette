@@ -134,8 +134,8 @@ const handleKeyboard = (e: KeyboardEvent) => {
 
 const infoContent = {
   oklch: {
-    title: "Why OKLCH?",
-    content: `<div class="space-y-4"><p>OKLCH is a modern color space designed for how humans actually perceive color. Unlike HSL or RGB, where changing Hue might drastically change the perceived lightness (blue looks darker than yellow at the same 'lightness' value), OKLCH is <strong>perceptually uniform</strong>.</p><ul class="list-disc pl-5 space-y-2"><li><strong>Predictable Lightness:</strong> 50% lightness means the same visual brightness for every hue.</li><li><strong>Wide Gamut:</strong> It supports P3 and Rec.2020 colors that sRGB/Hex cannot display.</li><li><strong>Better Gradients:</strong> Interpolating colors in OKLCH produces smooth, natural transitions without 'gray dead zones'.</li></ul></div>`,
+    title: "Why Okhsl + Oklch?",
+    content: `<div class="space-y-4"><p>Most pickers use HSL, which is easy to understand but not how eyes work: at the same "lightness", yellow looks far brighter than blue. This app is built on two modern spaces that match human perception.</p><ul class="list-disc pl-5 space-y-2"><li><strong>OKHSL (default):</strong> feels just like HSL — hue, saturation, lightness — but every step matches what you actually see. Saturation always stops at the edge of what your screen can display, so the sliders never wander into unusable color.</li><li><strong>OKLCH:</strong> the same perceptual system using raw <strong>chroma</strong> instead of saturation. It gives precise control and can describe vivid colors beyond sRGB/Hex, such as P3.</li><li><strong>Predictable lightness:</strong> 50% means the same visual brightness for every hue, so palettes and gradients stay even with no muddy midpoints.</li></ul></div>`,
   },
   analysis: {
     title: "Image Analysis",
@@ -229,7 +229,7 @@ const showInfo = (key: keyof typeof infoContent) => {
                   hover:underline
                 "
       >
-        Why OKLCH?
+        Why Okhsl + Oklch?
       </button>
       <span
         class="
