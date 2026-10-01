@@ -1,14 +1,12 @@
 # Goat Color Picker Palette
 
-A color picker with palette, image analyser, and export format options. Utilises various color formats for input or output.
-
-If you find a better color picker, let us know.
+A color picker with palette, image analyser, and export format options. Provides various color formats for input or output.
 
 ![Goat Color Picker Palette](/assets/screen-1.png)
 
 ## Features
 
-- **Perceptual Pickers:** Author in OKHSL (default, gamut-aware) or OKLCH (wide gamut), with an RGB fallback.
+- **Perceptual Pickers:** Author in Okhsl (default, gamut-aware) or Oklch (wide gamut), with an RGB fallback.
 - **Palette Engine:** Generate harmonies (split-complementary, triadic) and variable scales.
 - **Image Analysis:** Extract dominant and vibrant palettes using local K-Means clustering.
 - **Accessibility:** Real-time APCA (Lc) and WCAG 2.1 contrast checking.
