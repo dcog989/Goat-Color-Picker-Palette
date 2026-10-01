@@ -96,7 +96,7 @@ const { color, engine, theme } = getApp();
       aria-label="Toggle Theme"
       title="Toggle Light/Dark Mode"
     >
-      {#if theme.current === 'dark'}
+      {#if theme.current === "dark"}
         <Moon class="size-5 sm:size-6" />
       {:else}
         <Sun class="size-5 sm:size-6" />

@@ -292,16 +292,16 @@ const handleInput = (e: Event) => {
   <!-- Output Formats -->
   <div class="flex flex-wrap gap-2 border-t border-(--ui-border) pt-4">
     {#each [
-   { label: "HEX", value: color.hexa },
-   { label: "HSL", value: color.hsl },
-   { label: "HWB", value: color.hwb },
-   { label: "RGB", value: color.rgb },
-   { label: "Oklch", value: color.display },
-   { label: "Okhsl", value: color.okhsl },
-   { label: "CIELAB", value: color.lab },
-   { label: "Oklab", value: color.oklab },
-   { label: "CMYK", value: color.cmyk },
- ] as format (format.label)}
+      { label: "HEX", value: color.hexa },
+      { label: "HSL", value: color.hsl },
+      { label: "HWB", value: color.hwb },
+      { label: "RGB", value: color.rgb },
+      { label: "Oklch", value: color.display },
+      { label: "Okhsl", value: color.okhsl },
+      { label: "CIELAB", value: color.lab },
+      { label: "Oklab", value: color.oklab },
+      { label: "CMYK", value: color.cmyk },
+    ] as format (format.label)}
       <button
         type="button"
         onclick={(e) => app.copy(format.value, e)}

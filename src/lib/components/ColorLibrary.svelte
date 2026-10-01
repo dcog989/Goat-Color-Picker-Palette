@@ -238,9 +238,7 @@ $effect(() => {
                                           group-hover:scale-110
                                         "
                     style:--item-bg={color.hex}
-                    title={colorStore.formatColor(
-                                            color.hex,
-                                        )}
+                    title={colorStore.formatColor(color.hex)}
                   ></div>
                   <div class="min-w-0 flex-1">
                     <div

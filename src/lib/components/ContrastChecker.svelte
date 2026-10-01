@@ -98,8 +98,8 @@ const getApcaRating = (score: number) => {
                   relative flex flex-col items-center gap-1 rounded-lg px-2 py-3
                   transition-all
                   {mode === m
-  ? "bg-(--ui-card) text-(--ui-text) shadow-sm"
-  : `
+          ? "bg-(--ui-card) text-(--ui-text) shadow-sm"
+          : `
                       opacity-70
                       hover:bg-black/5 hover:opacity-100
                       dark:hover:bg-white/5
@@ -149,7 +149,9 @@ const getApcaRating = (score: number) => {
                       py-2 pr-4 pl-9 font-mono text-sm uppercase transition-all
                       outline-none
                       focus:ring-2 focus:ring-(--current-color)
-                      {customColorError ? "border-red-500 focus:border-red-500 focus:ring-red-500/50" : "border-(--ui-border)"}
+                      {customColorError
+            ? "border-red-500 focus:border-red-500 focus:ring-red-500/50"
+            : "border-(--ui-border)"}
                     "
         >
         <div

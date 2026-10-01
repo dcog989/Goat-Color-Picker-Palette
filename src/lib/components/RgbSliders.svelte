@@ -24,7 +24,7 @@ const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, loca
   min={0}
   max={255}
   step={1}
-  {...getGradient('r', color.rgbComp)}
+  {...getGradient("r", color.rgbComp)}
   oninput={updateRgbFromLocal}
 />
 <Slider
@@ -34,7 +34,7 @@ const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, loca
   min={0}
   max={255}
   step={1}
-  {...getGradient('g', color.rgbComp)}
+  {...getGradient("g", color.rgbComp)}
   oninput={updateRgbFromLocal}
 />
 <Slider
@@ -44,6 +44,6 @@ const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, loca
   min={0}
   max={255}
   step={1}
-  {...getGradient('b', color.rgbComp)}
+  {...getGradient("b", color.rgbComp)}
   oninput={updateRgbFromLocal}
 />

@@ -94,7 +94,7 @@ const removeRow = () => {
             class="
                           rounded-md p-1.5 text-(--ui-text-muted)
                           transition-all hover:bg-(--current-color) hover:text-white
-                          {engine.genSteps <= 4 ? 'pointer-events-none opacity-55' : ''}
+                          {engine.genSteps <= 4 ? "pointer-events-none opacity-55" : ""}
                         "
             title="Remove Row"
             aria-label="Decrease steps"

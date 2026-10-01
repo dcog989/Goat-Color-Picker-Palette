@@ -94,7 +94,7 @@ onDestroy(() => {
         <input
           type="file"
           id="img-upload"
-          accept={IMAGE_ANALYSIS.ALLOWED_TYPES.join(',')}
+          accept={IMAGE_ANALYSIS.ALLOWED_TYPES.join(",")}
           class="hidden"
           onchange={handleInput}
         >
@@ -107,9 +107,7 @@ onDestroy(() => {
                     "
           class:border-brand={isDragging}
           class:border-(--ui-border)={!isDragging}
-          style:background-color={isDragging
-                        ? 'color-mix(in oklch, var(--current-color) 10%, transparent)'
-                        : undefined}
+          style:background-color={isDragging ? "color-mix(in oklch, var(--current-color) 10%, transparent)" : undefined}
           ondragover={onDragOver}
           ondragleave={onDragLeave}
           ondrop={onDrop}
@@ -121,9 +119,7 @@ onDestroy(() => {
                           uppercase
                         "
           >
-            {imageAnalyzer.isProcessing
-                            ? 'Processing...'
-                            : 'Drop Image or Click to Upload'}
+            {imageAnalyzer.isProcessing ? "Processing..." : "Drop Image or Click to Upload"}
           </span>
           <span class="pointer-events-none mt-2 text-xs opacity-40">JPEG, PNG, WEBP, AVIF, GIF, BMP, SVG</span>
         </label>
@@ -195,11 +191,11 @@ onDestroy(() => {
                                   border px-4 py-3 text-left text-xs font-bold
                                   uppercase transition-all
                                   {imageAnalyzer.sortMode === option.value
-                                    ? `
+                  ? `
                                       text-on-current border-transparent
                                       bg-(--current-color) shadow-md
                                     `
-                                    : `
+                  : `
                                       border-(--ui-border) bg-(--ui-card)
                                       hover:border-(--current-color)
                                     `}"

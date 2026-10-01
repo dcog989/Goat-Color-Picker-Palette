@@ -12,17 +12,17 @@ const isCursor = $derived(toast.active?.x !== undefined && toast.active?.y !== u
   <div
     class="
           pointer-events-none fixed z-100
-          {isCursor ? '' : 'bottom-8 left-1/2 -translate-x-1/2'}"
+          {isCursor ? "" : "bottom-8 left-1/2 -translate-x-1/2"}"
     style:top={isCursor ? `${toast.active.y}px` : undefined}
     style:left={isCursor ? `${toast.active.x}px` : undefined}
-    style:transform={isCursor ? 'translate(-50%, -100%) translateY(-12px)' : undefined}
+    style:transform={isCursor ? "translate(-50%, -100%) translateY(-12px)" : undefined}
   >
     <div
       transition:fly={{
-                y: isCursor ? 0 : 16,
-                duration: 200,
-                opacity: 0,
-            }}
+        y: isCursor ? 0 : 16,
+        duration: 200,
+        opacity: 0,
+      }}
       class="
               rounded-lg border border-(--ui-border) bg-(--ui-card) p-4 text-xs
               font-bold tracking-wider text-(--ui-text) uppercase shadow-xl"

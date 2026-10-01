@@ -95,7 +95,7 @@ $effect(() => {
 <div bind:this={container} class="w-full overflow-hidden flex" class:justify-center={!overflow}>
   <div bind:this={content} class="inline-flex whitespace-nowrap {gapSize}">
     {#each letters as letter, i}
-      {#if letter === ' '}
+      {#if letter === " "}
         <div
           class="
                       w-3 transition-all duration-1000

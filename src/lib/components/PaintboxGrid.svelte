@@ -42,9 +42,9 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
       <button
         type="button"
         onclick={(e) => {
-                    e.stopPropagation();
-                    paintbox.remove(item.id);
-                }}
+          e.stopPropagation();
+          paintbox.remove(item.id);
+        }}
         class="
                   absolute -top-2 -right-2 z-10 flex size-6 items-center
                   justify-center rounded-full bg-black/50 text-sm font-bold
@@ -64,11 +64,11 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
       class="
               relative aspect-square
               {i >= mobileEmptyLimit
-                ? `
+        ? `
                   hidden
                   md:block
                 `
-                : `block`}"
+        : `block`}"
     >
       <div
         class="

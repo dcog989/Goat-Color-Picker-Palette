@@ -80,9 +80,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
                       transition duration-200
                       will-change-transform hover:bg-red-500
                       hover:text-white
-                      {paintbox.items.length > 0
-                        ? 'opacity-100'
-                        : `pointer-events-none opacity-35`}"
+                      {paintbox.items.length > 0 ? "opacity-100" : `pointer-events-none opacity-35`}"
           title="Clear Paintbox"
         >
           <CircleX class="size-4" />
@@ -106,7 +104,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
     <div class="grid grid-cols-4 gap-3">
       <button
         type="button"
-        onclick={() => exportVisual(app, 'png')}
+        onclick={() => exportVisual(app, "png")}
         class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
@@ -120,7 +118,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
       </button>
       <button
         type="button"
-        onclick={() => exportVisual(app, 'svg')}
+        onclick={() => exportVisual(app, "svg")}
         class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)
@@ -135,15 +133,15 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
       <button
         type="button"
         onclick={async () => {
-                    const btn = document.activeElement as HTMLButtonElement;
-                    const originalText = btn?.textContent ?? 'PDF';
-                    if (btn) btn.textContent = '...';
-                    try {
-                        await exportVisual(app, 'pdf');
-                    } finally {
-                        if (btn) btn.textContent = originalText;
-                    }
-                }}
+          const btn = document.activeElement as HTMLButtonElement;
+          const originalText = btn?.textContent ?? "PDF";
+          if (btn) btn.textContent = "...";
+          try {
+            await exportVisual(app, "pdf");
+          } finally {
+            if (btn) btn.textContent = originalText;
+          }
+        }}
         class="
                   hover:text-on-current
                   cursor-pointer rounded-2xl border border-(--ui-border)

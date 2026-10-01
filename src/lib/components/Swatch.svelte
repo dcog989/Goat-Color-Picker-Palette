@@ -70,10 +70,10 @@ const getActionClass = () => {
     >
       <button
         onclick={(e) => {
-  e.stopPropagation();
-  paintbox.add(swatchColor);
-  toast.showAt("Added", e);
-}}
+          e.stopPropagation();
+          paintbox.add(swatchColor);
+          toast.showAt("Added", e);
+        }}
         class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm
                   transition-transform duration-200
@@ -87,9 +87,9 @@ const getActionClass = () => {
       </button>
       <button
         onclick={(e) => {
-  e.stopPropagation();
-  copy(e);
-}}
+          e.stopPropagation();
+          copy(e);
+        }}
         class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm
                   transition-transform duration-200
