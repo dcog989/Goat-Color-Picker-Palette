@@ -1,4 +1,4 @@
-// Design Tokens and Constants for Goat Color
+// Design Tokens and Constants for Color Picker Palette
 
 // Image Analysis Constants
 export const IMAGE_ANALYSIS = {

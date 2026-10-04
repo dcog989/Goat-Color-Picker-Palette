@@ -1,8 +1,8 @@
-# Goat Color Picker Palette
+# Color Picker Palette
 
 A color picker with palette, image analyser, contrast checker, and export format options. Pick colors using Okhsl (default, gamut-aware), or Oklch (wide gamut), or RGB. Copy or export to a wide range of formats.
 
-![Goat Color Picker Palette](/assets/screen-1.webp)
+![Color Picker Palette](/assets/screen-1.webp)
 
 ## Features
 

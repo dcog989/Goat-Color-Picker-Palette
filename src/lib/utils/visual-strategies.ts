@@ -67,7 +67,7 @@ class PngExportStrategy implements VisualExportStrategy {
       ctx.fillStyle = "#ffffff";
       ctx.font = "bold 28px system-ui, -apple-system, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("GOAT COLOR PALETTE", EXPORT.PNG_WIDTH / 2, EXPORT.PNG_HEIGHT - titleHeight / 2 + 10);
+      ctx.fillText("COLOR PALETTE", EXPORT.PNG_WIDTH / 2, EXPORT.PNG_HEIGHT - titleHeight / 2 + 10);
       ctx.textAlign = "left";
     }
 
@@ -132,7 +132,7 @@ ${colorText}`;
 <svg width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" viewBox="0 0 ${EXPORT.SVG_SIZE} ${EXPORT.SVG_SIZE}" xmlns="http://www.w3.org/2000/svg">
 ${swatches}
   <rect x="0" y="${titleY}" width="${EXPORT.SVG_SIZE}" height="50" fill="rgba(0, 0, 0, 0.8)" />
-  <text x="${EXPORT.SVG_SIZE / 2}" y="${titleY + 32}" font-family="sans-serif" font-weight="bold" font-size="18" fill="#ffffff" text-anchor="middle">GOAT COLOR PALETTE</text>
+  <text x="${EXPORT.SVG_SIZE / 2}" y="${titleY + 32}" font-family="sans-serif" font-weight="bold" font-size="18" fill="#ffffff" text-anchor="middle">COLOR PALETTE</text>
 </svg>`;
     }
 
@@ -156,7 +156,7 @@ class PdfExportStrategy implements VisualExportStrategy {
 
     doc.setFontSize(24);
     doc.setFont("helvetica", "bold");
-    doc.text("GOAT COLOR PALETTE", margin, 30);
+    doc.text("COLOR PALETTE", margin, 30);
 
     const cols = 4;
     const gap = 5;

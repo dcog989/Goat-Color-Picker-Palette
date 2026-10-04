@@ -2,7 +2,7 @@
 
 ## Project Specifics
 
-- Name: goatcolor
+- Name: color-picker-palette
 - Description: Color picker, palette generator, image extraction, contrast checker SPA
 - Tech: Svelte 5 (Runes API), Vite, TypeScript 6 (strict), Tailwind CSS v4, colordx, Biome, Vitest
   - TypeScript pinned at `6.0.3` via overrides — `svelte-check` peer deps don't allow TS 7 yet
@@ -43,7 +43,7 @@
 
 ### File System Access
 
-- Root: `/home/bubba/Projects/Goat-Color-Picker-Palette/`
+- Root: `/home/bubba/Projects/Color-Picker-Palette/`
 - Allowed: All subdirectories except disallowed
 - Read-Only: `.env*`, `.git/`
 - Disallowed: `.assets/`, `.context/`, `.docs/`, `.git/`, `.repomix/`, `.repomixignore`, `node_modules/`, `dist/`, `build/`, `.svelte-kit/`, `bun.lock`, `repomix.*.json`

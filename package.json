@@ -1,5 +1,5 @@
 {
-  "name": "goatcolor",
+  "name": "color-picker-palette",
   "description": "The only color picker palette generator you need.",
   "version": "3.6.1",
   "private": true,
@@ -8,7 +8,7 @@
     "build": "vite build",
     "changelog": "cog changelog",
     "check": "bun run lint && bun run typecheck",
-    "clean": "rm -rf dist node_modules .vitest",
+    "clean": "rm -rf bun.lock dist node_modules .vitest",
     "dev": "vite",
     "fix": "biome check --write src/",
     "format": "biome format --write src/",

@@ -35,7 +35,7 @@ app.init();
 // URL hash color sync — load color from hash, mirror current color to hash.
 // sessionStorage persists across reloads (same tab) but not new tabs, so an
 // F5 refresh gets a fresh random color while opening a shared link still loads it.
-const URL_COLOR_KEY = "goatcolor:url-color";
+const URL_COLOR_KEY = "color-picker-palette:url-color";
 
 const applyHashColor = () => {
   const stored = sessionStorage.getItem(URL_COLOR_KEY);
@@ -272,7 +272,7 @@ const showInfo = (key: keyof typeof infoContent) => {
                 "
         >|</span
       >
-      <a href="https://github.com/dcog989/Goat-Color-Picker-Palette">Github</a>
+      <a href="https://github.com/dcog989/Color-Picker-Palette">Github</a>
       <span
         class="
                   hidden opacity-30

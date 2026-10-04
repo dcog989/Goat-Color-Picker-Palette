@@ -28,7 +28,7 @@ export function generateColorName(index: number, source: ColorSource): string {
 
 export function generateFilename(root: RootStore, extension: string): string {
   const safeName = root.engine.closestName.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
-  return `GoatColor-${safeName}.${extension}`;
+  return `Color-Picker-Palette-${safeName}.${extension}`;
 }
 
 export function downloadFile(content: string | Blob, filename: string, mimeType?: string): void {
