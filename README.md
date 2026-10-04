@@ -1,8 +1,8 @@
 # Goat Color Picker Palette
 
-A color picker with palette, image analyser, and export format options. Provides various color formats for input or output.
+A color picker with palette, image analyser, contrast checker, and export format options. Pick colors using Okhsl (default, gamut-aware), or Oklch (wide gamut), or RGB. Copy or export to a wide range of formats.
 
-![Goat Color Picker Palette](/assets/screen-1.png)
+![Goat Color Picker Palette](/assets/screen-1.webp)
 
 ## Features
 
@@ -21,7 +21,7 @@ A color picker with palette, image analyser, and export format options. Provides
 - **Build:** Vite
 - **Color:** colordx
 - **Lint/Format:** Biome 2
-- **Test:** Vitest 4
+- **Test:** Vitest 5
 
 ## Development
 
@@ -36,3 +36,7 @@ A color picker with palette, image analyser, and export format options. Provides
 | `bun run fix` | Biome auto-fix |
 | `bun run format` | Biome format |
 | `bun run test` | Run tests |
+
+## License
+
+[MIT License](LICENSE).
