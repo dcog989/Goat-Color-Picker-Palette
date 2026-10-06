@@ -5,16 +5,16 @@ const { color, paintbox } = getApp();
 
 const desktopCols = 5;
 const mobileCols = 4;
-const minRows = 2;
+const minRows = 1;
 
 const items = $derived(paintbox.items);
 const itemCount = $derived(items.length);
 
-// Calculate total slots needed to fill the desktop grid (min 2 rows)
+// Calculate total slots needed to fill the desktop grid (min 1 row)
 const totalSlots = $derived(Math.max(desktopCols * minRows, itemCount));
 const emptySlotsCount = $derived(totalSlots - itemCount);
 
-// Calculate how many empty slots are needed for mobile (min 2 rows)
+// Calculate how many empty slots are needed for mobile (min 1 row)
 const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - itemCount);
 </script>
 
