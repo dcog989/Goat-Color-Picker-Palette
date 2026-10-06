@@ -8,7 +8,7 @@
     "build": "vite build",
     "changelog": "cog changelog",
     "check": "biome check src/ && bun run typecheck && bun run test && bun run build",
-    "clean": "rm -rf bun.lock dist node_modules .vitest",
+    "clean": "rm -rf bun.lock coverage dist node_modules .vitest",
     "dev": "vite",
     "fix": "biome check --write src/",
     "postinstall": "lefthook install",
