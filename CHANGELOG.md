@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.7.0 - 2026-10-06
+
+#### Features
+
+- (0348569) add DTCG design-tokens and GIMP GPL import/export - dcog989
+
+#### Bug Fixes
+
+- (306d01d) show a single row by default instead of two - dcog989
+
+#### Refactoring
+
+- (9ebb4da) rebrand to 'color-picker-palette' - dcog989
+- - -
+
 ## v3.6.1 - 2026-10-04
 - - -
 
