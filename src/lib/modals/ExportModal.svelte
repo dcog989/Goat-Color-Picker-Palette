@@ -1,7 +1,7 @@
 <script lang="ts">
 import { getApp } from "../context";
 import type { ExportFormat } from "../utils/formatters";
-import { exportCode, strategies } from "../utils/strategies";
+import { exportCode, exportCodeFile, strategies } from "../utils/strategies";
 
 interface Props {
   onClose: () => void;
@@ -15,7 +15,9 @@ let exportFormat = $state<ExportFormat>("oklch");
 
 const exports = $derived.by(() =>
   Object.entries(strategies).map(([key, strategy]) => ({
+    key,
     name: strategy.name,
+    extension: strategy.extension,
     content: exportCode(app, key, exportFormat),
   })),
 );
@@ -123,6 +125,21 @@ const exports = $derived.by(() =>
                 </span>
               </span>
             </button>
+            {#if exportItem.extension}
+              <button
+                type="button"
+                onclick={() => exportCodeFile(app, exportItem.key, exportFormat)}
+                class="
+                                shrink-0 cursor-pointer rounded-md border
+                                border-(--ui-border) px-3 py-1 text-xs font-bold
+                                uppercase transition-all duration-200
+                                hover:border-(--current-color)
+                                hover:bg-(--current-color) hover:text-on-current
+                              "
+              >
+                Download
+              </button>
+            {/if}
           </div>
           <pre
             class="

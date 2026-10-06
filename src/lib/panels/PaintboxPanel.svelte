@@ -1,8 +1,10 @@
 <script lang="ts">
 import CircleX from "@lucide/svelte/icons/circle-x";
 import PaintboxGrid from "../components/PaintboxGrid.svelte";
+import { PALETTE_FILE } from "../constants";
 import { getApp } from "../context";
 import type { PaintboxSortMode } from "../stores/paintbox.svelte";
+import { parsePaletteFile } from "../utils/import-strategies";
 import { exportVisual } from "../utils/strategies";
 
 interface Props {
@@ -12,7 +14,29 @@ interface Props {
 let { onExport }: Props = $props();
 
 const app = getApp();
-const { paintbox } = app;
+const { paintbox, toast } = app;
+
+const actionButtonClass =
+  "hover:text-on-current cursor-pointer rounded-2xl border border-(--ui-border) bg-(--ui-bg) px-6 py-4 text-xs font-black uppercase shadow-sm transition duration-200 will-change-transform hover:scale-105 hover:bg-(--current-color)";
+
+let fileInput = $state<HTMLInputElement | null>(null);
+
+const handleImport = async (e: Event) => {
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (!file) return;
+
+  try {
+    const colors = parsePaletteFile(file.name, await file.text());
+    colors.forEach((css) => {
+      paintbox.add(css);
+    });
+    toast.show(`Imported ${colors.length} color${colors.length === 1 ? "" : "s"}`);
+  } catch (err) {
+    toast.show(err instanceof Error ? err.message : "Failed to import palette");
+  }
+};
 
 const sortOptions: { label: string; value: PaintboxSortMode }[] = [
   { label: "New First", value: "newest" },
@@ -102,34 +126,8 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
       Export
     </h3>
     <div class="grid grid-cols-4 gap-3">
-      <button
-        type="button"
-        onclick={() => exportVisual(app, "png")}
-        class="
-                  hover:text-on-current
-                  cursor-pointer rounded-2xl border border-(--ui-border)
-                  bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
-                  transition duration-200
-                  will-change-transform hover:scale-105
-                  hover:bg-(--current-color)
-                "
-      >
-        PNG
-      </button>
-      <button
-        type="button"
-        onclick={() => exportVisual(app, "svg")}
-        class="
-                  hover:text-on-current
-                  cursor-pointer rounded-2xl border border-(--ui-border)
-                  bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
-                  transition duration-200
-                  will-change-transform hover:scale-105
-                  hover:bg-(--current-color)
-                "
-      >
-        SVG
-      </button>
+      <button type="button" onclick={() => exportVisual(app, "png")} class={actionButtonClass}>PNG</button>
+      <button type="button" onclick={() => exportVisual(app, "svg")} class={actionButtonClass}>SVG</button>
       <button
         type="button"
         onclick={async () => {
@@ -142,31 +140,25 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
             if (btn) btn.textContent = originalText;
           }
         }}
-        class="
-                  hover:text-on-current
-                  cursor-pointer rounded-2xl border border-(--ui-border)
-                  bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
-                  transition duration-200
-                  will-change-transform hover:scale-105
-                  hover:bg-(--current-color)
-                "
+        class={actionButtonClass}
       >
         PDF
       </button>
-      <button
-        type="button"
-        onclick={onExport}
-        class="
-                  hover:text-on-current
-                  cursor-pointer rounded-2xl border border-(--ui-border)
-                  bg-(--ui-bg) p-4 text-xs font-black uppercase shadow-sm
-                  transition duration-200
-                  will-change-transform hover:scale-105
-                  hover:bg-(--current-color)
-                "
-      >
-        Code
-      </button>
+      <button type="button" onclick={onExport} class={actionButtonClass}>Code</button>
     </div>
+  </div>
+
+  <!-- Import Options -->
+  <div class="mt-4 space-y-3">
+    <h3
+      class="
+              text-xs font-black tracking-widest text-(--ui-text-muted)
+              uppercase
+            "
+    >
+      Import
+    </h3>
+    <input bind:this={fileInput} type="file" accept={PALETTE_FILE.ACCEPT} class="hidden" onchange={handleImport}>
+    <button type="button" onclick={() => fileInput?.click()} class={actionButtonClass}>DTCG JSON / GIMP GPL</button>
   </div>
 </section>

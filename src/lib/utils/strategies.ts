@@ -42,6 +42,8 @@ export function downloadFile(content: string | Blob, filename: string, mimeType?
 
 interface ExportStrategy {
   name: string;
+  extension?: string;
+  mimeType?: string;
   format(source: ColorSource, exportFormat: ExportFormat): string;
 }
 
@@ -116,18 +118,95 @@ class ScssExportStrategy implements ExportStrategy {
   }
 }
 
-export const strategies: Record<string, ExportStrategy> = {
+interface DtcgColorValue {
+  colorSpace: "srgb" | "hsl" | "oklch";
+  components: number[];
+  hex: string;
+  alpha?: number;
+}
+
+const round = (value: number, decimals: number): number => Number(value.toFixed(decimals));
+
+const toDtcgValue = (css: string, exportFormat: ExportFormat): DtcgColorValue => {
+  const parsed = safeColor(css);
+  if (!parsed) return { colorSpace: "srgb", components: [0, 0, 0], hex: "#000000" };
+
+  const alpha = round(parsed.alpha(), 3);
+  const hex = parsed.toHex().slice(0, 7);
+
+  if (exportFormat === "hsl") {
+    const { h, s, l } = parsed.toHsl();
+    return { colorSpace: "hsl", components: [round(h, 2), round(s, 2), round(l, 2)], hex, alpha };
+  }
+  if (exportFormat === "oklch") {
+    const { l, c, h } = parsed.toOklch();
+    return { colorSpace: "oklch", components: [round(l, 4), round(c, 4), round(h, 2)], hex, alpha };
+  }
+  const { r, g, b } = parsed.toRgb();
+  return {
+    colorSpace: "srgb",
+    components: [round(r / 255, 4), round(g / 255, 4), round(b / 255, 4)],
+    hex,
+    alpha,
+  };
+};
+
+class DtcgExportStrategy implements ExportStrategy {
+  name = "DTCG Design Tokens";
+  extension = "json";
+  mimeType = "application/json";
+  format(source: ColorSource, exportFormat: ExportFormat): string {
+    const color: Record<string, { $type: "color"; $value: DtcgColorValue }> = {};
+    source.colors.forEach((item, i) => {
+      color[generateColorName(i, source)] = { $type: "color", $value: toDtcgValue(item.css, exportFormat) };
+    });
+    return JSON.stringify({ color }, null, 2);
+  }
+}
+
+class GplExportStrategy implements ExportStrategy {
+  name = "GIMP Palette";
+  extension = "gpl";
+  mimeType = "text/plain";
+  format(source: ColorSource): string {
+    const lines = ["GIMP Palette", "Name: Color Picker Palette", "Columns: 0", "#"];
+    source.colors.forEach((item, i) => {
+      const parsed = safeColor(item.css);
+      const { r, g, b } = parsed ? parsed.toRgb() : { r: 0, g: 0, b: 0 };
+      const name = generateColorName(i, source);
+      lines.push(`${String(r).padStart(3, " ")} ${String(g).padStart(3, " ")} ${String(b).padStart(3, " ")}\t${name}`);
+    });
+    return lines.join("\n");
+  }
+}
+
+export type ExportStrategyName = "css" | "tailwind" | "xml" | "json" | "scss" | "dtcg" | "gpl";
+
+export const strategies: Record<ExportStrategyName, ExportStrategy> = {
   css: new CssExportStrategy(),
   tailwind: new TailwindExportStrategy(),
   xml: new AndroidXmlExportStrategy(),
   json: new JsonExportStrategy(),
   scss: new ScssExportStrategy(),
+  dtcg: new DtcgExportStrategy(),
+  gpl: new GplExportStrategy(),
 };
 
 export function exportCode(root: RootStore, strategyName: string, format: ExportFormat = "oklch"): string {
-  const strategy = strategies[strategyName];
+  const strategy = strategies[strategyName as ExportStrategyName];
   if (!strategy) throw new Error(`Unknown export strategy: ${strategyName}`);
   return strategy.format(getColorSource(root), format);
+}
+
+export function exportCodeFile(root: RootStore, strategyName: string, format: ExportFormat = "oklch"): void {
+  const strategy = strategies[strategyName as ExportStrategyName];
+  if (!strategy) throw new Error(`Unknown export strategy: ${strategyName}`);
+  if (!strategy.extension) throw new Error(`Export strategy has no file format: ${strategyName}`);
+  downloadFile(
+    strategy.format(getColorSource(root), format),
+    generateFilename(root, strategy.extension),
+    strategy.mimeType,
+  );
 }
 
 export async function exportVisual(root: RootStore, strategyName: string): Promise<void> {

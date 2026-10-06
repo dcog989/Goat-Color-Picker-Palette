@@ -23,3 +23,9 @@ export const EXPORT = {
   PNG_HEIGHT: 630,
   SVG_SIZE: 400,
 } as const;
+
+// Palette file import/export
+export const PALETTE_FILE = {
+  MAX_SIZE: 5 * 1024 * 1024, // 5MB
+  ACCEPT: ".json,.gpl,application/json,text/plain",
+} as const;
