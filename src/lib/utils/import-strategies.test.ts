@@ -33,6 +33,41 @@ describe("DTCG design tokens import", () => {
 
     expect(importStrategies.dtcg.parse(tokens)).toEqual(["#123456"]);
   });
+
+  it("preserves alpha for css-string tokens", () => {
+    const tokens = JSON.stringify({ color: { x: { $value: "#00ff0080" } } });
+
+    expect(importStrategies.dtcg.parse(tokens)).toEqual(["#00ff0080"]);
+  });
+
+  it("supports every registered color space and normalizes odd components", () => {
+    const tokens = JSON.stringify({
+      color: {
+        linear: { $value: { colorSpace: "srgb-linear", components: [0.5, 0.5, 0.5] } },
+        hwb: { $value: { colorSpace: "hwb", components: [0, 0, 0] } },
+        lab: { $value: { colorSpace: "lab", components: [50, 0, 0] } },
+        lch: { $value: { colorSpace: "lch", components: [50, 0, 0] } },
+        oklab: { $value: { colorSpace: "oklab", components: [0.5, 0, 0] } },
+        p3: { $value: { colorSpace: "display-p3", components: [1, 0, 0] } },
+        a98: { $value: { colorSpace: "a98-rgb", components: [1, 0, 0] } },
+        prophoto: { $value: { colorSpace: "prophoto-rgb", components: [1, 0, 0] } },
+        rec2020: { $value: { colorSpace: "rec2020", components: [1, 0, 0] } },
+        none: { $value: { colorSpace: "oklch", components: ["none", "none", "none"] } },
+        empty: { $value: { colorSpace: "srgb", components: [] } },
+        nonNumeric: { $value: { colorSpace: "srgb", components: [true, null, "x"] } },
+      },
+    });
+
+    expect(importStrategies.dtcg.parse(tokens)).toHaveLength(12);
+  });
+
+  it("falls back to the hex field for unknown color spaces", () => {
+    const tokens = JSON.stringify({
+      color: { x: { $value: { colorSpace: "unknown-space", components: [1, 2, 3], hex: "#123456" } } },
+    });
+
+    expect(importStrategies.dtcg.parse(tokens)).toEqual(["#123456"]);
+  });
 });
 
 describe("GIMP GPL import", () => {
@@ -54,6 +89,8 @@ describe("GIMP GPL import", () => {
     expect(resolveImportStrategy("palette.gpl", "")).toBe(importStrategies.gpl);
     expect(resolveImportStrategy("tokens.json", "{}")).toBe(importStrategies.dtcg);
     expect(resolveImportStrategy("mystery", "GIMP Palette\n255 0 0")).toBe(importStrategies.gpl);
+    expect(resolveImportStrategy("mystery", '{"color":{}}')).toBe(importStrategies.dtcg);
+    expect(resolveImportStrategy("mystery", "just text")).toBeNull();
   });
 });
 
@@ -64,5 +101,9 @@ describe("parsePaletteFile", () => {
 
   it("throws when no colors are found", () => {
     expect(() => parsePaletteFile("empty.json", '{"nested":{"value":1}}')).toThrow(/No colors found/);
+  });
+
+  it("throws when the matched strategy cannot parse the file", () => {
+    expect(() => parsePaletteFile("broken.json", "not valid json")).toThrow(/Could not parse/);
   });
 });
