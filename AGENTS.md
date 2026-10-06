@@ -28,10 +28,8 @@
 | `bun run dev`        | Start dev server |
 | `bun run build`      | Production build |
 | `bun run preview`    | Preview build    |
-| `bun run check`      | Biome lint + Svelte-check + tsc |
-| `bun run lint`       | Biome check only |
-| `bun run fix`        | Biome auto-fix   |
-| `bun run format`     | Biome format     |
+| `bun run check`      | All checks: Biome + typecheck + test + build |
+| `bun run fix`        | All fixes: Biome auto-fix (format/lint/imports) |
 | `bun run test`       | Vitest           |
 
 ### Common Patterns

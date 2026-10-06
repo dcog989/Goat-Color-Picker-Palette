@@ -6,12 +6,9 @@ pre-commit:
       stage_fixed: true
 
 pre-push:
-  parallel: true
   commands:
-    full-check:
+    check:
       run: bun run check
-    tests:
-      run: bun run test
 
 commit-msg:
   commands:

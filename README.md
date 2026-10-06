@@ -31,10 +31,8 @@ A color picker with palette, image analyser, contrast checker, and export format
 | `bun run dev` | Start dev server |
 | `bun run build` | Production build |
 | `bun run preview` | Preview build |
-| `bun run check` | Biome lint + typecheck |
-| `bun run lint` | Biome check only |
-| `bun run fix` | Biome auto-fix |
-| `bun run format` | Biome format |
+| `bun run check` | All checks: Biome + typecheck + test + build |
+| `bun run fix` | All fixes: Biome auto-fix (format/lint/imports) |
 | `bun run test` | Run tests |
 
 ## License
