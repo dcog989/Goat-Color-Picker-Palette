@@ -43,14 +43,14 @@
           }
           // Light mode is default (no class needed)
         }
-      } catch (e) {
+      } catch {
         // localStorage not available - fall back to system preference
         try {
           const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
           if (prefersDark) {
             document.documentElement.classList.add("dark");
           }
-        } catch (e2) {
+        } catch {
           // Ignore - light mode will be default
         }
       }

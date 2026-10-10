@@ -57,7 +57,7 @@ jobs:
         run: bun audit
 
       - name: Check frontend format & lint
-        run: bunx biome check src/
+        run: bunx biome check .
 
       - name: Check frontend types
         run: bun run typecheck

@@ -1,21 +1,21 @@
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { defineConfig } from 'vitest/config';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from "vitest/config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [svelte()],
   test: {
-    environment: 'jsdom',
+    environment: "jsdom",
     globals: true,
-    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx,svelte}'],
-    setupFiles: ['./vitest.setup.ts'],
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx,svelte}"],
+    setupFiles: ["./vitest.setup.ts"],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
-      exclude: ['node_modules/', '.svelte-kit/', '**/types.ts', '**/*.d.ts', '**/constants.ts', '**/data/**'],
+      provider: "v8",
+      reporter: ["text", "json", "html", "lcov"],
+      exclude: ["node_modules/", ".svelte-kit/", "**/types.ts", "**/*.d.ts", "**/constants.ts", "**/data/**"],
       thresholds: {
         lines: 80,
         statements: 80,
@@ -26,7 +26,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      $lib: path.resolve(__dirname, './src/lib'),
+      $lib: path.resolve(__dirname, "./src/lib"),
     },
   },
 });

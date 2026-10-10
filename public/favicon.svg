@@ -1,4 +1,5 @@
 <svg width="64" height="64" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <title>Color Picker Palette</title>
   <defs>
     <!-- Correct path for exactly 30-degree segment with proper calculations -->
     <path id="segment" d="M256,256 L512,256 A256,256 0 0,1 477.5825,384 Z" />

@@ -7,10 +7,10 @@
   "scripts": {
     "build": "vite build",
     "changelog": "cog changelog",
-    "check": "biome check src/ && bun run typecheck && bun run test && bun run build",
+    "check": "biome check . && bun run typecheck && bun run test && bun run build",
     "clean": "rm -rf bun.lock coverage dist node_modules .vitest",
     "dev": "vite",
-    "fix": "biome check --write src/",
+    "fix": "biome check --write .",
     "postinstall": "lefthook install",
     "preview": "vite preview",
     "release": "cog bump --auto",
