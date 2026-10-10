@@ -25,7 +25,7 @@ const removeRow = () => {
 
 <section
   class="
-      panel h-full overflow-y-auto
+      panel
     "
 >
   <div

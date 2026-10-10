@@ -55,7 +55,7 @@ const handleInput = (e: Event) => {
 
 <section
   class="
-      panel h-full overflow-y-auto overflow-x-hidden space-y-4
+      panel overflow-x-hidden space-y-4
       sm:space-y-6
       md:space-y-8
     "

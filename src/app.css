@@ -86,9 +86,9 @@
 }
 
 @layer components {
-  /* Shared panel shell: visual style only; call sites add their own layout/spacing */
+  /* Shared panel shell: visual + scroll container; call sites add spacing/layout */
   .panel {
-    @apply rounded-xl border border-(--ui-border) bg-(--ui-card) p-4 shadow-xl sm:p-6 md:p-8;
+    @apply h-full overflow-y-auto rounded-xl border border-(--ui-border) bg-(--ui-card) p-4 shadow-xl sm:p-6 md:p-8;
   }
 
   /* Shared panel section heading */

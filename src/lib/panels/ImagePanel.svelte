@@ -70,7 +70,7 @@ onDestroy(() => {
 
 <section
   class="
-      panel flex h-full flex-col overflow-y-auto
+      panel flex flex-col
     "
 >
   <div class="mb-6 flex shrink-0 items-center justify-between">

@@ -4,7 +4,7 @@ import ContrastChecker from "../components/ContrastChecker.svelte";
 
 <section
   class="
-      panel flex h-full flex-col overflow-y-auto
+      panel flex flex-col
     "
 >
   <div class="mb-6">
