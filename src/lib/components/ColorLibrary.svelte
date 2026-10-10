@@ -20,6 +20,7 @@ let unsubscribe: (() => void) | null = null;
 let searchDebounceTimeout: number | null = null;
 let debouncedQuery = $state("");
 let hasLoadedInitialPage = false;
+let isPagePending = false;
 
 const INITIAL_DISPLAY_LIMIT = 100;
 let displayedColors = $state<Array<{ name: string; hex: string }>>([]);
@@ -39,11 +40,13 @@ onMount(() => {
         isLoading = false;
       }
       displayedColors = [...displayedColors, ...colors];
+      isPagePending = false;
       if (msg.total !== undefined) {
         totalColors = msg.total;
       }
     } else if (msg.type === "error") {
       loadError = "Failed to load color library. Please refresh the page.";
+      isPagePending = false;
       isLoading = false;
     }
   });
@@ -116,9 +119,10 @@ function handleScroll(e: Event) {
     throttledScrollTop = _scrollTop;
     scrollThrottleTimeout = null;
 
-    if (!searchQuery.trim() && !isLoading) {
+    if (!searchQuery.trim() && !isLoading && !isPagePending) {
       const scrolledNearBottom = _scrollTop + viewportHeight > displayedColors.length * itemHeight - 500;
       if (scrolledNearBottom && displayedColors.length < totalColors) {
+        isPagePending = true;
         engine.postToWorker({
           type: "get-page",
           offset: displayedColors.length,
