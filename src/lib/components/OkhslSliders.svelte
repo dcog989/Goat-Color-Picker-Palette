@@ -22,11 +22,11 @@ $effect(() => {
   const { h, s, l } = color.okhslComp;
   const prev = untrack(() => local);
   const hasHue = s > ACHROMATIC_S_THRESHOLD && l > EDGE_L_THRESHOLD && l < 100 - EDGE_L_THRESHOLD;
-  local = {
-    h: hasHue ? h : prev.h,
-    s: l > EDGE_L_THRESHOLD && l < 100 - EDGE_L_THRESHOLD ? s : prev.s,
-    l,
-  };
+  // Mutate in place so each channel keeps its identity; a wholesale reassignment
+  // would invalidate every gradient ramp, including ones whose channels did not change.
+  local.h = hasHue ? h : prev.h;
+  local.s = l > EDGE_L_THRESHOLD && l < 100 - EDGE_L_THRESHOLD ? s : prev.s;
+  local.l = l;
 });
 
 const update = () => color.setOkhslValues(local.h, local.s, local.l);
