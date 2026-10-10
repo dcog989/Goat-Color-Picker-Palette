@@ -19,6 +19,7 @@ interface WorkerResponse {
 let coordinates: Float32Array | null = null;
 let names: string[] = [];
 let hexValues: string[] = [];
+let lowerNames: string[] = [];
 
 let isLoading = false;
 let loadError: Error | null = null;
@@ -39,6 +40,7 @@ async function prepareData(): Promise<void> {
     const coords = new Float32Array(count * 3);
     const nextNames: string[] = [];
     const nextHex: string[] = [];
+    const nextLower: string[] = [];
 
     for (let i = 0; i < count; i++) {
       const entry = list[i];
@@ -61,12 +63,14 @@ async function prepareData(): Promise<void> {
       coords[ptr + 2] = b;
       nextNames.push(entry.name);
       nextHex.push(entry.hex);
+      nextLower.push(entry.name.toLowerCase());
     }
 
     // Dense, aligned arrays: holes in `list` can no longer leave gaps.
     coordinates = coords.subarray(0, nextNames.length * 3);
     names = nextNames;
     hexValues = nextHex;
+    lowerNames = nextLower;
   } catch (error) {
     loadError = error instanceof Error ? error : new Error("Failed to load color names");
     console.error("Failed to load color name list:", loadError);
@@ -176,9 +180,9 @@ function filterColors(query: string, limit: number): Array<{ name: string; hex: 
   const len = names.length;
 
   for (let i = 0; i < len && results.length < limit; i++) {
-    const name = names[i];
-    if (name?.toLowerCase().includes(q)) {
-      results.push({ name, hex: hexValues[i] as string });
+    const lower = lowerNames[i];
+    if (lower?.includes(q)) {
+      results.push({ name: names[i] as string, hex: hexValues[i] as string });
     }
   }
 
