@@ -44,7 +44,6 @@ const getActionClass = () => {
   class="
       group relative aspect-square cursor-pointer overflow-hidden rounded-lg
       border border-white/10 shadow-md
-      will-change-transform
       [background:var(--swatch-color)]
       hover:scale-105
     "
@@ -77,7 +76,6 @@ const getActionClass = () => {
         class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm
                   transition-transform duration-200
-                  will-change-transform
                   hover:scale-110
                 "
         title="Add to paintbox"
@@ -93,7 +91,6 @@ const getActionClass = () => {
         class="{getActionClass()}
                   cursor-pointer rounded-full p-3 shadow-sm
                   transition-transform duration-200
-                  will-change-transform
                   hover:scale-110
                 "
         title="Copy"

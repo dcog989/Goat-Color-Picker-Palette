@@ -127,7 +127,6 @@ const handleInput = (e: Event) => {
                       group relative shrink-0 rounded-md border border-(--ui-border)
                       bg-(--ui-bg) p-2
                       transition duration-200
-                      will-change-transform
                       hover:bg-(--current-color)
                     "
       >
@@ -173,7 +172,6 @@ const handleInput = (e: Event) => {
           class="
                       rounded-sm px-4 py-2 text-xs font-black uppercase
                       transition duration-200
-                      will-change-transform
                       {color.mode === m ? "text-on-current bg-(--current-color)" : "hover:bg-(--ui-card)"}"
         >
           {m}
@@ -240,7 +238,7 @@ const handleInput = (e: Event) => {
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
                           shadow-lg backdrop-blur-md
                           transition-transform duration-200
-                          will-change-transform hover:scale-110
+                          hover:scale-110
                           hover:bg-white/40
                         "
             title="Copy {color.mode.toUpperCase()}"
@@ -254,7 +252,7 @@ const handleInput = (e: Event) => {
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
                           shadow-lg backdrop-blur-md
                           transition-transform duration-200
-                          will-change-transform hover:scale-110
+                          hover:scale-110
                           hover:bg-white/40
                         "
             title="Add to Paintbox"
@@ -268,7 +266,7 @@ const handleInput = (e: Event) => {
                           cursor-pointer rounded-full bg-white/30 p-3 text-white
                           shadow-lg backdrop-blur-md
                           transition-transform duration-200
-                          will-change-transform hover:scale-110
+                          hover:scale-110
                           hover:bg-white/40
                         "
             title="Copy link"

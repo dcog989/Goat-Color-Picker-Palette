@@ -17,7 +17,7 @@ const app = getApp();
 const { paintbox, toast } = app;
 
 const actionButtonClass =
-  "hover:text-on-current cursor-pointer rounded-2xl border border-(--ui-border) bg-(--ui-bg) px-6 py-4 text-xs font-black uppercase shadow-sm transition duration-200 will-change-transform hover:scale-105 hover:bg-(--current-color)";
+  "hover:text-on-current cursor-pointer rounded-2xl border border-(--ui-border) bg-(--ui-bg) px-6 py-4 text-xs font-black uppercase shadow-sm transition duration-200 hover:scale-105 hover:bg-(--current-color)";
 
 let fileInput = $state<HTMLInputElement | null>(null);
 
