@@ -164,23 +164,11 @@ onDestroy(() => {
         <!-- Controls -->
         <div class="flex min-w-0 flex-1 flex-col gap-4">
           <label for="sort-mode" class="sub-label block">Ordered By:</label>
-          <div class="flex flex-col gap-2" role="radiogroup" aria-label="Sort Mode">
+          <div class="control-group flex flex-col gap-1" role="radiogroup" aria-label="Sort Mode">
             {#each sortOptions as option (option.value)}
               <button
                 type="button"
-                class="
-                                  flex items-center justify-between rounded-md
-                                  border px-4 py-3 text-left text-xs font-bold
-                                  uppercase transition-all
-                                  {imageAnalyzer.sortMode === option.value
-                  ? `
-                                      text-on-current border-transparent
-                                      bg-(--current-color) shadow-md
-                                    `
-                  : `
-                                      border-(--ui-border) bg-(--ui-card)
-                                      hover:border-(--current-color)
-                                    `}"
+                class="segment-button flex items-center justify-between px-4 py-3 text-left text-xs font-bold uppercase"
                 onclick={() => (imageAnalyzer.sortMode = option.value)}
                 aria-checked={imageAnalyzer.sortMode === option.value}
                 role="radio"

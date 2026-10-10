@@ -101,17 +101,9 @@ const getApcaRating = (score: number) => {
       <div class="relative">
         <button
           type="button"
+          aria-pressed={mode === m}
           onclick={() => (mode = m)}
-          class="
-                    relative flex h-full w-full flex-col items-center gap-1
-                    rounded-md px-2 py-3 transition-all
-                    {mode === m
-            ? "bg-(--ui-card) text-(--ui-text) shadow-sm"
-            : `
-                        opacity-70
-                        hover:bg-black/5 hover:opacity-100
-                        dark:hover:bg-white/5
-                      `}"
+          class="tab-button relative flex h-full w-full flex-col items-center gap-1 px-2 py-3"
         >
           <span class="section-heading">{m}</span>
           {#if mode === m}

@@ -126,6 +126,35 @@
     @apply rounded-lg border border-(--ui-border) bg-(--ui-bg) p-1;
   }
 
+  /* Shared segmented-control item (compact mode/option toggle).
+     Selected/inactive states live here; call sites add layout/size only. */
+  .segment-button {
+    @apply cursor-pointer rounded-md transition-colors duration-200;
+  }
+
+  .segment-button[aria-pressed="true"],
+  .segment-button[aria-checked="true"] {
+    @apply bg-(--current-color) text-on-current;
+  }
+
+  .segment-button[aria-pressed="false"]:hover,
+  .segment-button[aria-checked="false"]:hover {
+    @apply bg-(--ui-card);
+  }
+
+  /* Shared segmented tab item (segment hosting overlaid controls/badges: raised card, not filled) */
+  .tab-button {
+    @apply cursor-pointer rounded-md transition-all;
+  }
+
+  .tab-button[aria-pressed="true"] {
+    @apply bg-(--ui-card) text-(--ui-text) shadow-sm;
+  }
+
+  .tab-button[aria-pressed="false"] {
+    @apply opacity-70 hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/5;
+  }
+
   /* Shared on-color hover-overlay action button; call sites may override bg/text for contrast */
   .overlay-button {
     @apply cursor-pointer rounded-full bg-white/30 p-3 text-white shadow-lg backdrop-blur-md transition-transform duration-200 hover:scale-110 hover:bg-white/40;

@@ -153,11 +153,9 @@ const handleInput = (e: Event) => {
       {#each ["okhsl", "oklch", "rgb"] as m (m)}
         <button
           type="button"
+          aria-pressed={color.mode === m}
           onclick={() => (color.mode = m as "okhsl" | "oklch" | "rgb")}
-          class="
-                      rounded-md px-4 py-2 text-xs font-black uppercase
-                      transition duration-200
-                      {color.mode === m ? "text-on-current bg-(--current-color)" : "hover:bg-(--ui-card)"}"
+          class="segment-button px-4 py-2 text-xs font-black uppercase"
         >
           {m}
         </button>
