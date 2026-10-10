@@ -3,10 +3,10 @@
 @theme {
   /* Border Radius System */
   --radius-sm: 0.75rem; /* Small elements (tags, badges) */
-  --radius-md: 1rem; /* Buttons, inputs, small cards */
-  --radius-lg: 1.5rem; /* Swatches, medium cards */
-  --radius-xl: 2rem; /* Panels, large cards, canvas */
-  --radius-2xl: 2.5rem; /* Export buttons, contrast cards */
+  --radius-md: 1rem; /* Inputs, inset controls, small cards */
+  --radius-lg: 1.5rem; /* Buttons, selects, swatches, medium cards */
+  --radius-xl: 2rem; /* Panels, contrast cards, large cards */
+  --radius-2xl: 2.5rem; /* Large action/export buttons */
   --radius-3xl: 3rem; /* Modal dialogs */
   --radius: var(--radius-md); /* Default radius (rounded) maps to md */
 }
