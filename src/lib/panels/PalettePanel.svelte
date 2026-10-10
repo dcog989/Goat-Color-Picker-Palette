@@ -46,11 +46,7 @@ const removeRow = () => {
         id="paletteVariable"
         bind:value={engine.genAxis}
         aria-label="Palette generation variable"
-        class="
-                      cursor-pointer rounded-lg border
-                      border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs
-                      font-bold uppercase transition-all
-                    "
+        class="select-control"
       >
         <optgroup label="Variables">
           <option value="l">Lightness</option>

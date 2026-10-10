@@ -68,12 +68,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
           id="paintboxSort"
           bind:value={paintbox.sortMode}
           aria-label="Sort paintbox by"
-          class="
-                      flex-1 cursor-pointer rounded-lg border
-                      border-(--ui-border) bg-(--ui-bg) px-2 py-1.5 text-xs
-                      font-bold uppercase transition-colors duration-200
-                      sm:flex-none
-                    "
+          class="select-control flex-1 sm:flex-none"
         >
           {#each sortOptions as option (option.value)}
             <option value={option.value}>{option.label}</option>

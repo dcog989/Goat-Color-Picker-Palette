@@ -105,6 +105,11 @@
     @apply cursor-pointer rounded-2xl border border-(--ui-border) bg-(--ui-bg) px-6 py-4 text-xs font-black uppercase shadow-sm transition duration-200 hover:scale-105 hover:bg-(--current-color) hover:text-on-current;
   }
 
+  /* Shared select control (radius, border, bg, padding, type, transition); call sites add layout only */
+  .select-control {
+    @apply cursor-pointer rounded-lg border border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs font-bold uppercase transition-colors duration-200;
+  }
+
   /* Shared circular header button */
   .header-button {
     @apply hover:text-on-current cursor-pointer rounded-full border border-(--ui-border) bg-(--ui-card) p-2 shadow-lg transition duration-300 hover:scale-110 hover:bg-(--current-color) sm:p-3;

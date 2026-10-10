@@ -58,15 +58,7 @@ const exports = $derived.by(() =>
                   md:gap-4
                 "
       >
-        <select
-          bind:value={exportFormat}
-          class="
-                      cursor-pointer rounded-md border border-(--ui-border)
-                      bg-(--ui-bg) px-3 py-2 text-xs font-bold uppercase
-                      transition-colors
-                      md:px-4
-                    "
-        >
+        <select bind:value={exportFormat} class="select-control">
           <option value="oklch">OKLCH</option>
           <option value="hex">HEX</option>
           <option value="hsl">HSL</option>
