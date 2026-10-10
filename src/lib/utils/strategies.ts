@@ -7,27 +7,35 @@ export interface ColorSource {
   name: string;
 }
 
+const PENDING_COLOR_NAME = "Searching...";
+
+const resolveClosestName = (closestName: string, hex: string): string => {
+  const trimmed = closestName.trim();
+  return trimmed && trimmed !== PENDING_COLOR_NAME ? trimmed : hex;
+};
+
 export function getColorSource(root: RootStore): ColorSource {
   const hasColors = root.paintbox.items.length > 0;
   return {
     colors: hasColors ? root.paintbox.items : [{ css: root.color.hexa }],
     isSingle: !hasColors,
-    name: root.engine.closestName,
+    name: resolveClosestName(root.engine.closestName, root.color.hex),
   };
 }
 
 export function generateColorName(index: number, source: ColorSource): string {
-  if (source.isSingle) {
-    return source.name
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
-  }
-  return `color-${index + 1}`;
+  const fallback = `color-${index + 1}`;
+  if (!source.isSingle) return fallback;
+  const slug = source.name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+  return slug || fallback;
 }
 
 export function generateFilename(root: RootStore, extension: string): string {
-  const safeName = root.engine.closestName.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
+  const name = resolveClosestName(root.engine.closestName, root.color.hex);
+  const safeName = name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
   return `Color-Picker-Palette-${safeName}.${extension}`;
 }
 
