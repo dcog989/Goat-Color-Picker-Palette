@@ -190,10 +190,7 @@ $effect(() => {
         type="text"
         bind:value={searchQuery}
         placeholder="Search 30,000+ colors..."
-        class="
-                  mb-4 w-full shrink-0 rounded-md border
-                  border-(--ui-border) bg-(--ui-card) p-4 font-mono text-sm shadow-inner
-                "
+        class="text-input mb-4 shrink-0 bg-(--ui-card) p-4 text-sm shadow-inner"
       >
 
       {#if isLoading}

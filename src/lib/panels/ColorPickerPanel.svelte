@@ -85,10 +85,9 @@ const handleInput = (e: Event) => {
           id="inputColor"
           onchange={handleInput}
           onfocus={(e) => (e.target as HTMLInputElement).select()}
-          class="
-                      w-full rounded-md border bg-(--ui-bg) py-2 pr-8 pl-3
-                      font-mono text-base uppercase transition-shadow duration-200
-                      {hasError ? "border-red-500 ring-2 ring-red-500/20" : `border-(--ui-border)`}"
+          class="text-input py-2 pr-8 pl-3 text-base uppercase {hasError
+            ? "border-red-500 ring-2 ring-red-500/20"
+            : ""}"
           placeholder="Paste color..."
         >
         {#if color.isOutOfGamut}

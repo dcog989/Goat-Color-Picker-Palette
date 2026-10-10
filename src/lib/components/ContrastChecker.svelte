@@ -178,11 +178,7 @@ const getApcaRating = (score: number) => {
         id="contrastColor"
         type="text"
         bind:value={customColor}
-        class="
-                    w-full rounded-lg border bg-(--ui-bg)
-                    py-2 pr-4 pl-10 font-mono text-sm uppercase transition-all
-                    {customColorError ? "border-red-500" : "border-(--ui-border)"}
-                  "
+        class="text-input py-2 pr-4 pl-10 text-sm uppercase {customColorError ? "border-red-500" : ""}"
       >
       <div
         class="
