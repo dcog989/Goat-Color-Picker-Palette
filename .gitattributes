@@ -5,4 +5,3 @@
 *.{js,ts,svelte,css,html,json,md} text eol=lf
 *.{yml,yaml} text eol=lf
 .editorconfig text eol=lf
-.prettierrc text eol=lf
