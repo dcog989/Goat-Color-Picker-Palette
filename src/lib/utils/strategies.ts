@@ -10,7 +10,7 @@ export interface ColorSource {
 export function getColorSource(root: RootStore): ColorSource {
   const hasColors = root.paintbox.items.length > 0;
   return {
-    colors: hasColors ? root.paintbox.items : [{ css: root.color.hex }],
+    colors: hasColors ? root.paintbox.items : [{ css: root.color.hexa }],
     isSingle: !hasColors,
     name: root.engine.closestName,
   };
