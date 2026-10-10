@@ -237,11 +237,8 @@ select {
     background-color 300ms ease;
 }
 
-/* Optimize animations for GPU compositing */
-[class*="hover:scale-"],
-.animate-fade-in,
-.animate-scale-in,
-.animate-slide-up {
+/* Optimize hover-scale animations for GPU compositing */
+[class*="hover:scale-"] {
   will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -262,73 +259,6 @@ select {
 *:focus-visible {
   outline: 2px solid var(--current-color);
   outline-offset: 2px;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes scaleOut {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 300ms ease-out;
-}
-.animate-fade-out {
-  animation: fadeOut 300ms ease-out;
-}
-.animate-scale-in {
-  animation: scaleIn 300ms ease-out;
-}
-.animate-scale-out {
-  animation: scaleOut 300ms ease-out;
-}
-.animate-slide-up {
-  animation: slideUp 300ms ease-out;
 }
 
 @utility text-on-current {
