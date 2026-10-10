@@ -237,6 +237,10 @@ select {
     background-color 300ms ease;
 }
 
+button:disabled {
+  opacity: 0.4;
+}
+
 /* Optimize hover-scale animations for GPU compositing */
 [class*="hover:scale-"] {
   will-change: transform, opacity;
