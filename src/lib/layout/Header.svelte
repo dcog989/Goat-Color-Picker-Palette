@@ -34,14 +34,7 @@ const { color, engine, theme } = getApp();
     <button
       type="button"
       onclick={onSearch}
-      class="
-              hover:text-on-current
-              cursor-pointer rounded-full border border-(--ui-border)
-              bg-(--ui-card) p-2 shadow-lg
-              transition duration-300
-              hover:scale-110 hover:bg-(--current-color)
-              sm:p-3
-            "
+      class="header-button"
       aria-label="Search colors"
       title="Search color library"
     >
@@ -64,14 +57,7 @@ const { color, engine, theme } = getApp();
     <button
       type="button"
       onclick={() => color.randomize()}
-      class="
-              hover:text-on-current
-              cursor-pointer rounded-full border border-(--ui-border)
-              bg-(--ui-card) p-2 shadow-lg
-              transition duration-300
-              hover:scale-110 hover:bg-(--current-color)
-              sm:p-3
-            "
+      class="header-button"
       aria-label="Random color"
       title="Generate random color"
     >
@@ -85,14 +71,7 @@ const { color, engine, theme } = getApp();
     <button
       type="button"
       onclick={() => theme.toggle()}
-      class="
-              hover:text-on-current
-              cursor-pointer rounded-full border border-(--ui-border)
-              bg-(--ui-card) p-2 shadow-lg
-              transition duration-300
-              hover:scale-110 hover:bg-(--current-color)
-              sm:p-3
-            "
+      class="header-button"
       aria-label="Toggle Theme"
       title="Toggle Light/Dark Mode"
     >

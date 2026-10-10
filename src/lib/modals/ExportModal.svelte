@@ -29,12 +29,7 @@ const exports = $derived.by(() =>
       p-4 pt-12 md:p-8 md:pt-16
     "
 >
-  <button
-    type="button"
-    class="absolute inset-0 cursor-default bg-black/70 backdrop-blur-xl"
-    onclick={onClose}
-    aria-label="Close export dialog"
-  ></button>
+  <button type="button" class="modal-scrim" onclick={onClose} aria-label="Close export dialog"></button>
   <div
     class="
           animate-scale-in relative max-h-[90vh] w-full max-w-3xl space-y-6
@@ -77,18 +72,7 @@ const exports = $derived.by(() =>
           <option value="hsl">HSL</option>
           <option value="rgb">RGB</option>
         </select>
-        <button
-          type="button"
-          onclick={onClose}
-          class="
-                      cursor-pointer text-3xl opacity-50 transition-opacity
-                      hover:opacity-100
-                      md:text-4xl
-                    "
-          aria-label="Close"
-        >
-          ×
-        </button>
+        <button type="button" onclick={onClose} class="modal-close" aria-label="Close">×</button>
       </div>
     </header>
     <div class="space-y-6">

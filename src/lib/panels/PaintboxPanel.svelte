@@ -87,13 +87,9 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
           type="button"
           onclick={() => paintbox.clear()}
           disabled={paintbox.items.length === 0}
-          class="
-                      shrink-0 rounded-lg border border-(--ui-border)
-                      bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm
-                      transition duration-200
-                      will-change-transform hover:bg-red-500
-                      hover:text-white
-                      {paintbox.items.length > 0 ? "opacity-100" : `pointer-events-none opacity-35`}"
+          class="icon-button hover:bg-red-500 {paintbox.items.length > 0
+            ? "opacity-100"
+            : `pointer-events-none opacity-35`}"
           title="Clear Paintbox"
         >
           <CircleX class="size-4" />

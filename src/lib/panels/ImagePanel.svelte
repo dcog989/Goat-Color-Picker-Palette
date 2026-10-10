@@ -212,17 +212,7 @@ onDestroy(() => {
           <h3 class="section-heading">Palette</h3>
           <div class="flex items-center gap-3">
             <span class="font-mono text-xs text-(--ui-text-muted)">Top 24</span>
-            <button
-              type="button"
-              onclick={(e) => addAll(e)}
-              class="
-                              shrink-0 rounded-lg border border-(--ui-border)
-                              bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm
-                              transition-all
-                              hover:bg-(--current-color) hover:text-white
-                            "
-              title="Add All to Paintbox"
-            >
+            <button type="button" onclick={(e) => addAll(e)} class="icon-button" title="Add All to Paintbox">
               <LayersPlus class="size-4" />
             </button>
           </div>

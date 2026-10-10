@@ -104,16 +104,7 @@ const removeRow = () => {
         </div>
       {/if}
 
-      <button
-        type="button"
-        onclick={(e) => addAll(e)}
-        class="
-                  shrink-0 rounded-lg border border-(--ui-border) bg-(--ui-bg)
-                  p-2 text-(--ui-text-muted) shadow-sm transition-all
-                  hover:bg-(--current-color) hover:text-white
-                "
-        title="Add all to paintbox"
-      >
+      <button type="button" onclick={(e) => addAll(e)} class="icon-button" title="Add all to paintbox">
         <LayersPlus class="size-4" />
       </button>
     </div>
