@@ -1,4 +1,4 @@
-import { colordx } from "@colordx/core";
+import { type Colordx, colordx } from "@colordx/core";
 import { PRECISION } from "../constants";
 import { type GenerationMode, generatePalette, isHarmonyMode } from "../utils/palette";
 import { ManagedWorker } from "../utils/worker-manager";
@@ -28,11 +28,19 @@ export class EngineStore {
     this.#colorStore = colorStore;
   }
 
-  #contrastWhite = $derived.by((): string => {
+  #currentColor = $derived.by((): Colordx | null => {
     try {
-      const current = colordx(this.#colorStore.hex);
-      const raw = current.apcaContrast("#fff");
-      return Math.abs(raw).toFixed(PRECISION.CONTRAST_DISPLAY);
+      return colordx(this.#colorStore.hex);
+    } catch {
+      return null;
+    }
+  });
+
+  #contrastWhite = $derived.by((): string => {
+    const current = this.#currentColor;
+    if (!current) return "0";
+    try {
+      return Math.abs(current.apcaContrast("#fff")).toFixed(PRECISION.CONTRAST_DISPLAY);
     } catch {
       return "0";
     }
@@ -43,10 +51,10 @@ export class EngineStore {
   }
 
   #contrastBlack = $derived.by((): string => {
+    const current = this.#currentColor;
+    if (!current) return "0";
     try {
-      const current = colordx(this.#colorStore.hex);
-      const raw = current.apcaContrast("#000");
-      return Math.abs(raw).toFixed(PRECISION.CONTRAST_DISPLAY);
+      return Math.abs(current.apcaContrast("#000")).toFixed(PRECISION.CONTRAST_DISPLAY);
     } catch {
       return "0";
     }
