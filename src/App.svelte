@@ -81,7 +81,6 @@ $effect(() => {
   // Batch DOM writes in next frame
   rafId = requestAnimationFrame(() => {
     const root = document.documentElement;
-    const body = document.body;
 
     // Batch all style changes together to minimize reflows
     root.style.setProperty("--current-color", cssVar);
@@ -94,7 +93,6 @@ $effect(() => {
       root.style.setProperty("--current-hue", prevHue.toString());
       root.setAttribute("data-achromatic", "");
     }
-    body.style.backgroundColor = cssVar;
 
     // Set data attribute for contrast-dependent styling
     const needsDarkText = usesDarkText(cssVar);

@@ -95,7 +95,6 @@ body {
   background-attachment: fixed;
   color: var(--ui-text);
   @apply selection:bg-brand antialiased selection:text-white;
-  transition: background-color 500ms ease;
 }
 
 /* Custom range inputs */
