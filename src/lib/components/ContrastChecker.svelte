@@ -172,44 +172,34 @@ const getApcaRating = (score: number) => {
   </div>
 
   <!-- 2. Controls Row (Custom Input) -->
-  <div class="flex min-h-10.5 items-center gap-4">
-    {#if mode === "custom"}
-      <div class="relative flex-1 pb-6">
-        <input
-          id="contrastColor"
-          type="text"
-          bind:value={customColor}
-          class="
-                      w-full rounded-lg border bg-(--ui-bg)
-                      py-2 pr-4 pl-9 font-mono text-sm uppercase transition-all
-                      {customColorError ? "border-red-500" : "border-(--ui-border)"}
-                    "
-        >
-        <div
-          class="
-                      absolute top-1/2 left-3 size-4 -translate-y-1/2
-                      rounded-full border border-(--ui-border)
-                    "
-          style:background-color={customColorError ? "transparent" : customColor}
-        >
-          {#if customColorError}
-            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-red-500">!</span>
-          {/if}
-        </div>
-        {#if customColorError}
-          <div class="absolute -bottom-6 left-0 text-xs font-medium text-red-500">Invalid color format</div>
-        {/if}
-      </div>
-    {:else}
+  {#if mode === "custom"}
+    <div class="relative pb-6">
+      <input
+        id="contrastColor"
+        type="text"
+        bind:value={customColor}
+        class="
+                    w-full rounded-lg border bg-(--ui-bg)
+                    py-2 pr-4 pl-9 font-mono text-sm uppercase transition-all
+                    {customColorError ? "border-red-500" : "border-(--ui-border)"}
+                  "
+      >
       <div
         class="
-                  flex-1 pl-2 text-base font-bold text-(--ui-text-muted) italic
-                "
+                    absolute top-1/2 left-3 size-4 -translate-y-1/2
+                    rounded-full border border-(--ui-border)
+                  "
+        style:background-color={customColorError ? "transparent" : customColor}
       >
-        Comparing {isInverted ? mode : color.hex} vs {isInverted ? color.hex : mode}...
+        {#if customColorError}
+          <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-red-500">!</span>
+        {/if}
       </div>
-    {/if}
-  </div>
+      {#if customColorError}
+        <div class="absolute -bottom-6 left-0 text-xs font-medium text-red-500">Invalid color format</div>
+      {/if}
+    </div>
+  {/if}
 
   <!-- 3. Preview Area -->
   <div
