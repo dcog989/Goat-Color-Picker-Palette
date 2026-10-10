@@ -220,65 +220,14 @@ const showInfo = (key: keyof typeof infoContent) => {
               flex flex-wrap gap-6 text-sm font-bold tracking-widest uppercase
             "
     >
-      <button
-        onclick={() => showInfo("oklch")}
-        type="button"
-        class="
-                  cursor-pointer
-                  hover:underline
-                "
-      >
-        Why Okhsl + Oklch?
-      </button>
-      <span
-        class="
-                  hidden opacity-30
-                  sm:inline
-                "
-        >|</span
-      >
-      <button
-        onclick={() => showInfo("analysis")}
-        type="button"
-        class="
-                  cursor-pointer
-                  hover:underline
-                "
-      >
-        Image Analysis?
-      </button>
-      <span
-        class="
-                  hidden opacity-30
-                  sm:inline
-                "
-        >|</span
-      >
-      <button
-        onclick={() => showInfo("contrast")}
-        type="button"
-        class="
-                  cursor-pointer
-                  hover:underline
-                "
-      >
-        Good Contrast?
-      </button>
-      <span
-        class="
-                  hidden opacity-30
-                  sm:inline
-                "
-        >|</span
-      >
-      <a href="https://github.com/dcog989/Color-Picker-Palette">Github</a>
-      <span
-        class="
-                  hidden opacity-30
-                  sm:inline
-                "
-        >|</span
-      >
+      <button onclick={() => showInfo("oklch")} type="button" class="footer-link">Why Okhsl + Oklch?</button>
+      <span class="footer-divider">|</span>
+      <button onclick={() => showInfo("analysis")} type="button" class="footer-link">Image Analysis?</button>
+      <span class="footer-divider">|</span>
+      <button onclick={() => showInfo("contrast")} type="button" class="footer-link">Good Contrast?</button>
+      <span class="footer-divider">|</span>
+      <a href="https://github.com/dcog989/Color-Picker-Palette" class="footer-link">Github</a>
+      <span class="footer-divider">|</span>
       <span class="opacity-30">v{version}</span>
     </div>
 

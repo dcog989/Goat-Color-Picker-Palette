@@ -161,6 +161,15 @@
   .modal-title {
     @apply text-xl font-black tracking-widest uppercase md:text-2xl;
   }
+
+  /* Shared footer link + divider */
+  .footer-link {
+    @apply cursor-pointer opacity-70 hover:opacity-100 hover:underline;
+  }
+
+  .footer-divider {
+    @apply hidden opacity-30 sm:inline;
+  }
 }
 
 body {
