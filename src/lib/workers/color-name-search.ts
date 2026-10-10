@@ -22,6 +22,9 @@ let hexValues: string[] = [];
 let isLoading = false;
 let loadError: Error | null = null;
 
+const DATA_POLL_INTERVAL_MS = 10;
+const DATA_WAIT_TIMEOUT_MS = 15_000;
+
 async function prepareData(): Promise<void> {
   if (coordinates !== null || isLoading) return;
 
@@ -102,8 +105,14 @@ self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
 };
 
 async function waitForData(): Promise<void> {
+  const deadline = Date.now() + DATA_WAIT_TIMEOUT_MS;
   while (!loadError && (coordinates === null || isLoading)) {
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    if (Date.now() >= deadline) {
+      // Give up waiting; callers fall back to empty results instead of hanging.
+      console.warn("Color name data did not finish loading in time");
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, DATA_POLL_INTERVAL_MS));
   }
 }
 
