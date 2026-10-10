@@ -170,6 +170,11 @@
     @apply cursor-pointer rounded-full bg-white/30 p-3 text-white shadow-lg backdrop-blur-md transition-transform duration-200 hover:scale-110 hover:bg-white/40;
   }
 
+  /* Shared copy-value button host (pairs with .value-reveal); call sites add `group` + radius/colour */
+  .value-button {
+    @apply flex items-center overflow-hidden;
+  }
+
   /* Shared hover value reveal: content expands from 0 width and fades in */
   .value-reveal {
     @apply grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-hover:grid-cols-[1fr];

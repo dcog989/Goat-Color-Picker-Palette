@@ -250,10 +250,9 @@ const handleInput = (e: Event) => {
         type="button"
         onclick={(e) => app.copy(format.value, e)}
         class="
-                  group flex cursor-pointer items-center overflow-hidden
-                  rounded-full border border-(--ui-border) bg-(--ui-bg)
-                  px-4 py-2 text-xs transition-all duration-200
-                  hover:bg-(--current-color)
+                  group value-button cursor-pointer rounded-full border
+                  border-(--ui-border) bg-(--ui-bg) px-4 py-2 text-xs
+                  transition-all duration-200 hover:bg-(--current-color)
                 "
       >
         <span

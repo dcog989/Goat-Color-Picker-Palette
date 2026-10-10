@@ -66,9 +66,9 @@ const exports = $derived.by(() =>
               type="button"
               onclick={(e) => app.copy(exportItem.content, e)}
               class="
-                              small-button group flex items-center
-                              overflow-hidden border-transparent
-                              hover:border-(--ui-border) hover:bg-(--ui-bg)
+                              small-button value-button group
+                              border-transparent hover:border-(--ui-border)
+                              hover:bg-(--ui-bg)
                             "
             >
               <span class="shrink-0 text-(--current-color)">Copy</span>
