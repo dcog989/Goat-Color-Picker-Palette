@@ -173,20 +173,20 @@ const getApcaRating = (score: number) => {
 
   <!-- 2. Controls Row (Custom Input) -->
   {#if mode === "custom"}
-    <div class="relative pb-6">
+    <div class="relative">
       <input
         id="contrastColor"
         type="text"
         bind:value={customColor}
         class="
                     w-full rounded-lg border bg-(--ui-bg)
-                    py-2 pr-4 pl-9 font-mono text-sm uppercase transition-all
+                    py-2 pr-4 pl-10 font-mono text-sm uppercase transition-all
                     {customColorError ? "border-red-500" : "border-(--ui-border)"}
                   "
       >
       <div
         class="
-                    absolute top-1/2 left-3 size-4 -translate-y-1/2
+                    absolute top-1/2 left-3 size-5 -translate-y-1/2
                     rounded-full border border-(--ui-border)
                   "
         style:background-color={customColorError ? "transparent" : customColor}
@@ -196,7 +196,7 @@ const getApcaRating = (score: number) => {
         {/if}
       </div>
       {#if customColorError}
-        <div class="absolute -bottom-6 left-0 text-xs font-medium text-red-500">Invalid color format</div>
+        <div class="absolute top-full left-0 mt-1 text-xs font-medium text-red-500">Invalid color format</div>
       {/if}
     </div>
   {/if}
