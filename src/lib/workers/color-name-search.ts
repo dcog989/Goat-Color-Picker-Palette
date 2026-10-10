@@ -32,27 +32,38 @@ async function prepareData(): Promise<void> {
     const list = await module.loadColorNames();
 
     const count = list.length;
-    coordinates = new Float32Array(count * 3);
-    names = new Array(count);
-    hexValues = new Array(count);
+    const coords = new Float32Array(count * 3);
+    const nextNames: string[] = [];
+    const nextHex: string[] = [];
 
     for (let i = 0; i < count; i++) {
       const entry = list[i];
       if (!entry) continue;
 
-      names[i] = entry.name;
-      hexValues[i] = entry.hex;
-
+      let l = 0;
+      let a = 0;
+      let b = 0;
       try {
         const oklab = colordx(entry.hex).toOklab();
-        const ptr = i * 3;
-        coordinates[ptr] = oklab.l;
-        coordinates[ptr + 1] = oklab.a;
-        coordinates[ptr + 2] = oklab.b;
+        l = oklab.l;
+        a = oklab.a;
+        b = oklab.b;
       } catch {
-        // Skip colors that can't be parsed
+        // Unparseable colors keep zero coordinates but stay listed.
       }
+
+      const ptr = nextNames.length * 3;
+      coords[ptr] = l;
+      coords[ptr + 1] = a;
+      coords[ptr + 2] = b;
+      nextNames.push(entry.name);
+      nextHex.push(entry.hex);
     }
+
+    // Dense, aligned arrays: holes in `list` can no longer leave gaps.
+    coordinates = coords.subarray(0, nextNames.length * 3);
+    names = nextNames;
+    hexValues = nextHex;
   } catch (error) {
     loadError = error instanceof Error ? error : new Error("Failed to load color names");
     console.error("Failed to load color name list:", loadError);
