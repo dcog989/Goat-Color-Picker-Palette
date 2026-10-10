@@ -98,19 +98,26 @@ const dtcgValueToCss = (value: unknown): string | null => {
   return null;
 };
 
-const collectDtcgColors = (node: unknown, out: string[]): void => {
-  if (!isRecord(node)) return;
+const collectDtcgColors = (root: unknown, out: string[]): void => {
+  const stack: unknown[] = [root];
 
-  if ("$value" in node) {
-    const token = node as { $value?: unknown };
-    const css = dtcgValueToCss(token.$value);
-    if (css) out.push(css);
-    return;
-  }
+  while (stack.length > 0) {
+    const node = stack.pop();
+    if (!isRecord(node)) continue;
 
-  for (const key of Object.keys(node)) {
-    if (key.startsWith("$")) continue;
-    collectDtcgColors(node[key], out);
+    if ("$value" in node) {
+      const token = node as { $value?: unknown };
+      const css = dtcgValueToCss(token.$value);
+      if (css) out.push(css);
+      continue;
+    }
+
+    const keys = Object.keys(node);
+    for (let i = keys.length - 1; i >= 0; i--) {
+      const key = keys[i] as string;
+      if (key.startsWith("$")) continue;
+      stack.push(node[key]);
+    }
   }
 };
 
