@@ -71,13 +71,7 @@ const exports = $derived.by(() =>
       {#each exports as exportItem (exportItem.name)}
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <span
-              class="
-                              text-xs font-bold tracking-wider uppercase
-                              opacity-50
-                            "
-              >{exportItem.name}</span
-            >
+            <span class="sub-label">{exportItem.name}</span>
             <button
               type="button"
               onclick={(e) => app.copy(exportItem.content, e)}

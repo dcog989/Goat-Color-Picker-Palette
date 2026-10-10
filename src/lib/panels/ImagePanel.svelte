@@ -163,14 +163,7 @@ onDestroy(() => {
 
         <!-- Controls -->
         <div class="flex min-w-0 flex-1 flex-col gap-4">
-          <label
-            for="sort-mode"
-            class="
-                          block text-xs font-bold text-(--ui-text-muted)
-                          uppercase
-                        "
-            >Ordered By:</label
-          >
+          <label for="sort-mode" class="sub-label block">Ordered By:</label>
           <div class="flex flex-col gap-2" role="radiogroup" aria-label="Sort Mode">
             {#each sortOptions as option (option.value)}
               <button

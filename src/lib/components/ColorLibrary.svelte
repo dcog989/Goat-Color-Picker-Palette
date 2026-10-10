@@ -162,7 +162,7 @@ $effect(() => {
 <div class="flex h-full flex-col">
   {#if !forceExpanded}
     <div class="mb-4 flex items-center justify-between">
-      <h3 class="text-xs font-black tracking-widest uppercase opacity-30">Color Library</h3>
+      <h3 class="section-heading">Color Library</h3>
       <button
         type="button"
         onclick={() => (isExpanded = !isExpanded)}

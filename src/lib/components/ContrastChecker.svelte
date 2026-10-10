@@ -118,13 +118,7 @@ const getApcaRating = (score: number) => {
                         dark:hover:bg-white/5
                       `}"
         >
-          <span
-            class="
-                        text-xs font-black tracking-wider text-(--ui-text-muted)
-                        uppercase
-                      "
-            >{m}</span
-          >
+          <span class="section-heading">{m}</span>
           {#if mode === m}
             <div class="flex items-baseline gap-1">
               {#if m === "custom" && !isValidColor(customColor)}
@@ -241,13 +235,7 @@ const getApcaRating = (score: number) => {
             "
     >
       <div class="flex items-baseline justify-between">
-        <span
-          class="
-                      text-xs font-black tracking-wider text-(--ui-text-muted)
-                      uppercase
-                    "
-          >APCA</span
-        >
+        <span class="section-heading">APCA</span>
         <span class="text-xl font-black">{customColorError && mode === "custom" ? "--" : currentApca}</span>
       </div>
       <div
@@ -267,13 +255,7 @@ const getApcaRating = (score: number) => {
             "
     >
       <div class="flex items-baseline justify-between">
-        <span
-          class="
-                      text-xs font-black tracking-wider text-(--ui-text-muted)
-                      uppercase
-                    "
-          >Ratio</span
-        >
+        <span class="section-heading">Ratio</span>
         <span class="text-xl font-black"
           >{customColorError && mode === "custom" ? "--" : currentWcag.toFixed(1)}:1</span
         >
@@ -286,20 +268,20 @@ const getApcaRating = (score: number) => {
       >
         {#if customColorError && mode === "custom"}
           <div class="flex flex-col items-center gap-1">
-            <span class="text-xs font-bold uppercase opacity-70">AA Lg</span>
+            <span class="sub-label">AA Lg</span>
             <X class="size-4 text-gray-400 opacity-70" />
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="text-xs font-bold uppercase opacity-70">AA</span>
+            <span class="sub-label">AA</span>
             <X class="size-4 text-gray-400 opacity-70" />
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="text-xs font-bold uppercase opacity-70">AAA</span>
+            <span class="sub-label">AAA</span>
             <X class="size-4 text-gray-400 opacity-70" />
           </div>
         {:else}
           <div class="flex flex-col items-center gap-1">
-            <span class="text-xs font-bold uppercase opacity-70">AA Lg</span>
+            <span class="sub-label">AA Lg</span>
             {#if readableAt("AA Large")}
               <Check class="size-4 text-green-500" />
             {:else}
@@ -307,7 +289,7 @@ const getApcaRating = (score: number) => {
             {/if}
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="text-xs font-bold uppercase opacity-70">AA</span>
+            <span class="sub-label">AA</span>
             {#if readableAt("AA")}
               <Check class="size-4 text-green-500" />
             {:else}
@@ -315,7 +297,7 @@ const getApcaRating = (score: number) => {
             {/if}
           </div>
           <div class="flex flex-col items-center gap-1">
-            <span class="text-xs font-bold uppercase opacity-70">AAA</span>
+            <span class="sub-label">AAA</span>
             {#if readableAt("AAA")}
               <Check class="size-4 text-green-500" />
             {:else}

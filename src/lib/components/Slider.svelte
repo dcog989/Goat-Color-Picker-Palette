@@ -29,12 +29,7 @@ let {
 </script>
 
 <div class="space-y-1">
-  <div
-    class="
-          flex justify-between text-xs font-bold
-          text-(--ui-text-muted) uppercase
-        "
-  >
+  <div class="sub-label flex justify-between">
     <span>{label}</span> <span>{displayValue}</span>
   </div>
   <div class="relative h-4 rounded-full">
