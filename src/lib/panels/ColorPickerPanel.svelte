@@ -55,10 +55,9 @@ const handleInput = (e: Event) => {
 
 <section
   class="
-      h-full overflow-y-auto overflow-x-hidden space-y-4 rounded-xl border border-(--ui-border)
-      bg-(--ui-card) p-4 shadow-xl
-      sm:space-y-6 sm:p-6
-      md:space-y-8 md:p-8
+      panel h-full overflow-y-auto overflow-x-hidden space-y-4
+      sm:space-y-6
+      md:space-y-8
     "
   style:--picker-l={color.l}
   style:--picker-c={color.c}

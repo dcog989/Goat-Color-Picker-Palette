@@ -25,10 +25,7 @@ const removeRow = () => {
 
 <section
   class="
-      h-full overflow-y-auto rounded-xl border border-(--ui-border)
-      bg-(--ui-card) p-4 shadow-xl
-      sm:p-6
-      md:p-8
+      panel h-full overflow-y-auto
     "
 >
   <div

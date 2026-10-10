@@ -49,10 +49,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
 
 <section
   class="
-      flex h-full flex-col justify-between overflow-y-auto rounded-xl border
-      border-(--ui-border) bg-(--ui-card) p-4 shadow-xl
-      sm:p-6
-      md:p-8
+      panel flex h-full flex-col justify-between overflow-y-auto
     "
 >
   <div class="space-y-6">
