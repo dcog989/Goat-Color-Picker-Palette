@@ -1,5 +1,5 @@
 import type { Colordx } from "@colordx/core";
-import { colordx, inGamutSrgb } from "@colordx/core";
+import { colordx, inGamutSrgb, oklchToLinearInto } from "@colordx/core";
 
 const RANDOM_HUE_MAX = 360;
 const RANDOM_LIGHTNESS = 0.45;
@@ -8,15 +8,34 @@ const CHROMA_SEARCH_UPPER_BOUND = 0.5;
 const CHROMA_SEARCH_ITERATIONS = 18;
 const MIN_CHROMA_MAX = 0.001;
 const HUE_MAX = 359.999;
+// Mirrors colordx's in-gamut test, which allows a small linear-sRGB tolerance.
+const GAMUT_TOLERANCE = 5e-4;
 
 const clampHue = (h: number): number => Math.max(0, Math.min(h, HUE_MAX));
+
+const gamutChannels = new Float64Array(3);
+
+const isInSrgbGamut = (l: number, c: number, h: number): boolean => {
+  oklchToLinearInto(gamutChannels, l, c, h);
+  const r = gamutChannels[0]!;
+  const g = gamutChannels[1]!;
+  const b = gamutChannels[2]!;
+  return (
+    r >= -GAMUT_TOLERANCE &&
+    r <= 1 + GAMUT_TOLERANCE &&
+    g >= -GAMUT_TOLERANCE &&
+    g <= 1 + GAMUT_TOLERANCE &&
+    b >= -GAMUT_TOLERANCE &&
+    b <= 1 + GAMUT_TOLERANCE
+  );
+};
 
 function getMaxSrgbChroma(l: number, h: number): number {
   let low = 0;
   let high = CHROMA_SEARCH_UPPER_BOUND;
   for (let i = 0; i < CHROMA_SEARCH_ITERATIONS; i++) {
     const mid = (low + high) / 2;
-    if (inGamutSrgb({ l, c: mid, h })) {
+    if (isInSrgbGamut(l, mid, h)) {
       low = mid;
     } else {
       high = mid;
