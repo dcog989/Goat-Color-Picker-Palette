@@ -149,34 +149,6 @@ input[type="number"]::-webkit-outer-spin-button {
   opacity: 1;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--ui-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--ui-border);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(from var(--current-color) l c h / 0.7);
-}
-
-:root.dark ::-webkit-scrollbar-thumb:hover {
-  background: oklch(from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) ::-webkit-scrollbar-thumb:hover {
-    background: oklch(from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9);
-  }
-}
-
 button,
 input,
 select {

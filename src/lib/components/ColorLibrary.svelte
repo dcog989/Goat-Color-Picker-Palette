@@ -208,11 +208,7 @@ $effect(() => {
           </div>
         </div>
       {:else}
-        <div
-          class="custom-scrollbar relative flex-1 overflow-y-auto"
-          onscroll={handleScroll}
-          bind:clientHeight={viewportHeight}
-        >
+        <div class="relative flex-1 overflow-y-auto" onscroll={handleScroll} bind:clientHeight={viewportHeight}>
           {#if filteredColors.length > 0}
             <div style:height="{totalHeight}px" class="pointer-events-none absolute top-0 left-0 w-full"></div>
 
@@ -275,28 +271,3 @@ $effect(() => {
     </div>
   {/if}
 </div>
-
-<style>
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--ui-border);
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: oklch(from var(--current-color) l c h / 0.7);
-}
-
-@media (prefers-color-scheme: dark) {
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: oklch(from var(--current-color) calc(l * 0.6) calc(c * 1.2) h / 0.9);
-  }
-}
-</style>
