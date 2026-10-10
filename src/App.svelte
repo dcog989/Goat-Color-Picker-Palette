@@ -236,7 +236,7 @@ const showInfo = (key: keyof typeof infoContent) => {
       type="button"
       class="
               rounded-lg p-2 transition-colors
-              hover:bg-black/10
+              hover:bg-black/10 dark:hover:bg-white/10
             "
       aria-label="Keyboard Shortcuts"
     >

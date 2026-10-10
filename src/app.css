@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* App theme toggles html.dark/.light; bind Tailwind's dark: variant to that class, not the OS media query */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Border Radius System */
   --radius-sm: 0.75rem; /* Small elements (tags, badges) */
