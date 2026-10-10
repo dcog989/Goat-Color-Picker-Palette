@@ -63,13 +63,14 @@ export class EngineStore {
   }
 
   #generated = $derived.by((): string[] => {
-    if (this.#isHarmonyMode) {
+    const axis = this.genAxis;
+    if (isHarmonyMode(axis)) {
       const base = this.#getBaseColor();
       return colordx({ l: base.l, c: base.c, h: base.h })
-        .harmonies(this.genAxis)
+        .harmonies(axis)
         .map((c) => c.toHex());
     }
-    return generatePalette(this.#getBaseColor(), this.genAxis, this.genSteps);
+    return generatePalette(this.#getBaseColor(), axis, this.genSteps);
   });
 
   get generated(): string[] {
