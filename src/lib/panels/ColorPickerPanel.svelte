@@ -228,43 +228,15 @@ const handleInput = (e: Event) => {
           <button
             type="button"
             onclick={(e) => app.copy(inputVal, e)}
-            class="
-                          cursor-pointer rounded-full bg-white/30 p-3 text-white
-                          shadow-lg backdrop-blur-md
-                          transition-transform duration-200
-                          hover:scale-110
-                          hover:bg-white/40
-                        "
+            class="overlay-button"
             title="Copy {color.mode.toUpperCase()}"
           >
             <Copy class="size-4" />
           </button>
-          <button
-            type="button"
-            onclick={(e) => addToPaintbox(e)}
-            class="
-                          cursor-pointer rounded-full bg-white/30 p-3 text-white
-                          shadow-lg backdrop-blur-md
-                          transition-transform duration-200
-                          hover:scale-110
-                          hover:bg-white/40
-                        "
-            title="Add to Paintbox"
-          >
+          <button type="button" onclick={(e) => addToPaintbox(e)} class="overlay-button" title="Add to Paintbox">
             <Plus class="size-4" />
           </button>
-          <button
-            type="button"
-            onclick={(e) => copyLink(e)}
-            class="
-                          cursor-pointer rounded-full bg-white/30 p-3 text-white
-                          shadow-lg backdrop-blur-md
-                          transition-transform duration-200
-                          hover:scale-110
-                          hover:bg-white/40
-                        "
-            title="Copy link"
-          >
+          <button type="button" onclick={(e) => copyLink(e)} class="overlay-button" title="Copy link">
             <Link class="size-4" />
           </button>
         </div>
@@ -302,10 +274,8 @@ const handleInput = (e: Event) => {
                     "
           >{format.label}</span
         >
-        <span class="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-hover:grid-cols-[1fr]">
-          <span
-            class="flex items-center gap-1.5 overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          >
+        <span class="value-reveal">
+          <span class="value-reveal-inner flex items-center gap-1.5">
             <span class="text-on-current font-mono whitespace-nowrap">{format.value}</span>
             <Copy class="text-on-current size-3 shrink-0" />
           </span>

@@ -125,6 +125,20 @@
     @apply rounded-lg border border-(--ui-border) bg-(--ui-bg) p-1;
   }
 
+  /* Shared on-color hover-overlay action button; call sites may override bg/text for contrast */
+  .overlay-button {
+    @apply cursor-pointer rounded-full bg-white/30 p-3 text-white shadow-lg backdrop-blur-md transition-transform duration-200 hover:scale-110 hover:bg-white/40;
+  }
+
+  /* Shared hover value reveal: content expands from 0 width and fades in */
+  .value-reveal {
+    @apply grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-hover:grid-cols-[1fr];
+  }
+
+  .value-reveal-inner {
+    @apply overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100;
+  }
+
   /* Shared circular header button */
   .header-button {
     @apply hover:text-on-current cursor-pointer rounded-full border border-(--ui-border) bg-(--ui-card) p-2 shadow-lg transition duration-300 hover:scale-110 hover:bg-(--current-color) sm:p-3;

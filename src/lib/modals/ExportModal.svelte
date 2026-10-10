@@ -84,10 +84,8 @@ const exports = $derived.by(() =>
                             "
             >
               <span class="shrink-0 text-brand">Copy</span>
-              <span
-                class="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-hover:grid-cols-[1fr]"
-              >
-                <span class="overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span class="value-reveal">
+                <span class="value-reveal-inner">
                   <span class="ml-2 max-w-40 truncate text-(--ui-text-muted) font-mono font-normal normal-case"
                     >{exportItem.content}</span
                   >

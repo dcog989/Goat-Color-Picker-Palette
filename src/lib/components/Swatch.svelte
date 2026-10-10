@@ -29,9 +29,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
 };
 
 const getActionClass = () => {
-  if (!dynamicClass) {
-    return "bg-white/30 hover:bg-white/50 text-white";
-  }
+  if (!dynamicClass) return "";
   return usesDarkText(swatchColor)
     ? "bg-black/10 hover:bg-black/20 text-black"
     : "bg-white/20 hover:bg-white/30 text-white";
@@ -73,11 +71,7 @@ const getActionClass = () => {
           paintbox.add(swatchColor);
           toast.showAt("Added", e);
         }}
-        class="{getActionClass()}
-                  cursor-pointer rounded-full p-3 shadow-sm
-                  transition-transform duration-200
-                  hover:scale-110
-                "
+        class="overlay-button {getActionClass()}"
         title="Add to paintbox"
         type="button"
       >
@@ -88,11 +82,7 @@ const getActionClass = () => {
           e.stopPropagation();
           copy(e);
         }}
-        class="{getActionClass()}
-                  cursor-pointer rounded-full p-3 shadow-sm
-                  transition-transform duration-200
-                  hover:scale-110
-                "
+        class="overlay-button {getActionClass()}"
         title="Copy"
         type="button"
       >
