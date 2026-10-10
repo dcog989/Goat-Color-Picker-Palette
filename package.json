@@ -7,7 +7,7 @@
   "scripts": {
     "build": "vite build",
     "changelog": "cog changelog",
-    "check": "biome check . && bun run typecheck && bun run test && bun run build",
+    "check": "biome check . && bun run typecheck && bun run test:coverage && bun run build",
     "clean": "rm -rf bun.lock coverage dist node_modules .vitest",
     "dev": "vite",
     "fix": "biome check --write .",
