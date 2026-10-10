@@ -35,6 +35,7 @@ export function generatePalette(
     const h = axis === "h" ? i * (360 / steps) : (baseColor.h ?? 0);
     const alpha = axis === "a" ? fraction : (baseColor.alpha ?? 1);
 
-    return colordx({ l, c, h, alpha }).toHex();
+    // toHex8 keeps every step at a uniform 8-digit width; toHex drops alpha when opaque.
+    return colordx({ l, c, h, alpha }).toHex8();
   });
 }
