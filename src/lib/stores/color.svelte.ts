@@ -11,13 +11,6 @@ const HUE_MAX = 359.999;
 
 const clampHue = (h: number): number => Math.max(0, Math.min(h, HUE_MAX));
 
-function getDisplayColor(color: Colordx): Colordx {
-  if (inGamutSrgb(color.toOklch())) {
-    return color;
-  }
-  return color.clampSrgb();
-}
-
 function getMaxSrgbChroma(l: number, h: number): number {
   let low = 0;
   let high = CHROMA_SEARCH_UPPER_BOUND;
@@ -34,6 +27,7 @@ function getMaxSrgbChroma(l: number, h: number): number {
 
 export class ColorStore {
   #current = $state<Colordx>(ColorStore.#getRandomColor());
+  #oklch = $derived(this.#current.toOklch());
   #lastMeaningfulHue = 0;
   mode = $state<"okhsl" | "oklch" | "rgb">("okhsl");
   #precisionMode: () => "precise" | "practical";
@@ -41,7 +35,7 @@ export class ColorStore {
   constructor(precisionGetter: () => "precise" | "practical" = () => "practical") {
     this.#precisionMode = precisionGetter;
     // Capture initial hue if meaningful
-    const init = this.#current.toOklch();
+    const init = this.#oklch;
     if (init.c > 0.001) this.#lastMeaningfulHue = init.h;
   }
 
@@ -70,21 +64,21 @@ export class ColorStore {
   }
 
   get l() {
-    return this.#current.toOklch().l;
+    return this.#oklch.l;
   }
   set l(v: number) {
     this.#setOklchField("l", v);
   }
 
   get c() {
-    return this.#current.toOklch().c;
+    return this.#oklch.c;
   }
   set c(v: number) {
     this.#setOklchField("c", v);
   }
 
   get h() {
-    const { c, h } = this.#current.toOklch();
+    const { c, h } = this.#oklch;
     return c > 0.001 ? h : this.#lastMeaningfulHue;
   }
   set h(v: number) {
@@ -92,7 +86,7 @@ export class ColorStore {
   }
 
   #setOklchField(field: "l" | "c" | "h", value: number) {
-    const { l, c, h, alpha } = this.#current.toOklch();
+    const { l, c, h, alpha } = this.#oklch;
     this.#setCurrent(colordx({ l, c, h, alpha, [field]: value }));
   }
 
@@ -103,10 +97,7 @@ export class ColorStore {
     this.#setCurrent(this.#current.alpha(v));
   }
 
-  #isOutOfGamut = $derived.by(() => {
-    const oklch = this.#current.toOklch();
-    return !inGamutSrgb({ l: oklch.l, c: oklch.c, h: oklch.h });
-  });
+  #isOutOfGamut = $derived.by(() => !inGamutSrgb(this.#oklch));
 
   get isOutOfGamut() {
     return this.#isOutOfGamut;
@@ -124,7 +115,7 @@ export class ColorStore {
     return this.#chromaMax;
   }
 
-  #displayColor = $derived.by(() => getDisplayColor(this.#current));
+  #displayColor = $derived.by(() => (inGamutSrgb(this.#oklch) ? this.#current : this.#current.clampSrgb()));
 
   get rgbComp() {
     return this.#displayColor.toRgb();
@@ -189,7 +180,7 @@ export class ColorStore {
     if (this.#precisionMode() === "precise") {
       return this.#current.toOklchString();
     }
-    const { l, c, h, alpha } = this.#current.toOklch();
+    const { l, c, h, alpha } = this.#oklch;
     const lPct = Math.round(l * 100);
     const cStr = parseFloat(c.toFixed(2));
     const hStr = Math.round(h || 0);
@@ -228,13 +219,13 @@ export class ColorStore {
   cmyk = $derived(this.#displayColor.toCmykString(this.#precision));
 
   cssVar = $derived.by(() => {
-    const oklch = this.#current.toOklch();
+    const oklch = this.#oklch;
     const alphaStr = oklch.alpha < 1 ? ` / ${oklch.alpha}` : "";
     return `oklch(${oklch.l * 100}% ${oklch.c} ${oklch.h}${alphaStr})`;
   });
 
   cssVarOpaque = $derived.by(() => {
-    const oklch = this.#current.toOklch();
+    const oklch = this.#oklch;
     return `oklch(${oklch.l * 100}% ${oklch.c} ${oklch.h})`;
   });
 
