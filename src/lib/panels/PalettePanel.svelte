@@ -81,7 +81,7 @@ const removeRow = () => {
             disabled={engine.genSteps <= 4}
             class="
                           rounded-md p-1.5 text-(--ui-text-muted)
-                          transition-all hover:bg-(--current-color) hover:text-white
+                          transition-all hover:bg-(--current-color) hover:text-on-current
                           {engine.genSteps <= 4 ? "pointer-events-none opacity-55" : ""}
                         "
             title="Remove Row"
@@ -94,7 +94,7 @@ const removeRow = () => {
             onclick={addRow}
             class="
                           rounded-md p-1.5 text-(--ui-text-muted)
-                          transition-all hover:bg-(--current-color) hover:text-white
+                          transition-all hover:bg-(--current-color) hover:text-on-current
                         "
             title="Add Row"
             aria-label="Increase steps"

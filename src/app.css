@@ -97,7 +97,7 @@
 
   /* Shared small icon action button (rounded-lg, subtle); call sites may override hover colour */
   .icon-button {
-    @apply shrink-0 rounded-lg border border-(--ui-border) bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm transition-all hover:bg-(--current-color) hover:text-white;
+    @apply shrink-0 rounded-lg border border-(--ui-border) bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm transition-all hover:bg-(--current-color) hover:text-on-current;
   }
 
   /* Shared large action button (rounded-2xl) */
