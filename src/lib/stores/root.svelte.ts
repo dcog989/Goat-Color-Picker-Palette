@@ -43,8 +43,12 @@ export class RootStore {
     this.image.destroy();
   }
 
-  copy(text: string, e?: MouseEvent) {
-    navigator.clipboard.writeText(text);
-    this.toast.showAt("Copied", e);
+  async copy(text: string, e?: MouseEvent) {
+    try {
+      await navigator.clipboard.writeText(text);
+      this.toast.showAt("Copied", e);
+    } catch {
+      this.toast.showAt("Copy failed", e);
+    }
   }
 }

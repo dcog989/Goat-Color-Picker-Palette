@@ -15,10 +15,14 @@ interface Props {
 
 let { color: swatchColor, index, onSelect, dynamicClass = true }: Props = $props();
 
-const copy = (e: MouseEvent) => {
+const copy = async (e: MouseEvent) => {
   const formatted = color.formatColor(swatchColor);
-  navigator.clipboard.writeText(formatted);
-  toast.showAt("Copied", e);
+  try {
+    await navigator.clipboard.writeText(formatted);
+    toast.showAt("Copied", e);
+  } catch {
+    toast.showAt("Copy failed", e);
+  }
 };
 
 const handleKeyDown = (e: KeyboardEvent) => {
