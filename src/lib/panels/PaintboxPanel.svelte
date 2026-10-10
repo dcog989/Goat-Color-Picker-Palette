@@ -59,14 +59,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
               sm:flex-row sm:items-center
             "
     >
-      <h2
-        class="
-                  shrink-0 text-xs font-black tracking-widest
-                  text-(--ui-text-muted) uppercase
-                "
-      >
-        Paintbox
-      </h2>
+      <h2 class="section-heading shrink-0">Paintbox</h2>
 
       <div
         class="
@@ -113,14 +106,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
 
   <!-- Export Options -->
   <div class="mt-8 space-y-3">
-    <h3
-      class="
-              text-xs font-black tracking-widest text-(--ui-text-muted)
-              uppercase
-            "
-    >
-      Export
-    </h3>
+    <h3 class="section-heading">Export</h3>
     <div class="grid grid-cols-4 gap-3">
       <button type="button" onclick={() => exportVisual(app, "png")} class={actionButtonClass}>PNG</button>
       <button type="button" onclick={() => exportVisual(app, "svg")} class={actionButtonClass}>SVG</button>
@@ -146,14 +132,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
 
   <!-- Import Options -->
   <div class="mt-4 space-y-3">
-    <h3
-      class="
-              text-xs font-black tracking-widest text-(--ui-text-muted)
-              uppercase
-            "
-    >
-      Import
-    </h3>
+    <h3 class="section-heading">Import</h3>
     <input bind:this={fileInput} type="file" accept={PALETTE_FILE.ACCEPT} class="hidden" onchange={handleImport}>
     <button type="button" onclick={() => fileInput?.click()} class={actionButtonClass}>DTCG JSON / GIMP GPL</button>
   </div>

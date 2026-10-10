@@ -74,14 +74,7 @@ onDestroy(() => {
     "
 >
   <div class="mb-6 flex shrink-0 items-center justify-between">
-    <h2
-      class="
-              text-xs font-black tracking-widest text-(--ui-text-muted)
-              uppercase
-            "
-    >
-      Image Analyser
-    </h2>
+    <h2 class="section-heading">Image Analyser</h2>
   </div>
 
   <div class="flex-1 space-y-6">
@@ -216,14 +209,7 @@ onDestroy(() => {
       <!-- Extracted Colors Grid -->
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <h3
-            class="
-                          text-xs font-bold tracking-wider
-                          text-(--ui-text-muted) uppercase
-                        "
-          >
-            Palette
-          </h3>
+          <h3 class="section-heading">Palette</h3>
           <div class="flex items-center gap-3">
             <span class="font-mono text-xs text-(--ui-text-muted)">Top 24</span>
             <button

@@ -77,14 +77,7 @@ const handleInput = (e: Event) => {
               md:w-auto
             "
     >
-      <h2
-        class="
-                  text-xs font-black tracking-widest whitespace-nowrap
-                  text-(--ui-text-muted) uppercase
-                "
-      >
-        Color Picker
-      </h2>
+      <h2 class="section-heading whitespace-nowrap">Color Picker</h2>
       <div class="relative z-50 w-full">
         <input
           type="text"

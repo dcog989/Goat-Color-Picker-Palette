@@ -89,6 +89,11 @@
   @apply rounded-xl border border-(--ui-border) bg-(--ui-card) p-4 shadow-xl sm:p-6 md:p-8;
 }
 
+/* Shared panel section heading */
+.section-heading {
+  @apply text-xs font-black tracking-widest text-(--ui-text-muted) uppercase;
+}
+
 body {
   min-height: 100vh;
   background-color: #444;

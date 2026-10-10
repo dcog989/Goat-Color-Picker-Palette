@@ -34,15 +34,7 @@ const removeRow = () => {
           md:flex-row
         "
   >
-    <h2
-      class="
-              shrink-0 self-start text-xs font-black tracking-widest
-              text-(--ui-text-muted) uppercase
-              md:self-center
-            "
-    >
-      Palette
-    </h2>
+    <h2 class="section-heading shrink-0 self-start md:self-center">Palette</h2>
 
     <div
       class="
