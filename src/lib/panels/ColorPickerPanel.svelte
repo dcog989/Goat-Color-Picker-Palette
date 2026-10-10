@@ -119,16 +119,7 @@ const handleInput = (e: Event) => {
           </div>
         {/if}
       </div>
-      <button
-        type="button"
-        onclick={togglePrecision}
-        class="
-                      group relative shrink-0 rounded-md border border-(--ui-border)
-                      bg-(--ui-bg) p-2
-                      transition duration-200
-                      hover:bg-(--current-color)
-                    "
-      >
+      <button type="button" onclick={togglePrecision} class="icon-button group relative rounded-md">
         {#if app.precision === "precise"}
           <DecimalsArrowRight
             class="
