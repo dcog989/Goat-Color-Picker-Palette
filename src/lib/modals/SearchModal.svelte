@@ -24,14 +24,7 @@ let { onClose }: Props = $props();
     transition:scale={{ duration: 300, easing: quadOut, start: 0.95 }}
   >
     <header class="z-10 mb-4 flex shrink-0 items-center justify-between">
-      <h2
-        class="
-                  text-xl font-black tracking-widest uppercase
-                  md:text-2xl
-                "
-      >
-        Color Library
-      </h2>
+      <h2 class="modal-title">Color Library</h2>
       <button type="button" onclick={onClose} class="modal-close" aria-label="Close">×</button>
     </header>
     <div class="relative min-h-0 flex-1">

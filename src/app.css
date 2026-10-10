@@ -158,6 +158,11 @@
   .modal-panel {
     @apply rounded-xl bg-(--ui-card) p-6 shadow-2xl md:rounded-3xl md:p-8;
   }
+
+  /* Shared modal title */
+  .modal-title {
+    @apply text-xl font-black tracking-widest uppercase md:text-2xl;
+  }
 }
 
 body {

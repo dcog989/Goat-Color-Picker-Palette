@@ -1,4 +1,6 @@
 <script lang="ts">
+import { quadOut } from "svelte/easing";
+import { fade, scale } from "svelte/transition";
 import { getApp } from "../context";
 import type { ExportFormat } from "../utils/formatters";
 import { exportCode, exportCodeFile, strategies } from "../utils/strategies";
@@ -24,19 +26,14 @@ const exports = $derived.by(() =>
 </script>
 
 <div
-  class="
-      animate-fade-in fixed inset-0 z-50 flex items-start justify-center
-      p-4 pt-12 md:p-8 md:pt-16
-    "
+  class="fixed inset-0 z-50 flex items-start justify-center p-4 pt-12 md:p-8 md:pt-16"
+  transition:fade={{ duration: 300, easing: quadOut }}
 >
   <button type="button" class="modal-scrim" onclick={onClose} aria-label="Close export dialog"></button>
   <div
-    class="
-          animate-scale-in relative max-h-[90vh] w-full max-w-3xl space-y-6
-          overflow-y-auto rounded-3xl bg-(--ui-card) p-6 shadow-2xl
-          md:space-y-8 md:p-12
-        "
+    class="modal-panel relative max-h-[90vh] w-full max-w-3xl space-y-6 overflow-y-auto md:space-y-8"
     role="dialog"
+    transition:scale={{ duration: 300, easing: quadOut, start: 0.95 }}
   >
     <header
       class="
@@ -44,14 +41,7 @@ const exports = $derived.by(() =>
               pb-4
             "
     >
-      <h2
-        class="
-                  text-2xl font-black tracking-widest uppercase
-                  md:text-3xl
-                "
-      >
-        Export Code
-      </h2>
+      <h2 class="modal-title">Export Code</h2>
       <div
         class="
                   flex items-center gap-2
