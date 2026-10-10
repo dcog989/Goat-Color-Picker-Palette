@@ -10,9 +10,16 @@ const { color } = getApp();
 type ContrastMode = "white" | "black" | "custom";
 type WcagLevel = "AA Large" | "AA" | "AAA";
 
+const modes: ContrastMode[] = ["white", "black", "custom"];
+
 let mode = $state<ContrastMode>("white");
 let customColor = $state("#888888");
-let isFg = $state(true);
+// Per mode: false = target color as background, true = current color as background
+let inverted = $state<Record<ContrastMode, boolean>>({
+  white: true,
+  black: true,
+  custom: true,
+});
 
 const isValidColor = (colorStr: string): boolean => {
   return getFormat(colorStr) !== undefined;
@@ -33,8 +40,13 @@ const getTargetColor = (m: ContrastMode): string => {
 
 // Derived Stats
 let currentTarget = $derived(getTargetColor(mode));
-let fg = $derived(isFg ? color.hex : currentTarget);
-let bg = $derived(isFg ? currentTarget : color.hex);
+let isInverted = $derived(inverted[mode]);
+let fg = $derived(isInverted ? currentTarget : color.hex);
+let bg = $derived(isInverted ? color.hex : currentTarget);
+
+const toggleInvert = (m: ContrastMode) => {
+  inverted[m] = !inverted[m];
+};
 
 let currentApca = $derived.by((): number => {
   if (mode === "custom" && !isValidColor(customColor)) return 0;
@@ -90,53 +102,76 @@ const getApcaRating = (score: number) => {
           bg-(--ui-bg) p-1
         "
   >
-    {#each ["white", "black", "custom"] as m (m)}
-      <button
-        type="button"
-        onclick={() => (mode = m as ContrastMode)}
-        class="
-                  relative flex flex-col items-center gap-1 rounded-lg px-2 py-3
-                  transition-all
-                  {mode === m
-          ? "bg-(--ui-card) text-(--ui-text) shadow-sm"
-          : `
-                      opacity-70
-                      hover:bg-black/5 hover:opacity-100
-                      dark:hover:bg-white/5
-                    `}"
-      >
-        <span
+    {#each modes as m (m)}
+      <div class="relative">
+        <button
+          type="button"
+          onclick={() => (mode = m)}
           class="
-                      text-xs font-black tracking-wider text-(--ui-text-muted)
-                      uppercase
-                    "
-          >{m}</span
+                    relative flex h-full w-full flex-col items-center gap-1
+                    rounded-lg px-2 py-3 transition-all
+                    {mode === m
+            ? "bg-(--ui-card) text-(--ui-text) shadow-sm"
+            : `
+                        opacity-70
+                        hover:bg-black/5 hover:opacity-100
+                        dark:hover:bg-white/5
+                      `}"
         >
-        {#if mode === m}
-          <div class="flex items-baseline gap-1">
-            {#if m === "custom" && !isValidColor(customColor)}
-              <span class="text-lg font-black text-red-500">--</span>
-              <span class="font-mono text-xs text-red-500/70">!</span>
-            {:else}
-              <span class="text-lg font-black">{currentApca}</span>
-              <span class="font-mono text-xs opacity-50">Lc</span>
-            {/if}
-          </div>
-        {/if}
-        <!-- Active Indicator -->
-        {#if mode === m}
-          <div
+          <span
             class="
-                          absolute bottom-1 size-1 rounded-full
-                          bg-(--current-color)
-                        "
-          ></div>
-        {/if}
-      </button>
+                        text-xs font-black tracking-wider text-(--ui-text-muted)
+                        uppercase
+                      "
+            >{m}</span
+          >
+          {#if mode === m}
+            <div class="flex items-baseline gap-1">
+              {#if m === "custom" && !isValidColor(customColor)}
+                <span class="text-lg font-black text-red-500">--</span>
+                <span class="font-mono text-xs text-red-500/70">!</span>
+              {:else}
+                <span class="text-lg font-black">{currentApca}</span>
+                <span class="font-mono text-xs opacity-50">Lc</span>
+              {/if}
+            </div>
+          {/if}
+          <!-- Active Indicator -->
+          {#if mode === m}
+            <div
+              class="
+                            absolute bottom-1 size-1 rounded-full
+                            bg-(--current-color)
+                          "
+            ></div>
+          {/if}
+        </button>
+
+        <button
+          type="button"
+          onclick={() => {
+            mode = m;
+            toggleInvert(m);
+          }}
+          aria-pressed={inverted[m]}
+          aria-label="Invert {m} and current color"
+          title={inverted[m]
+            ? `Showing ${m} on the current color — click to invert`
+            : `Showing the current color on ${m} — click to invert`}
+          class="
+                    absolute top-1.5 right-1.5 rounded-md p-1
+                    transition-colors
+                    hover:bg-black/5 dark:hover:bg-white/10
+                    {inverted[m] ? `text-(--current-color)` : `text-(--ui-text-muted) opacity-60 hover:opacity-100`}
+                  "
+        >
+          <ArrowRightLeft class="size-[18px]" />
+        </button>
+      </div>
     {/each}
   </div>
 
-  <!-- 2. Controls Row (Custom Input & Swap) -->
+  <!-- 2. Controls Row (Custom Input) -->
   <div class="flex min-h-10.5 items-center gap-4">
     {#if mode === "custom"}
       <div class="relative flex-1 pb-6">
@@ -175,23 +210,9 @@ const getApcaRating = (score: number) => {
                   flex-1 pl-2 text-base font-bold text-(--ui-text-muted) italic
                 "
       >
-        Comparing {isFg ? color.hex : mode} vs {isFg ? mode : color.hex}...
+        Comparing {isInverted ? mode : color.hex} vs {isInverted ? color.hex : mode}...
       </div>
     {/if}
-
-    <button
-      type="button"
-      onclick={() => (isFg = !isFg)}
-      class="
-              shrink-0 rounded-lg border border-transparent p-2
-              text-(--ui-text-muted) transition-all
-              hover:border-(--ui-border) hover:bg-(--ui-bg)
-              hover:text-(--current-color)
-            "
-      title="Swap Foreground/Background"
-    >
-      <ArrowRightLeft class="size-4" />
-    </button>
   </div>
 
   <!-- 3. Preview Area -->
