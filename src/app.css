@@ -327,22 +327,3 @@ select {
     oklch(var(--picker-l) var(--picker-max-c) var(--picker-h))
   );
 }
-
-@media (min-width: 1920px) {
-  .main-grid {
-    grid-template-columns: 1fr 500px 500px;
-    grid-template-rows: auto auto;
-  }
-  .main-grid > .picker {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .main-grid > .mid-group {
-    grid-column: 2 / span 2;
-    grid-row: 1;
-  }
-  .main-grid > .full-row {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-}

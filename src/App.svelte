@@ -171,18 +171,19 @@ const showInfo = (key: keyof typeof infoContent) => {
 
   <main
     class="
-          main-grid grid w-full flex-1 grid-cols-1 gap-4 p-4
+          grid w-full flex-1 grid-cols-1 gap-4 p-4
           sm:gap-6 sm:p-6
           md:gap-8 md:p-8
+          min-[1920px]:grid-cols-[1fr_500px_500px] min-[1920px]:grid-rows-[auto_auto]
           min-[1920px]:px-16
         "
   >
-    <div class="picker min-h-0 min-w-64 w-full max-h-[48rem]">
+    <div class="min-h-0 min-w-64 w-full max-h-[48rem] min-[1920px]:col-start-1 min-[1920px]:row-start-1">
       <ColorPickerPanel />
     </div>
 
     <div
-      class="mid-group min-h-0 flex flex-col gap-4 items-center justify-center sm:gap-6 md:flex-row md:items-stretch md:gap-8"
+      class="min-h-0 flex flex-col gap-4 items-center justify-center sm:gap-6 md:flex-row md:items-stretch md:gap-8 min-[1920px]:col-start-2 min-[1920px]:col-span-2 min-[1920px]:row-start-1"
     >
       <div class="min-h-0 min-w-0 w-full max-w-[500px] max-h-[48rem]">
         <PalettePanel />
@@ -194,7 +195,7 @@ const showInfo = (key: keyof typeof infoContent) => {
     </div>
 
     <div
-      class="full-row min-h-0 flex flex-col gap-4 items-center justify-center sm:gap-6 md:gap-8 md:flex-row md:items-stretch"
+      class="min-h-0 flex flex-col gap-4 items-center justify-center sm:gap-6 md:gap-8 md:flex-row md:items-stretch min-[1920px]:col-span-full min-[1920px]:row-start-2"
     >
       <div class="min-h-0 min-w-0 w-full max-w-2xl max-h-[42.5rem] flex-1">
         <ImagePanel />
