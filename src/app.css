@@ -120,6 +120,11 @@
     @apply w-full rounded-md border border-(--ui-border) bg-(--ui-bg) font-mono transition-shadow duration-200;
   }
 
+  /* Shared segmented-control container shell; call sites add display/gap/radius context */
+  .control-group {
+    @apply rounded-lg border border-(--ui-border) bg-(--ui-bg) p-1;
+  }
+
   /* Shared circular header button */
   .header-button {
     @apply hover:text-on-current cursor-pointer rounded-full border border-(--ui-border) bg-(--ui-card) p-2 shadow-lg transition duration-300 hover:scale-110 hover:bg-(--current-color) sm:p-3;

@@ -65,12 +65,7 @@ const removeRow = () => {
       </select>
 
       {#if !engine.isHarmonyMode}
-        <div
-          class="
-                      flex items-center gap-1 rounded-lg border
-                      border-(--ui-border) bg-(--ui-bg) p-1
-                    "
-        >
+        <div class="control-group flex items-center gap-1">
           <button
             type="button"
             onclick={removeRow}

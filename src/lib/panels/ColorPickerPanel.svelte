@@ -158,12 +158,7 @@ const handleInput = (e: Event) => {
       </button>
     </div>
 
-    <div
-      class="
-              flex shrink-0 gap-1 rounded-md border border-(--ui-border)
-              bg-(--ui-bg) p-1
-            "
-    >
+    <div class="control-group flex shrink-0 gap-1 rounded-md">
       {#each ["okhsl", "oklch", "rgb"] as m (m)}
         <button
           type="button"
