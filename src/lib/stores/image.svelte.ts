@@ -19,6 +19,7 @@ export class ImageStore {
   currentFile = $state<File | null>(null);
 
   #managedWorker = new ManagedWorker<ImageWorkerMessage>();
+  #generation = 0;
 
   extractedPalette = $derived.by(() => {
     if (!this.mosaicData.length) return [];
@@ -59,6 +60,8 @@ export class ImageStore {
   async analyze(file: File) {
     validateImageFile(file);
 
+    const generation = ++this.#generation;
+
     this.#managedWorker.terminate();
 
     this.isProcessing = true;
@@ -71,6 +74,11 @@ export class ImageStore {
 
     try {
       const bitmap = await createImageBitmap(file);
+
+      if (generation !== this.#generation) {
+        bitmap.close();
+        return;
+      }
 
       const width = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
       const height = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
@@ -93,11 +101,13 @@ export class ImageStore {
         () => new ColorAnalysisWorker(),
         {
           onMessage: (data) => {
+            if (generation !== this.#generation) return;
             this.mosaicData = data.clusters;
             this.isProcessing = false;
             this.#managedWorker.terminate();
           },
           onError: () => {
+            if (generation !== this.#generation) return;
             this.isProcessing = false;
           },
         },
@@ -107,13 +117,17 @@ export class ImageStore {
       this.#managedWorker.post({ imageData, distance: 0.05 }, [imageData.data.buffer]);
     } catch (error) {
       console.error("Image analysis error:", error);
-      this.isProcessing = false;
-      this.#managedWorker.terminate();
+      if (generation === this.#generation) {
+        this.isProcessing = false;
+        this.#managedWorker.terminate();
+      }
       throw error;
     }
   }
 
   clear() {
+    this.#generation++;
+    this.isProcessing = false;
     this.mosaicData = [];
     this.currentFile = null;
     if (this.previewUrl) {
