@@ -86,7 +86,8 @@ export class ColorStore {
   }
 
   #setOklchField(field: "l" | "c" | "h", value: number) {
-    const { l, c, h, alpha } = this.#oklch;
+    const { l, c, alpha } = this.#oklch;
+    const h = this.h;
     this.#setCurrent(colordx({ l, c, h, alpha, [field]: value }));
   }
 
