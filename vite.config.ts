@@ -1,23 +1,23 @@
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vite';
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: './',
+  base: "./",
   plugins: [tailwindcss(), svelte()],
   worker: {
-    format: 'es',
+    format: "es",
   },
   build: {
-    target: 'esnext',
-    minify: 'esbuild',
-    sourcemap: process.env.NODE_ENV !== 'production' ? true : 'hidden',
+    target: "esnext",
+    minify: "esbuild",
+    sourcemap: "hidden",
     cssMinify: true,
     rollupOptions: {
       output: {
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]',
+        entryFileNames: "assets/[name]-[hash].js",
+        chunkFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash][extname]",
       },
     },
   },
