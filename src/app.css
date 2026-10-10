@@ -121,6 +121,11 @@
     @apply cursor-pointer rounded-lg border border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs font-bold uppercase transition-colors duration-200;
   }
 
+  /* Shared compact button chrome; call sites add border/bg colour + hover state only */
+  .small-button {
+    @apply cursor-pointer rounded-md border px-3 py-1 text-xs font-bold uppercase transition-all duration-200;
+  }
+
   /* Shared text-field chrome (radius, border, bg, mono, transition); call sites add size/spacing/state only */
   .text-input {
     @apply w-full rounded-md border border-(--ui-border) bg-(--ui-bg) font-mono transition-shadow duration-200;

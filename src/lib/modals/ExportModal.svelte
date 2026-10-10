@@ -66,10 +66,8 @@ const exports = $derived.by(() =>
               type="button"
               onclick={(e) => app.copy(exportItem.content, e)}
               class="
-                              group flex cursor-pointer items-center overflow-hidden
-                              rounded-md border border-transparent px-3 py-1
-                              text-xs font-bold uppercase transition-all
-                              duration-200
+                              small-button group flex items-center
+                              overflow-hidden border-transparent
                               hover:border-(--ui-border) hover:bg-(--ui-bg)
                             "
             >
@@ -87,9 +85,7 @@ const exports = $derived.by(() =>
                 type="button"
                 onclick={() => exportCodeFile(app, exportItem.key, exportFormat)}
                 class="
-                                shrink-0 cursor-pointer rounded-md border
-                                border-(--ui-border) px-3 py-1 text-xs font-bold
-                                uppercase transition-all duration-200
+                                small-button shrink-0 border-(--ui-border)
                                 hover:border-(--current-color)
                                 hover:bg-(--current-color) hover:text-on-current
                               "
