@@ -228,15 +228,6 @@ input[type="number"]::-webkit-outer-spin-button {
   opacity: 1;
 }
 
-button,
-input,
-select {
-  transition:
-    transform 300ms ease,
-    opacity 300ms ease,
-    background-color 300ms ease;
-}
-
 button:disabled {
   opacity: 0.4;
 }
@@ -246,11 +237,6 @@ button:disabled {
   will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
-}
-
-/* Avoid animating color/border properties - use opacity/transform instead */
-.transition-colors {
-  transition-property: opacity, transform, background-color;
 }
 
 /* Optimize shadow transitions */
