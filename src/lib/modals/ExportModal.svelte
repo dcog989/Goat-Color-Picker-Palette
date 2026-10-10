@@ -73,7 +73,7 @@ const exports = $derived.by(() =>
                               hover:border-(--ui-border) hover:bg-(--ui-bg)
                             "
             >
-              <span class="shrink-0 text-brand">Copy</span>
+              <span class="shrink-0 text-(--current-color)">Copy</span>
               <span class="value-reveal">
                 <span class="value-reveal-inner">
                   <span class="ml-2 max-w-40 truncate text-(--ui-text-muted) font-mono font-normal normal-case"

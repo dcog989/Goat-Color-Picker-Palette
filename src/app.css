@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: var(--current-color);
-
   /* Border Radius System */
   --radius-sm: 0.75rem; /* Small elements (tags, badges) */
   --radius-md: 1rem; /* Buttons, inputs, small cards */
@@ -175,7 +173,7 @@ body {
     64px 64px;
   background-attachment: fixed;
   color: var(--ui-text);
-  @apply selection:bg-brand antialiased selection:text-white;
+  @apply selection:bg-(--current-color) antialiased selection:text-white;
 }
 
 /* Custom range inputs */

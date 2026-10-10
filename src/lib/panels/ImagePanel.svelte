@@ -94,7 +94,7 @@ onDestroy(() => {
                       justify-center rounded-xl border-2 border-dashed
                       bg-(--ui-bg) p-12 transition-all
                     "
-          class:border-brand={isDragging}
+          class:border-(--current-color)={isDragging}
           class:border-(--ui-border)={!isDragging}
           style:background-color={isDragging ? "color-mix(in oklch, var(--current-color) 10%, transparent)" : undefined}
           ondragover={onDragOver}
