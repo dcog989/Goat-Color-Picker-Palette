@@ -139,10 +139,6 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 2px 6px oklch(0 0 0 / 0.3);
 }
 
-input[type="range"]:focus {
-  outline: none;
-}
-
 input[type="number"] {
   appearance: auto;
   -moz-appearance: auto;
