@@ -166,10 +166,7 @@ $effect(() => {
       <button
         type="button"
         onclick={() => (isExpanded = !isExpanded)}
-        class="
-                  text-xs font-bold uppercase opacity-40 transition-opacity
-                  hover:opacity-100
-                "
+        class="sub-label opacity-40 transition-opacity hover:opacity-100"
       >
         {isExpanded ? "Collapse" : "Expand"}
       </button>

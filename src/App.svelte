@@ -146,10 +146,10 @@ const infoContent = {
   shortcuts: {
     title: "Keyboard Shortcuts",
     content: `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="font-black text-xs uppercase opacity-50">Search</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + K</span></div>
-                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="font-black text-xs uppercase opacity-50">Save Color</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + S</span></div>
-                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="font-black text-xs uppercase opacity-50">Randomize</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + R</span></div>
-                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="font-black text-xs uppercase opacity-50">Close Modal</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">Esc</span></div>
+                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Search</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + K</span></div>
+                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Save Color</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + S</span></div>
+                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Randomize</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + R</span></div>
+                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Close Modal</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">Esc</span></div>
             </div>`,
   },
 };
