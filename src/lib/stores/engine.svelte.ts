@@ -39,11 +39,7 @@ export class EngineStore {
   #contrastWhite = $derived.by((): string => {
     const current = this.#currentColor;
     if (!current) return "0";
-    try {
-      return Math.abs(current.apcaContrast("#fff")).toFixed(PRECISION.CONTRAST_DISPLAY);
-    } catch {
-      return "0";
-    }
+    return Math.abs(current.apcaContrast("#fff")).toFixed(PRECISION.CONTRAST_DISPLAY);
   });
 
   get contrastWhite(): string {
@@ -53,11 +49,7 @@ export class EngineStore {
   #contrastBlack = $derived.by((): string => {
     const current = this.#currentColor;
     if (!current) return "0";
-    try {
-      return Math.abs(current.apcaContrast("#000")).toFixed(PRECISION.CONTRAST_DISPLAY);
-    } catch {
-      return "0";
-    }
+    return Math.abs(current.apcaContrast("#000")).toFixed(PRECISION.CONTRAST_DISPLAY);
   });
 
   get contrastBlack(): string {
@@ -71,7 +63,7 @@ export class EngineStore {
   }
 
   #generated = $derived.by((): string[] => {
-    if (isHarmonyMode(this.genAxis)) {
+    if (this.#isHarmonyMode) {
       const base = this.#getBaseColor();
       return colordx({ l: base.l, c: base.c, h: base.h })
         .harmonies(this.genAxis)
