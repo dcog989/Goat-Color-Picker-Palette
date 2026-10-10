@@ -58,17 +58,24 @@ export class PaintboxStore {
   }
 
   #saveToStorage() {
+    const colors = this.#colors;
     try {
-      localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(this.#colors));
+      localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(colors));
     } catch (e) {
       console.error("Failed to save paintbox data:", e);
-      if (e instanceof Error && e.name === "QuotaExceededError" && this.#colors.length > 0) {
-        this.#colors = this.#colors.slice(0, Math.floor(this.#colors.length / 2));
+      if (e instanceof Error && e.name === "QuotaExceededError" && colors.length > 0) {
+        const trimmed = colors.slice(0, Math.floor(colors.length / 2));
         try {
-          localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(this.#colors));
+          localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(trimmed));
         } catch {
           /* Storage write failed, already logged */
         }
+        // Defer the state update so the persist effect does not mutate the state it just read.
+        queueMicrotask(() => {
+          if (this.#colors === colors) {
+            this.#colors = trimmed;
+          }
+        });
       }
     }
   }
