@@ -16,6 +16,7 @@ let { onSearch }: Props = $props();
 const { color, engine, theme } = getApp();
 </script>
 
+<!-- -webkit-mask-image kept for older WebKit/Safari; unprefixed mask-image serves modern engines -->
 <header
   class="
       sticky top-0 z-50

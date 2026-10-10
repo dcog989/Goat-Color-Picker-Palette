@@ -227,12 +227,13 @@ body {
   background-size:
     100% 100%,
     64px 64px;
-  background-attachment: fixed;
+  background-attachment: fixed; /* keep the page gradient stationary while panels scroll */
   color: var(--ui-text);
   @apply selection:bg-(--current-color) antialiased selection:text-white;
 }
 
-/* Custom range inputs */
+/* Custom range inputs. The -webkit- and -moz- track/thumb rules cannot be merged:
+   no shared pseudo-element exists, and each engine ignores the other's prefix. */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -273,6 +274,8 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 2px 6px oklch(0 0 0 / 0.3);
 }
 
+/* Native number-input spinners: re-asserted per engine because appearance resets strip them
+   and WebKit exposes the controls only through vendor pseudo-elements. */
 input[type="number"] {
   appearance: auto;
   -moz-appearance: auto;
