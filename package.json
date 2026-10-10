@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@colordx/core": "^7.3.0",
-    "@lucide/svelte": "^1.52.0",
+    "@lucide/svelte": "^1.55.0",
     "color-name-list": "^14.51.0",
     "jspdf": "^4.2.1"
   },
@@ -35,15 +35,15 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/svelte": "^5.4.2",
     "@tsconfig/svelte": "^5.0.8",
-    "@types/node": "^26.6.4",
+    "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^5.0.3",
     "jsdom": "^30.1.2",
-    "lefthook": "^2.1.17",
-    "svelte": "^5.57.1",
+    "lefthook": "^2.2.1",
+    "svelte": "^5.57.2",
     "svelte-check": "^4.7.6",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3",
-    "vite": "^8.3.3",
+    "vite": "^8.3.4",
     "vitest": "^5.0.3"
   },
   "overrides": {
