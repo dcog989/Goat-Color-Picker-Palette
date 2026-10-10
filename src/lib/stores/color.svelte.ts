@@ -7,6 +7,9 @@ const RANDOM_CHROMA = 0.08;
 const CHROMA_SEARCH_UPPER_BOUND = 0.5;
 const CHROMA_SEARCH_ITERATIONS = 18;
 const MIN_CHROMA_MAX = 0.001;
+const HUE_MAX = 359.999;
+
+const clampHue = (h: number): number => Math.max(0, Math.min(h, HUE_MAX));
 
 function getDisplayColor(color: Colordx): Colordx {
   if (inGamutSrgb(color.toOklch())) {
@@ -85,7 +88,7 @@ export class ColorStore {
     return c > 0.001 ? h : this.#lastMeaningfulHue;
   }
   set h(v: number) {
-    this.#setOklchField("h", Math.min(v, 359.999));
+    this.#setOklchField("h", clampHue(v));
   }
 
   #setOklchField(field: "l" | "c" | "h", value: number) {
@@ -146,7 +149,7 @@ export class ColorStore {
   setOkhslValues(h: number, s: number, l: number) {
     this.#setCurrent(
       colordx({
-        h: Math.min(h, 359.999),
+        h: clampHue(h),
         s: Math.max(0, Math.min(s, 100)),
         l: Math.max(0, Math.min(l, 100)),
         alpha: this.alpha,
