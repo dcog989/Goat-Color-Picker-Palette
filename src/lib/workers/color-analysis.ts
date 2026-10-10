@@ -118,7 +118,6 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   const finalColors = mergedList.slice(0, 64);
 
   self.postMessage({
-    colors: finalColors.map((c) => rgbToHex({ r: c.r, g: c.g, b: c.b, alpha: 1 })),
     clusters: finalColors.map((c) => ({
       color: rgbToHex({ r: c.r, g: c.g, b: c.b, alpha: 1 }),
       pixels: c.count,

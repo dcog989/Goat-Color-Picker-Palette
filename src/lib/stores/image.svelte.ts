@@ -7,7 +7,6 @@ import ColorAnalysisWorker from "../workers/color-analysis.ts?worker";
 export type SortMode = "dominant" | "vibrant" | "bright" | "dark";
 
 type ImageWorkerMessage = {
-  colors: string[];
   clusters: { color: string; pixels: number }[];
 };
 
