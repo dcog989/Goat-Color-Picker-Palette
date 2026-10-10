@@ -118,9 +118,7 @@ export class ColorStore {
 
   #displayColor = $derived.by(() => (inGamutSrgb(this.#oklch) ? this.#current : this.#current.clampSrgb()));
 
-  get rgbComp() {
-    return this.#displayColor.toRgb();
-  }
+  rgbComp = $derived(this.#displayColor.toRgb());
 
   mapToSrgb() {
     this.#setCurrent(this.#current.mapSrgb());
