@@ -182,11 +182,7 @@ const getApcaRating = (score: number) => {
           class="
                       w-full rounded-lg border bg-(--ui-bg)
                       py-2 pr-4 pl-9 font-mono text-sm uppercase transition-all
-                      outline-none
-                      focus:ring-2 focus:ring-(--current-color)
-                      {customColorError
-            ? "border-red-500 focus:border-red-500 focus:ring-red-500/50"
-            : "border-(--ui-border)"}
+                      {customColorError ? "border-red-500" : "border-(--ui-border)"}
                     "
         >
         <div

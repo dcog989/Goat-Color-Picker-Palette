@@ -95,8 +95,7 @@ const handleInput = (e: Event) => {
           onfocus={(e) => (e.target as HTMLInputElement).select()}
           class="
                       w-full rounded-md border bg-(--ui-bg) py-2 pr-8 pl-3
-                      font-mono text-base uppercase transition-shadow duration-200 outline-none
-                      focus:ring-2 focus:ring-(--current-color)
+                      font-mono text-base uppercase transition-shadow duration-200
                       {hasError ? "border-red-500 ring-2 ring-red-500/20" : `border-(--ui-border)`}"
           placeholder="Paste color..."
         >

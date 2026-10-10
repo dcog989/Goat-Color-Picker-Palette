@@ -60,8 +60,7 @@ const removeRow = () => {
         class="
                       cursor-pointer rounded-lg border
                       border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs
-                      font-bold uppercase transition-all outline-none
-                      focus:border-(--current-color)
+                      font-bold uppercase transition-all
                     "
       >
         <optgroup label="Variables">

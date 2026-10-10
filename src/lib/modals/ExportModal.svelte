@@ -68,8 +68,7 @@ const exports = $derived.by(() =>
           class="
                       cursor-pointer rounded-md border border-(--ui-border)
                       bg-(--ui-bg) px-3 py-2 text-xs font-bold uppercase
-                      transition-colors outline-none
-                      focus:ring-2 focus:ring-(--current-color)
+                      transition-colors
                       md:px-4
                     "
         >

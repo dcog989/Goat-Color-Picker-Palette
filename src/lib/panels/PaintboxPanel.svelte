@@ -84,8 +84,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
           class="
                       flex-1 cursor-pointer rounded-lg border
                       border-(--ui-border) bg-(--ui-bg) px-2 py-1.5 text-xs
-                      font-bold uppercase transition-colors duration-200 outline-none
-                      focus:border-(--current-color)
+                      font-bold uppercase transition-colors duration-200
                       sm:flex-none
                     "
         >
