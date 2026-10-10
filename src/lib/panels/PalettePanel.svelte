@@ -70,25 +70,13 @@ const removeRow = () => {
             type="button"
             onclick={removeRow}
             disabled={engine.genSteps <= 4}
-            class="
-                          rounded-md p-1.5 text-(--ui-text-muted)
-                          transition-all hover:bg-(--current-color) hover:text-on-current
-                        "
+            class="icon-button-inset"
             title="Remove Row"
             aria-label="Decrease steps"
           >
             <ListMinus class="size-4" />
           </button>
-          <button
-            type="button"
-            onclick={addRow}
-            class="
-                          rounded-md p-1.5 text-(--ui-text-muted)
-                          transition-all hover:bg-(--current-color) hover:text-on-current
-                        "
-            title="Add Row"
-            aria-label="Increase steps"
-          >
+          <button type="button" onclick={addRow} class="icon-button-inset" title="Add Row" aria-label="Increase steps">
             <ListPlus class="size-4" />
           </button>
         </div>
