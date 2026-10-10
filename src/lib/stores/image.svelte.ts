@@ -23,26 +23,30 @@ export class ImageStore {
   extractedPalette = $derived.by(() => {
     if (!this.mosaicData.length) return [];
 
-    const candidates = [...this.mosaicData];
-
-    const getL = (hex: string) => {
-      const parsed = colordx(hex);
-      return parsed.isValid() ? parsed.toOklch().l : 0;
-    };
-    const getC = (hex: string) => {
-      const parsed = colordx(hex);
-      return parsed.isValid() ? parsed.toOklch().c : 0;
-    };
+    const needsColor = this.sortMode !== "dominant";
+    const candidates = this.mosaicData.map((item) => {
+      let l = 0;
+      let c = 0;
+      if (needsColor) {
+        const parsed = colordx(item.color);
+        if (parsed.isValid()) {
+          const oklch = parsed.toOklch();
+          l = oklch.l;
+          c = oklch.c;
+        }
+      }
+      return { color: item.color, pixels: item.pixels, l, c };
+    });
 
     switch (this.sortMode) {
       case "vibrant":
-        candidates.sort((a, b) => getC(b.color) - getC(a.color));
+        candidates.sort((a, b) => b.c - a.c);
         break;
       case "bright":
-        candidates.sort((a, b) => getL(b.color) - getL(a.color));
+        candidates.sort((a, b) => b.l - a.l);
         break;
       case "dark":
-        candidates.sort((a, b) => getL(a.color) - getL(b.color));
+        candidates.sort((a, b) => a.l - b.l);
         break;
       default:
         candidates.sort((a, b) => b.pixels - a.pixels);
