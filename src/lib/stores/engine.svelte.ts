@@ -16,6 +16,7 @@ export class EngineStore {
   closestName = $state("Searching...");
   #managedWorker = new ManagedWorker<WorkerMessageData>({ maxRetries: 3, retryDelay: 1000 });
   #debounceHandle: number | null = null;
+  #disposeEffect: (() => void) | null = null;
   #initialized = false;
   #pendingSearch: { l: number; c: number; h: number; alpha: number } | null = null;
   #colorStore: ColorStore;
@@ -81,22 +82,24 @@ export class EngineStore {
 
     this.#initWorker();
 
-    $effect(() => {
-      const current = {
-        l: this.#colorStore.l,
-        c: this.#colorStore.c,
-        h: this.#colorStore.h,
-        alpha: this.#colorStore.alpha,
-      };
+    this.#disposeEffect = $effect.root(() => {
+      $effect(() => {
+        const current = {
+          l: this.#colorStore.l,
+          c: this.#colorStore.c,
+          h: this.#colorStore.h,
+          alpha: this.#colorStore.alpha,
+        };
 
-      if (this.#debounceHandle !== null) {
-        clearTimeout(this.#debounceHandle);
-      }
+        if (this.#debounceHandle !== null) {
+          clearTimeout(this.#debounceHandle);
+        }
 
-      this.#debounceHandle = window.setTimeout(() => {
-        this.#searchColorName(current);
-        this.#debounceHandle = null;
-      }, 150);
+        this.#debounceHandle = window.setTimeout(() => {
+          this.#searchColorName(current);
+          this.#debounceHandle = null;
+        }, 150);
+      });
     });
   }
 
@@ -133,6 +136,8 @@ export class EngineStore {
       clearTimeout(this.#debounceHandle);
       this.#debounceHandle = null;
     }
+    this.#disposeEffect?.();
+    this.#disposeEffect = null;
     this.#managedWorker.destroy();
   }
 
