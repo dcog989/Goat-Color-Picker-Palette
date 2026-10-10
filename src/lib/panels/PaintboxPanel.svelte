@@ -16,9 +16,6 @@ let { onExport }: Props = $props();
 const app = getApp();
 const { paintbox, toast } = app;
 
-const actionButtonClass =
-  "hover:text-on-current cursor-pointer rounded-2xl border border-(--ui-border) bg-(--ui-bg) px-6 py-4 text-xs font-black uppercase shadow-sm transition duration-200 hover:scale-105 hover:bg-(--current-color)";
-
 let fileInput = $state<HTMLInputElement | null>(null);
 
 const handleImport = async (e: Event) => {
@@ -104,8 +101,8 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
   <div class="mt-8 space-y-3">
     <h3 class="section-heading">Export</h3>
     <div class="grid grid-cols-4 gap-3">
-      <button type="button" onclick={() => exportVisual(app, "png")} class={actionButtonClass}>PNG</button>
-      <button type="button" onclick={() => exportVisual(app, "svg")} class={actionButtonClass}>SVG</button>
+      <button type="button" onclick={() => exportVisual(app, "png")} class="action-button">PNG</button>
+      <button type="button" onclick={() => exportVisual(app, "svg")} class="action-button">SVG</button>
       <button
         type="button"
         onclick={async () => {
@@ -118,11 +115,11 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
             if (btn) btn.textContent = originalText;
           }
         }}
-        class={actionButtonClass}
+        class="action-button"
       >
         PDF
       </button>
-      <button type="button" onclick={onExport} class={actionButtonClass}>Code</button>
+      <button type="button" onclick={onExport} class="action-button">Code</button>
     </div>
   </div>
 
@@ -130,6 +127,6 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
   <div class="mt-4 space-y-3">
     <h3 class="section-heading">Import</h3>
     <input bind:this={fileInput} type="file" accept={PALETTE_FILE.ACCEPT} class="hidden" onchange={handleImport}>
-    <button type="button" onclick={() => fileInput?.click()} class={actionButtonClass}>DTCG JSON / GIMP GPL</button>
+    <button type="button" onclick={() => fileInput?.click()} class="action-button">DTCG JSON / GIMP GPL</button>
   </div>
 </section>
