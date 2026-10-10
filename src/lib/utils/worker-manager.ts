@@ -10,6 +10,7 @@ export class ManagedWorker<TMessage = unknown> {
     onReady?: () => void;
   } | null = null;
   #context = "";
+  #retryTimer: number | null = null;
   #subscribers: Array<(msg: TMessage) => void> = [];
 
   constructor(config?: { maxRetries?: number; retryDelay?: number }) {
@@ -34,6 +35,15 @@ export class ManagedWorker<TMessage = unknown> {
     this.#workerFactory = factory;
     this.#handlers = handlers;
     this.#context = context;
+    this.#retryCount = 0;
+
+    this.#start();
+  }
+
+  #start(): void {
+    const factory = this.#workerFactory;
+    const handlers = this.#handlers;
+    if (!factory || !handlers) return;
 
     try {
       const worker = factory();
@@ -47,7 +57,7 @@ export class ManagedWorker<TMessage = unknown> {
       };
 
       worker.onerror = (error) => {
-        console.error(`${context} error:`, error);
+        console.error(`${this.#context} error:`, error);
         handlers.onError?.(error);
         this.terminate();
         this.#retry();
@@ -56,7 +66,7 @@ export class ManagedWorker<TMessage = unknown> {
       this.#worker = worker;
       handlers.onReady?.();
     } catch (error) {
-      console.error(`Failed to initialize ${context}:`, error);
+      console.error(`Failed to initialize ${this.#context}:`, error);
       handlers.onError?.();
       this.#retry();
     }
@@ -82,6 +92,10 @@ export class ManagedWorker<TMessage = unknown> {
   }
 
   terminate(): void {
+    if (this.#retryTimer !== null) {
+      clearTimeout(this.#retryTimer);
+      this.#retryTimer = null;
+    }
     if (this.#worker) {
       this.#worker.terminate();
       this.#worker = null;
@@ -97,12 +111,13 @@ export class ManagedWorker<TMessage = unknown> {
   }
 
   #retry(): void {
-    const factory = this.#workerFactory;
-    const handlers = this.#handlers;
-    if (!factory || !handlers) return;
+    if (!this.#workerFactory || !this.#handlers) return;
     if (this.#retryCount < this.#maxRetries) {
       this.#retryCount++;
-      setTimeout(() => this.init(factory, handlers, this.#context), this.#retryDefaultDelay * this.#retryCount);
+      this.#retryTimer = window.setTimeout(() => {
+        this.#retryTimer = null;
+        this.#start();
+      }, this.#retryDefaultDelay * this.#retryCount);
     } else {
       console.error(`Max ${this.#context} retry attempts reached. Giving up.`);
     }
