@@ -1,4 +1,5 @@
 ﻿import { colordx } from "@colordx/core";
+import { parseHex, rgbToOklab } from "@colordx/core/fn";
 
 interface WorkerMessage {
   type: "search" | "filter" | "get-page";
@@ -46,13 +47,12 @@ async function prepareData(): Promise<void> {
       let l = 0;
       let a = 0;
       let b = 0;
-      try {
-        const oklab = colordx(entry.hex).toOklab();
+      const rgb = parseHex(entry.hex);
+      if (rgb) {
+        const oklab = rgbToOklab(rgb);
         l = oklab.l;
         a = oklab.a;
         b = oklab.b;
-      } catch {
-        // Unparseable colors keep zero coordinates but stay listed.
       }
 
       const ptr = nextNames.length * 3;
