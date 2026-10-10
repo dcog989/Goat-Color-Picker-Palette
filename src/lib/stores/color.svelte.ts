@@ -1,5 +1,5 @@
 import type { Colordx } from "@colordx/core";
-import { colordx, inGamutSrgb, oklchToLinearInto } from "@colordx/core";
+import { colordx, inGamutSrgb, oklchToLinear } from "@colordx/core";
 
 const RANDOM_HUE_MAX = 360;
 const RANDOM_LIGHTNESS = 0.45;
@@ -13,13 +13,8 @@ const GAMUT_TOLERANCE = 5e-4;
 
 const clampHue = (h: number): number => Math.max(0, Math.min(h, HUE_MAX));
 
-const gamutChannels = new Float64Array(3);
-
 const isInSrgbGamut = (l: number, c: number, h: number): boolean => {
-  oklchToLinearInto(gamutChannels, l, c, h);
-  const r = gamutChannels[0]!;
-  const g = gamutChannels[1]!;
-  const b = gamutChannels[2]!;
+  const [r, g, b] = oklchToLinear(l, c, h);
   return (
     r >= -GAMUT_TOLERANCE &&
     r <= 1 + GAMUT_TOLERANCE &&
