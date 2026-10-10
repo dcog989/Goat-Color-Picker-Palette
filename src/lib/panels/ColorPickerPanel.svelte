@@ -119,7 +119,7 @@ const handleInput = (e: Event) => {
           </div>
         {/if}
       </div>
-      <button type="button" onclick={togglePrecision} class="icon-button group relative rounded-md">
+      <button type="button" onclick={togglePrecision} class="icon-button group relative">
         {#if app.precision === "precise"}
           <DecimalsArrowRight
             class="
@@ -149,13 +149,13 @@ const handleInput = (e: Event) => {
       </button>
     </div>
 
-    <div class="control-group flex shrink-0 gap-1 rounded-md">
+    <div class="control-group flex shrink-0 gap-1">
       {#each ["okhsl", "oklch", "rgb"] as m (m)}
         <button
           type="button"
           onclick={() => (color.mode = m as "okhsl" | "oklch" | "rgb")}
           class="
-                      rounded-sm px-4 py-2 text-xs font-black uppercase
+                      rounded-md px-4 py-2 text-xs font-black uppercase
                       transition duration-200
                       {color.mode === m ? "text-on-current bg-(--current-color)" : "hover:bg-(--ui-card)"}"
         >

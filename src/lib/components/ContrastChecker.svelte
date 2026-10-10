@@ -96,7 +96,7 @@ const getApcaRating = (score: number) => {
 
 <div class="flex h-full flex-col gap-6">
   <!-- 1. Context Switcher Tabs -->
-  <div class="control-group grid grid-cols-3 gap-2 rounded-xl">
+  <div class="control-group grid grid-cols-3 gap-2">
     {#each modes as m (m)}
       <div class="relative">
         <button
@@ -104,7 +104,7 @@ const getApcaRating = (score: number) => {
           onclick={() => (mode = m)}
           class="
                     relative flex h-full w-full flex-col items-center gap-1
-                    rounded-lg px-2 py-3 transition-all
+                    rounded-md px-2 py-3 transition-all
                     {mode === m
             ? "bg-(--ui-card) text-(--ui-text) shadow-sm"
             : `
